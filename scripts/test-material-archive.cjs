@@ -32,6 +32,17 @@ function check(name,fn){fn();passed++;console.log('PASS '+name)}
  check('Candidates calculated only for returned items',()=>assert.equal(candidateCalls,20));
  check('Returned tags preserve original legacy and hashtag candidates',()=>assert.deepEqual(first.items[0].tagCandidates,[{value:'粘毛',source:'legacy_unspecified',status:'unverified',confidence:null},...originalCandidates(rows[0].title,rows[0].description,rows[0].textContent||'')]));
  contract.tagCandidates=originalCandidates;
+ let productQueries=0;
+ prisma.product.findMany=async()=>{productQueries++;return [{id:'p-b',productName:'商品B'},{id:'p-a',productName:'商品A'}]};
+ rows[0].metadataJson={productIds:['p-a','p-b','p-a','missing']};
+ const linked=await svc.getArchive({brandId:'qa',productId:'p-a',limit:'20'});
+ check('Product matching keeps database order, deduplicates and ignores missing products',()=>assert.deepEqual(linked.items[0].products,[{id:'p-b',name:'商品B'},{id:'p-a',name:'商品A'}]));
+ check('Product filtering includes only actually linked material',()=>assert.equal(linked.total,1));
+ check('One product query serves both linked items and returned product list',()=>assert.equal(productQueries,1));
+ let offlineQueries=0;
+ const offline=new AiControlAssetArchiveService({canUseDatabase:async()=>false,product:{findMany:()=>{offlineQueries++;throw Error('unexpected product query')}}},{},{},{},{});
+ await assert.rejects(()=>offline.getArchive({brandId:'qa'}),error=>error.getStatus?.()===503);
+ check('Database unavailable returns 503 without starting a product query',()=>assert.equal(offlineQueries,0));
  check('Total is not returned page length',()=>assert.deepEqual([first.total,first.items.length],[250,20]));
  const original=await svc.getArchive({brandId:'qa',keyword:'7693006000135214961',limit:'20'});check('Original outside first200 found by exact work ID',()=>assert.deepEqual([original.total,original.items[0].libraryState], [1,'collected']));
  const video=await svc.getArchive({brandId:'qa',materialType:'视频',keyword:'粘毛'});check('Video filter excludes images with video captions',()=>assert.equal(video.total,0));

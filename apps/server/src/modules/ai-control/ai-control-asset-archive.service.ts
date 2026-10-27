@@ -179,15 +179,18 @@ export class AiControlAssetArchiveService {
     private readonly localOcrService: LocalOcrService,
   ) {}
 
-  private async loadArchiveItems(brandId: string): Promise<ArchiveItem[]> {
+  private async loadArchiveItems(brandId: string, getProducts?: () => Promise<Array<{ id: string; productName: string }>>): Promise<ArchiveItem[]> {
     if (!await this.prisma.canUseDatabase()) throw new ServiceUnavailableException("数据库不可用，无法确认素材覆盖范围");
     // Filter before pagination, never silently limit each source before exact-ID/product search.
     const [creative, videos, media, business, artifacts, revisions, products] = await Promise.all([
       this.listCreativeMaterials(brandId, 2147483647), this.listVideoWorks(brandId, 2147483647), this.listMediaAssets(brandId, 2147483647),
       this.listBusinessAssets(brandId, 2147483647), this.listWorkflowArtifacts(brandId, 2147483647),
-      new MaterialIndexStore(this.prisma).list(brandId), this.prisma.product.findMany({ where: { brandId }, select: { id: true, productName: true } }),
+      new MaterialIndexStore(this.prisma).list(brandId), getProducts ? getProducts() : this.prisma.product.findMany({ where: { brandId }, select: { id: true, productName: true } }),
     ]);
     const indexes = new Map(revisions.map(r => [`${r.evidenceTable}:${r.recordId}`, r]));
+    // Index once per brand request. Preserve the original product-query order,
+    // even when an asset has duplicate or differently ordered product IDs.
+    const productLookup = new Map(products.map((product, position) => [product.id, { product, position }] as const));
     const rows = [...creative, ...videos, ...media, ...business, ...artifacts];
     const rowsByRef = new Map(rows.map(r => [`${r.evidenceTable}:${r.evidenceRecordId}`, r]));
     const importedFrom = new Map(revisions.filter(r => r.data.importedId).map(r => [r.data.importedId!, r]));
@@ -195,10 +198,13 @@ export class AiControlAssetArchiveService {
       const item = this.toArchiveItem(row), revision = indexes.get(`${item.evidence.table}:${item.evidence.recordId}`), index = revision?.data || validateMaterialIndex({});
       const inferredProducts = [row.metadataJson?.productId, ...(Array.isArray(row.metadataJson?.productIds) ? row.metadataJson.productIds : [])].filter(v => typeof v === "string");
       const origin = importedFrom.get(row.id), originRow = origin ? rowsByRef.get(`${origin.evidenceTable}:${origin.recordId}`) : null;
-      const productIds = index?.productIds.length ? index.productIds : origin?.data.productIds.length ? origin.data.productIds : inferredProducts;
+      const productIds: string[] = index?.productIds.length ? index.productIds : origin?.data.productIds.length ? origin.data.productIds : inferredProducts;
       if (origin && originRow) { item.origin = { table: origin.evidenceTable, recordId: origin.recordId, title: originRow.title }; item.collection = originRow.collection; }
       item.index = index; item.indexRevision = revision?.revision || 0;
-      item.products = products.filter(p => productIds.includes(p.id)).map(p => ({ id: p.id, name: p.productName }));
+      item.products = [...new Set(productIds)].map(id => productLookup.get(id))
+        .filter((entry): entry is NonNullable<typeof entry> => !!entry)
+        .sort((a, b) => a.position - b.position)
+        .map(({ product }) => ({ id: product.id, name: product.productName }));
       item.libraryState = item.source === "collected_work" ? (index?.importedId ? "in_library" : "collected") : "in_library";
       item.availability = index?.availability || "unverified"; item.recommendation = index?.recommendation || "unverified";
       item.materialTags = [...new Set([...(index?.confirmedTags || []), ...(item.legacyTags || []).map(cleanCandidate).filter(Boolean)])];
@@ -228,7 +234,11 @@ export class AiControlAssetArchiveService {
     const brandId = this.normalizeBrandId(params.brandId), limit = this.clampInt(params.limit, 1, 200, 80);
     const offset = params.offset === undefined ? 0 : Number(params.offset);
     if (!Number.isSafeInteger(offset) || offset < 0) throw new BadRequestException("分页起点不正确");
-    const all = await this.loadArchiveItems(brandId), search = this.normalizeArchiveSearch(params);
+    // Share one query between item association and the returned product list.
+    // Promise.resolve executes a PrismaPromise once even when awaited twice.
+    let productQuery: Promise<Array<{ id: string; productName: string }>> | undefined;
+    const getProducts = () => productQuery ??= Promise.resolve(this.prisma.product.findMany({ where: { brandId }, select: { id: true, productName: true } }));
+    const all = await this.loadArchiveItems(brandId, getProducts), search = this.normalizeArchiveSearch(params);
     const matches = this.filterArchiveItems(all, search).filter(item => {
       const idx = item.index;
       if (params.productId && !item.products?.some(p => p.id === params.productId)) return false;
@@ -253,7 +263,7 @@ export class AiControlAssetArchiveService {
     return { ok: true, readonly: true, brandId, total: matches.length, returned: items.length, offset, limit,
       coverage: "all_current_brand_archive_and_collected_records", summary: this.buildSummary(matches), items, sources: this.sourceLabels(),
       filters: { ...this.buildArchiveFilterMetadata(all, search), applied: { ...params, ...search, brandId: undefined } },
-      products: await this.prisma.product.findMany({ where: { brandId }, select: { id: true, productName: true } }),
+      products: await getProducts(),
       productCoverage: params.productId ? { indexedScenes: [...new Set(matches.flatMap(i => i.index?.clips.map((c: any) => c.scene).filter(Boolean) || []))], indexedClips: matches.flatMap(i => (i.index?.clips || []).map((c: any) => ({ ...c, material: i.evidence, used: i.relations?.some(r => r.clipId === c.id && r.type === "used_in") || false }))), boundary: "仅已登记片段；未返回不代表不存在，场景覆盖以人工索引为准" } : undefined,
       boundary: "联查采集记录不等于已入库、可剪辑或已获商用授权；未知保持未知，不自动入库。" };
   }
@@ -1075,8 +1085,9 @@ export class AiControlAssetArchiveService {
       ORDER BY "createdAt" DESC
       LIMIT ${limit}
     `;
+    const analysis = new WorkAnalysisService(this.prisma);
     return rows.map(row => {
-      const work = new WorkAnalysisService(this.prisma).snapshot({ id: row.id, brandId: row.brandId, title: row.title, description: row.description, fileUrl: row.assetUrl, metadataJson: row.metadataJson, updatedAt: new Date(row.updatedAt || 0) });
+      const work = analysis.snapshot({ id: row.id, brandId: row.brandId, title: row.title, description: row.description, fileUrl: row.assetUrl, metadataJson: row.metadataJson, updatedAt: new Date(row.updatedAt || 0) });
       if (!work) return this.isRenderableBusinessAsset(row) ? row : null;
       return { ...row, source: "collected_work" as ArchiveSource, kind: work.videoUrl ? "video" : work.images.length ? "image" : work.platform === "douyin" ? "video" : "text", mimeType: row.mimeType || null, workspaceScope: work.platform, assetUrl: work.videoUrl || work.images[0]?.url || work.workUrl, textContent: work.body || null, collection: work };
     }).filter((row): row is ArchiveRow => !!row);
