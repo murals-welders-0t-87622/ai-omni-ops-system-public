@@ -1,5 +1,7 @@
 # AI全域运营系统文档中心
 
+2026-10-27：媒体素材只读取必需的产品关联元数据，见[对照与边界](changes/2026-10-27-material-media-metadata.md)。
+
 2026-10-27：素材筛选合并输入请求并保护最新结果，见[交互验证](changes/2026-10-27-material-filter-interaction.md)。
 
 2026-10-27：素材业务数据避免重复解压，见[变更与验收](changes/2026-10-27-material-query-normalization.md)。

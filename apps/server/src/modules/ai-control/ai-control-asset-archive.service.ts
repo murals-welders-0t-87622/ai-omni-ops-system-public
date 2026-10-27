@@ -1016,7 +1016,12 @@ export class AiControlAssetArchiveService {
         m."storageKey",
         NULL AS "localPath",
         m."mimeType",
-        m."metadataJson",
+        -- Archive conversion only uses these two fields for product links.
+        -- Keep the original metadata unchanged in MediaAsset.
+        jsonb_build_object(
+          'productId', m."metadataJson"::jsonb->'productId',
+          'productIds', m."metadataJson"::jsonb->'productIds'
+        ) AS "metadataJson",
         NULL AS "sourceKind",
         NULL AS "materialTags",
         m."createdAt",
