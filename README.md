@@ -1,5 +1,7 @@
 # AI 全域运营中台
 
+2026-10-27：素材检索减少重复正文和无关元数据读取；[详情](docs/changes/2026-10-27-material-business-metadata.md)。
+
 2026-10-27：素材检索减少媒体原始元数据传输，保留数据库原件；[详情](docs/changes/2026-10-27-material-media-metadata.md)。
 
 2026-10-27：素材筛选减少重复查询并避免旧结果覆盖新筛选；[详情](docs/changes/2026-10-27-material-filter-interaction.md)。

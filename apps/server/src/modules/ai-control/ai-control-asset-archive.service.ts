@@ -1082,9 +1082,15 @@ export class AiControlAssetArchiveService {
         END AS "storageKey",
         NULL AS "localPath",
         NULLIF("cleanMeta"->>'videoContentType', '') AS "mimeType",
-        -- rawFields is the original collector response. Archive conversion and
-        -- work snapshots use normalized fields; keep the original in the DB.
-        "cleanMeta" AS "metadataJson",
+        -- Archive association and WorkAnalysisService.snapshot do not consume
+        -- these fields; html/report/text are already projected as textContent.
+        -- The database retains the full original metadata. Keep the snapshot
+        -- compatibility regression in sync when its input fields change.
+        CASE WHEN jsonb_typeof("cleanMeta") = 'object' THEN "cleanMeta" - ARRAY[
+          'body', 'result', 'items', 'operatingMap', 'htmlContent', 'reportMarkdown', 'textContent',
+          'scorecard', 'authorAvatar', 'actions', 'report', 'productSnapshot', 'hashtags',
+          'receipt', 'growth', 'coverUrl', 'videoStorageKey'
+        ] ELSE "cleanMeta" END AS "metadataJson",
         NULL AS "sourceKind",
         NULL AS "materialTags",
         "createdAt",

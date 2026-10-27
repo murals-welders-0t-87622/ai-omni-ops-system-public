@@ -15,14 +15,16 @@ const fixture = `fixture("id","brandId","title","description","fileUrl","categor
   ('ocean','test-brand','ocean',NULL::text,NULL::text,'REPORT',timestamp '2026-01-07',timestamp '2026-01-07', '{"kind":"OCEAN_AD_REPORT"}'::jsonb)
 )`;
 const facade = {
-  tableExists: async () => true,
+  canUseDatabase: async () => true,
+  tableExists: async name => name === 'BusinessAsset',
+  product: { findMany: async () => [] },
   $queryRaw: async (parts, ...values) => {
     let query = parts.reduce((s, part, i) => s + part + (i < parts.length - 1 ? `$${i+1}` : ''), '');
     assert.match(query, /WITH normalized AS MATERIALIZED/);
     query = query.replace('WITH normalized AS MATERIALIZED', `WITH ${fixture}, normalized AS MATERIALIZED`)
       .replace('FROM "BusinessAsset"', 'FROM fixture');
     result = await db.$queryRawUnsafe(query, ...values);
-    return [];
+    return result;
   },
 };
 (async () => {
@@ -35,9 +37,15 @@ const facade = {
   assert.equal(byId.object.storageKey, 'key');
   assert.equal(byId.object.mimeType, 'video/mp4');
   assert.equal(byId.object.metadataJson.rawFields, undefined);
+  assert.equal(byId.object.metadataJson.htmlContent, undefined);
   assert.deepEqual(byId.object.metadataJson.nested, {rawFields:'retained'});
   assert.deepEqual(byId.array.metadataJson, [1,2]);
   assert.equal(byId.scalar.metadataJson, 'value');
   assert.equal(byId.null.metadataJson, null);
+  svc.listCreativeMaterials = svc.listVideoWorks = svc.listMediaAssets = svc.listWorkflowArtifacts = async () => [];
+  const matches = await svc.getArchive({ brandId: 'test-brand', keyword: 'hello', limit: '20' });
+  assert.equal(matches.total, 1);
+  assert.equal(matches.items[0].id, 'object');
+  assert.equal(matches.items[0].textContent, 'hello');
   console.log('PASS business archive SQL: brand isolation, exclusions, object/array/scalar/null metadata, projected fields');
 })().catch(e => { console.error(e.message); process.exitCode = 1; }).finally(() => db.$disconnect());
