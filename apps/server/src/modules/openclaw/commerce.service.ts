@@ -82,8 +82,10 @@ export class CommerceService {
       const projects = (await this.rows(this.prisma, brandId, "COMMERCE_DETAIL")).map((r: any) => this.meta(r));
       const products = await this.prisma.product.findMany({ where: { brandId }, orderBy: { createdAt: "desc" } });
       const [media, creative] = await Promise.all([
-        this.prisma.mediaAsset.findMany({ where: { brandId }, orderBy: { createdAt: "desc" }, take: 200 }),
-        this.prisma.aIControlCenterCreativeMaterial.findMany({ where: { brandId }, orderBy: { createdAt: "desc" }, take: 200 }),
+        // Keep ordering and the 200-record window unchanged; only transfer fields
+        // used to construct mediaItems. Original metadata/content stays in DB.
+        this.prisma.mediaAsset.findMany({ where: { brandId }, orderBy: { createdAt: "desc" }, take: 200, select: { id: true, title: true, taskId: true, mimeType: true, storageKey: true } }),
+        this.prisma.aIControlCenterCreativeMaterial.findMany({ where: { brandId }, orderBy: { createdAt: "desc" }, take: 200, select: { id: true, title: true, mimeType: true, storageKey: true } }),
       ]);
       const mediaItems = [["MediaAsset", media], ["AIControlCenterCreativeMaterial", creative]].flatMap(([table, records]: any) => records.filter((r: any) => r.storageKey).map((r: any) => {
         const prefix = `works/${brandId}/`;

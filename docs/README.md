@@ -1,5 +1,7 @@
 # AI全域运营系统文档中心
 
+2026-10-27：电商详情工作区减少媒体元数据读取，见[本地验证](changes/2026-10-27-commerce-media-read.md)。
+
 2026-10-27：电商工作区根据任务状态调整刷新频率，见[验证与边界](changes/2026-10-27-commerce-idle-refresh.md)。
 
 2026-10-27：业务素材元数据去掉重复及未使用字段，见[对照与边界](changes/2026-10-27-material-business-metadata.md)。

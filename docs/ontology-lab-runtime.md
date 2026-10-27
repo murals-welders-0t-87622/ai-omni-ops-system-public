@@ -53,6 +53,7 @@ Docker Desktop实测仅internal网络的ports未形成宿主监听，因此仅�
 
 - 不使用 standard/demo seed，也不导入通用邀请码。
 - 创建 `ontology_lab_operator`，登录邮箱 `operator@ontology-lab.invalid`，普通用户、品牌所有者、零积分。
+- 此账号的品牌所有者权限不等于平台管理员；系统角色 `USER` 无法进入平台全局管理。新机交付需按配套安装技能额外设置并验证平台管理员；既有实例不得通过重跑初始化强制改权限。
 - 创建明确人工指定的合成测试品牌 ID `brand-demo-cleaning`，不冒充服务端随机生成 ID 或原品牌映射。
 - 不创建无事实依据的产品或服务承诺、不配置 provider key。
 - 密码使用与 AuthService 一致的 scrypt 格式；来自源码外随机值。

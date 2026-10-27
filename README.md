@@ -1,5 +1,7 @@
 # AI 全域运营中台
 
+2026-10-27：电商详情工作区优化媒体字段读取；[本地变更](docs/changes/2026-10-27-commerce-media-read.md)。
+
 2026-10-27：电商详情页空闲时减少自动刷新，有任务时保持快速更新；[详情](docs/changes/2026-10-27-commerce-idle-refresh.md)。
 
 2026-10-27：素材检索减少重复正文和无关元数据读取；[详情](docs/changes/2026-10-27-material-business-metadata.md)。
