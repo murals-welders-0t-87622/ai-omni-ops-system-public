@@ -48,6 +48,7 @@ export default function CommerceWorkspace({ area }: { area: "detail" | "operatio
   const [shopId, setShopId] = useState(""), [snapshotId, setSnapshotId] = useState(""), [stage, setStage] = useState("diagnosis");
   const [bindOpen, setBindOpen] = useState(false), [shopName, setShopName] = useState(""), [externalId, setExternalId] = useState(""), [platform, setPlatform] = useState("tmall"), [mappingEvidence, setMappingEvidence] = useState("");
   const scope = useRef(0), refreshSequence = useRef(0);
+  const dirtyRef = useRef(false), quietRead = useRef<symbol | null>(null), foregroundReads = useRef(0);
   const base = `/ai-control-center/brands/${encodeURIComponent(brandId)}/commerce`;
   const project = data?.projects?.find((p: any) => p.id === selectedId);
   const selectedShop = data?.shops?.find((s: any) => s.id === shopId);
@@ -59,22 +60,34 @@ export default function CommerceWorkspace({ area }: { area: "detail" | "operatio
   const section = snapshot?.sections?.find((s: any) => s.key === stage);
   const shownBody: DetailBody | null = historical?.body || draft;
   const mediaItem = (ref?: CommerceMediaRef) => ref && data?.mediaItems?.find((m: any) => m.table === ref.table && m.recordId === ref.recordId);
+  const hasActiveTask = Boolean(data?.tasks?.some((t: any) => ["QUEUED", "RUNNING"].includes(t.state)));
 
   async function load(quiet = false) {
-    if (quiet && dirty) return;
+    if (quiet && (dirtyRef.current || quietRead.current || foregroundReads.current > 0)) return;
+    const quietToken = quiet ? Symbol("commerce-refresh") : null;
+    if (quietToken) quietRead.current = quietToken; else foregroundReads.current++;
     const readSequence = ++refreshSequence.current;
     const token = quiet ? scope.current : ++scope.current; if (!quiet) { setLoading(true); setError(""); }
     try {
       const result = await request<any>(`${base}?area=${area}`);
-      if (token !== scope.current || readSequence !== refreshSequence.current) return;
+      if (token !== scope.current || readSequence !== refreshSequence.current || (quiet && dirtyRef.current)) return;
       setData({ ...result, __brandId: brandId }); setSelectedId(id => result.projects?.some((p: any) => p.id === id) ? id : invalidDeepLink.current ? "" : result.projects?.[0]?.id || "");
       setShopId(id => result.shops?.some((s: any) => s.id === id) ? id : result.shops?.[0]?.id || "");
-    } catch (e: any) { if (token === scope.current) setError(e.message || "加载失败，请重试"); }
-    finally { if (token === scope.current && !quiet) setLoading(false); }
+    } catch (e: any) { if (token === scope.current && readSequence === refreshSequence.current && !(quiet && dirtyRef.current)) setError(e.message || "加载失败，请重试"); }
+    finally {
+      if (quietToken && quietRead.current === quietToken) quietRead.current = null;
+      if (!quiet) foregroundReads.current--;
+      if (token === scope.current && !quiet) setLoading(false);
+    }
   }
-  useEffect(() => { deepLinkApplied.current = false; invalidDeepLink.current = false; setData(null); setSelectedId(""); setProductId(""); void load(); return () => { scope.current++; }; }, [brandId, area]);
-  useEffect(() => { const timer = window.setInterval(() => { if (document.visibilityState === "visible") void load(true); }, area === "detail" || data?.tasks?.some((t: any) => ["QUEUED", "RUNNING"].includes(t.state)) ? 5000 : 60000); return () => window.clearInterval(timer); }, [brandId, area, dirty, data?.tasks?.some((t: any) => ["QUEUED", "RUNNING"].includes(t.state))]);
-  useEffect(() => { setDraft(project ? clone(project.body) : null); setDirty(false); setHistorical(null); setHistory([]); setConfirmOpen(false); setVideoOpen(Boolean(project?.body?.video?.concept)); }, [project?.id, project?.revision]);
+  useEffect(() => { deepLinkApplied.current = false; invalidDeepLink.current = false; setData(null); setSelectedId(""); setProductId(""); void load(); return () => { scope.current++; quietRead.current = null; }; }, [brandId, area]);
+  useEffect(() => {
+    const refreshVisible = () => { if (document.visibilityState === "visible") void load(true); };
+    const timer = window.setInterval(refreshVisible, hasActiveTask ? 5000 : 60000);
+    document.addEventListener("visibilitychange", refreshVisible);
+    return () => { window.clearInterval(timer); document.removeEventListener("visibilitychange", refreshVisible); };
+  }, [brandId, area, dirty, hasActiveTask]);
+  useEffect(() => { setDraft(project ? clone(project.body) : null); dirtyRef.current = false; setDirty(false); setHistorical(null); setHistory([]); setConfirmOpen(false); setVideoOpen(Boolean(project?.body?.video?.concept)); }, [project?.id, project?.revision]);
   useEffect(() => { setSnapshotId(""); setPlanId(""); setOperationsView(new URLSearchParams(window.location.search).get("view") === "tactics" ? "tactics" : "strategy"); setStage("diagnosis"); }, [brandId, shopId]);
   useEffect(() => {
     if (area !== "detail" || !data || data.__brandId !== brandId || deepLinkApplied.current) return;
@@ -108,11 +121,11 @@ export default function CommerceWorkspace({ area }: { area: "detail" | "operatio
     ++refreshSequence.current; if (r.area) setData({ ...r, __brandId: brandId });
     return r;
   }
-  function change(body: DetailBody) { setDraft(body); setDirty(true); setConfirmOpen(false); }
+  function change(body: DetailBody) { dirtyRef.current = true; setDraft(body); setDirty(true); setConfirmOpen(false); }
   async function save(body = draft) {
     if (!project || !body) return;
     await command("commerce_save_detail_revision", { projectId: project.id, expectedRevision: project.revision, body });
-    setDirty(false); setNotice("新版本已保存，历史版本保留。");
+    dirtyRef.current = false; setDirty(false); setNotice("新版本已保存，历史版本保留。");
   }
   async function copy(text: string) { await navigator.clipboard.writeText(text); setNotice("完整委托已复制，粘贴到 Codex 或 WorkBuddy 即可继续。"); }
   function detailInstruction(step: string) {
