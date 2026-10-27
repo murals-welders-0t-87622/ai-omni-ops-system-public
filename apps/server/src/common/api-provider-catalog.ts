@@ -1,0 +1,1471 @@
+type ProviderType = "OPENAI" | "GEMINI" | "DOUBAO" | "CUSTOM";
+type ProviderStatus = "ACTIVE" | "DISABLED" | "DRAFT";
+
+export type ApiProviderSeedRecord = {
+  id: string;
+  name: string;
+  providerType: ProviderType;
+  status: ProviderStatus;
+  baseUrl: string;
+  tutorialUrl: string;
+  modelWhitelist: string[];
+  apiKey: string;
+  defaultModel: string;
+  organization: string;
+  project: string;
+  timeoutMs: number;
+  streamEnabled: boolean;
+  customHeaders: Record<string, string>;
+  extraParams: Record<string, unknown>;
+  remark: string;
+  successRate: number;
+  requestCount24h: number;
+  totalCostYuan: number;
+  lastCalledAt: string;
+  updatedAt: string;
+};
+
+const CATALOG_UPDATED_AT = "2026-05-11T10:30:00.000Z";
+const RIGHT_CODES_CODEX_BASE_URL = "https://www.rightapi.ai/codex";
+const RIGHT_CODES_CODEX_DOC_ROOT = "https://docs.right.codes/docs/rc_extension/curl.html";
+const RIGHT_CODES_DRAW_BASE_URL = "https://www.rightapi.ai/draw";
+const RIGHT_CODES_DRAW_DOC_ROOT = "https://docs.right.codes/docs/rc_extension/draw/";
+export const APIZ_API_BASE_URL = "https://api.xskill.ai";
+export const APIZ_LEGACY_API_BASE_URL = "https://api.apiz.ai";
+export const APIZ_TASK_CREATE_PATH = "/api/v3/tasks/create";
+export const APIZ_TASK_QUERY_PATH = "/api/v3/tasks/query";
+export const MATHMIND_PLATFORM_BASE_URL = "https://agent.mathmind.cn";
+export const MATHMIND_API_BASE_URL = "https://api.mathmind.cn";
+export const AGNES_API_BASE_URL = "https://apihub.agnes-ai.com";
+export const STEPFUN_API_BASE_URL = "https://api.stepfun.com";
+export const DUOYUANX_API_BASE_URL = "https://duoyuanx.com";
+export const DUOYUANX_DOC_ROOT = "https://docs.deepwl.cn/duoyuanx/zh";
+const DUOYUANX_UPDATED_AT = "2026-09-06T00:00:00.000Z";
+
+function createSeed(input: Omit<ApiProviderSeedRecord, "successRate" | "requestCount24h" | "totalCostYuan" | "lastCalledAt" | "updatedAt">): ApiProviderSeedRecord {
+  return {
+    ...input,
+    successRate: 0,
+    requestCount24h: 0,
+    totalCostYuan: 0,
+    lastCalledAt: CATALOG_UPDATED_AT,
+    updatedAt: CATALOG_UPDATED_AT,
+  };
+}
+
+function createSeedWithTimestamp(
+  input: Omit<ApiProviderSeedRecord, "successRate" | "requestCount24h" | "totalCostYuan" | "lastCalledAt" | "updatedAt">,
+  timestamp: string,
+) {
+  return {
+    ...createSeed(input),
+    lastCalledAt: timestamp,
+    updatedAt: timestamp,
+  } satisfies ApiProviderSeedRecord;
+}
+
+type VolcengineArkVideoSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  backendKey: string;
+  displayLabel: string;
+  displayOrder: number;
+  remark: string;
+  status?: ProviderStatus;
+  recommended?: boolean;
+  durationOptions?: number[];
+};
+
+type VolcengineArkEmbeddingSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  displayOrder: number;
+  remark: string;
+  dimensions?: number[];
+  supportsText?: boolean;
+  supportsImage?: boolean;
+  supportsVideo?: boolean;
+  supportsSparseEmbedding?: boolean;
+};
+
+type VolcengineArkImageSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  displayOrder: number;
+  remark: string;
+  supportsTextToImage: boolean;
+  supportsReferenceImages: boolean;
+  requiresReferenceImages?: boolean;
+};
+
+type ApizTaskImageSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  displayOrder: number;
+  remark: string;
+  supportsTextToImage: boolean;
+  supportsReferenceImages: boolean;
+  requiresReferenceImages?: boolean;
+};
+
+type ApizTaskVideoSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  backendKey: string;
+  displayLabel: string;
+  displayOrder: number;
+  requestProfile: string;
+  remark: string;
+  supportsTextToVideo: boolean;
+  supportsImageToVideo: boolean;
+  durationOptions?: number[];
+  taskModel?: string;
+  textModel?: string;
+  imageModel?: string;
+};
+
+type AgnesImageSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  displayOrder: number;
+  remark: string;
+  supportsTextToImage: boolean;
+  supportsReferenceImages: boolean;
+  requiresReferenceImages?: boolean;
+};
+
+type AgnesVideoSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  backendKey: string;
+  displayLabel: string;
+  displayOrder: number;
+  remark: string;
+  supportsTextToVideo: boolean;
+  supportsImageToVideo: boolean;
+  durationOptions?: number[];
+};
+
+type GlmToolSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  providerType?: ProviderType;
+  runtimeKey: string;
+  runtimeTags: string[];
+  requestPath: string;
+  queryPath?: string;
+  displayOrder: number;
+  remark: string;
+};
+
+type StepfunAudioSeedInput = {
+  id: string;
+  name: string;
+  tutorialUrl: string;
+  modelId: string;
+  runtimeKey: string;
+  runtimeTags: string[];
+  requestPath: string;
+  displayOrder: number;
+  remark: string;
+};
+
+const DUOYUANX_TEXT_MODEL_WHITELIST = [
+  "gpt-5.5",
+  "gpt-5.5-pro",
+  "gpt-5.6-luna",
+  "gpt-5.6-sol",
+  "gpt-5.6-terra",
+  "gpt-6-astra",
+  "gpt-5.4",
+  "gpt-5.4-mini",
+  "gpt-5.3-codex",
+  "gpt-5-nano",
+  "gpt-4o",
+  "gpt-4o-mini",
+  "gpt-4.1",
+  "gpt-4.1-mini",
+  "gpt-4.1-nano",
+  "o1",
+  "o3",
+  "o4",
+  "claude-fable-5",
+  "claude-fable-5-1",
+  "claude-sonnet-4-20250514",
+  "claude-sonnet-4-5-20250929",
+  "claude-sonnet-4-6",
+  "claude-sonnet-5",
+  "claude-opus-4-20250514",
+  "claude-opus-4-5-20251101",
+  "claude-opus-4-1-20250805",
+  "claude-opus-4-6-thinking",
+  "claude-opus-4-6",
+  "claude-opus-4-7",
+  "claude-opus-4-8",
+  "claude-opus-5",
+  "claude-haiku-4-5-20251001",
+  "gemini-3.6-flash",
+  "gemini-3-flash-preview",
+  "gemini-2.0-flash",
+  "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-pro",
+  "gemini-3.1-pro-preview",
+  "gemini-3.1-flash-lite-preview",
+  "gemini-3-pro-image-preview",
+  "gemini-3.1-flash-image-preview",
+  "deepseek-chat",
+  "deepseek-reasoner",
+  "deepseek-v4-flash",
+  "deepseek-v4-pro",
+  "deepseek-r1",
+  "deepseek-r1-distill-qwen-32b",
+  "qwen-max",
+  "qwen3-max",
+  "qwen3.7-max",
+  "qwen3.7-plus",
+  "qwen3.6-plus",
+  "qwen3.5-plus",
+  "qwen3-omni-flash",
+  "qwq",
+];
+
+const DUOYUANX_IMAGE_MODEL_WHITELIST = [
+  "gemini-3-pro-image-preview",
+  "gemini-2.5-flash-image",
+  "gemini-2.5-flash-image-preview",
+  "gemini-3.1-flash-image-preview",
+  "gpt-image-2",
+  "gpt-image-2-all",
+  "gpt-image-2.5-sunburst",
+  "gpt-image-2.5-flare",
+  "qwen-image-3.0",
+  "qwen-image-3.0-pro",
+  "jimeng-4.0",
+  "jimeng-4.5",
+  "doubao-seedream-4-0-250828",
+  "doubao-seedream-4-5-251128",
+  "doubao-seedream-5-0-260128",
+  "doubao-seedream-5-0-pro-260628",
+  "grok-4-2-image",
+  "gpt-image-1",
+  "dall-e-3",
+  "dall-e-2",
+];
+
+const DUOYUANX_VIDEO_MODEL_WHITELIST = [
+  "veo_3_1",
+  "veo_3_1-fast",
+  "veo_3_1-extend",
+  "veo-3-1",
+  "veo-3-1-fast",
+  "grok-video-3",
+  "grok-video-3-pro",
+  "grok-video-3-max",
+  "omni-fast",
+  "omni-fast-v2v",
+  "MiniMax-H3",
+  "doubao-seedance-2-0-260128",
+  "doubao-seedance-2-0-fast-260128",
+  "doubao-seedance-1-0-pro_480p",
+  "doubao-seedance-1-0-pro_720p",
+  "doubao-seedance-1-0-pro_1080p",
+  "doubao-seedance-1-5-pro_480p",
+  "doubao-seedance-1-5-pro_720p",
+  "doubao-seedance-1-5-pro_1080p",
+  "wan2.6-t2v:1280*720",
+  "wan2.6-t2v:1920*1080",
+  "wan2.6-i2v:1280*720",
+  "wan2.6-i2v:1920*1080",
+  "viduq3-pro",
+  "viduq2",
+  "viduq2-pro",
+  "viduq2-turbo",
+  "viduq1",
+  "viduq1-classic",
+  "vidu2.0",
+  "vidu-q2-pro-reference-1080p-offpeak",
+  "Kling-3.0-Omni",
+  "Kling-2.6",
+  "Kling-2.5",
+  "kling-3.0-omni-1080p-ref-audio",
+  "kling-2.6-motion-pro-1080p",
+  "kling-avatar-720p",
+  "jimeng-video-3.0",
+  "jimeng-video-2.0",
+  "Hailuo-2.3",
+  "Hailuo-2.3-fast",
+  "sv-1.5-pro-1080p-audio",
+];
+
+const DUOYUANX_AUDIO_RECOGNITION_MODELS = ["whisper-1"];
+const DUOYUANX_AUDIO_SPEECH_MODELS = ["tts-1", "tts-1-hd"];
+const DUOYUANX_AUDIO_MUSIC_MODELS = ["chirp-v3-5", "chirp-v4"];
+
+function createVolcengineArkVideoSeed(input: VolcengineArkVideoSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "DOUBAO",
+    status: input.status || "ACTIVE",
+    baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "video-generation",
+      runtimeTags: ["video-generation", "works-runtime"],
+      backendKey: input.backendKey,
+      displayLabel: input.displayLabel,
+      displayOrder: input.displayOrder,
+      recommended: input.recommended ?? false,
+      baseUrls: ["https://ark.cn-beijing.volces.com/api/v3"],
+      createPath: "/contents/generations/tasks",
+      queryPath: "/contents/generations/tasks/{id}",
+      queryMethod: "GET",
+      requestProfile: "volcengine_seedance",
+      textModel: input.modelId,
+      imageModel: input.modelId,
+      fastModel: input.modelId,
+      proModel: input.modelId,
+      supportsTextToVideo: true,
+      supportsImageToVideo: true,
+      durationOptions: input.durationOptions || [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      sourceFolder: "火山方舟 Seedance 视频生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createVolcengineArkEmbeddingSeed(input: VolcengineArkEmbeddingSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "DOUBAO",
+    status: "ACTIVE",
+    baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "embedding-multimodal",
+      runtimeTags: ["embedding", "knowledge-runtime", "rag-runtime", "multimodal-embedding"],
+      baseUrls: ["https://ark.cn-beijing.volces.com/api/v3"],
+      embeddingPath: "/embeddings/multimodal",
+      requestMode: "multimodal-embeddings",
+      encodingFormat: "float",
+      displayOrder: input.displayOrder,
+      supportsText: input.supportsText !== false,
+      supportsImage: input.supportsImage !== false,
+      supportsVideo: input.supportsVideo !== false,
+      supportsSparseEmbedding: input.supportsSparseEmbedding === true,
+      dimensions: input.dimensions || [256, 512, 1024],
+      sourceFolder: "火山方舟 Doubao 多模态向量化",
+    },
+    remark: input.remark,
+  });
+}
+
+function createVolcengineArkImageSeed(input: VolcengineArkImageSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "DOUBAO",
+    status: "ACTIVE",
+    baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "image-generation",
+      runtimeTags: ["image-generation", "works-runtime"],
+      baseUrls: ["https://ark.cn-beijing.volces.com/api/v3"],
+      completionPath: "/images/generations",
+      requestMode: "images-generations",
+      supportsTextToImage: input.supportsTextToImage,
+      supportsReferenceImages: input.supportsReferenceImages,
+      requiresReferenceImages: input.requiresReferenceImages === true,
+      displayOrder: input.displayOrder,
+      sourceFolder: "火山方舟 Seedream 图像生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createApizTaskImageSeed(input: ApizTaskImageSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: APIZ_API_BASE_URL,
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "image-generation",
+      runtimeTags: ["image-generation", "works-runtime"],
+      baseUrls: [APIZ_API_BASE_URL],
+      platformBaseUrls: [APIZ_API_BASE_URL, APIZ_LEGACY_API_BASE_URL],
+      requestMode: "apiz-task",
+      supportsTextToImage: input.supportsTextToImage,
+      supportsReferenceImages: input.supportsReferenceImages,
+      requiresReferenceImages: input.requiresReferenceImages === true,
+      createPath: APIZ_TASK_CREATE_PATH,
+      queryPath: APIZ_TASK_QUERY_PATH,
+      queryMethod: "POST",
+      queryBodyMode: "task_id-json",
+      displayOrder: input.displayOrder,
+      sourceFolder: "APIZ/NEX AI 图像生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createApizTaskVideoSeed(input: ApizTaskVideoSeedInput) {
+  const taskModel = input.taskModel || input.modelId;
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: APIZ_API_BASE_URL,
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [taskModel],
+    apiKey: "",
+    defaultModel: taskModel,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "video-generation",
+      runtimeTags: ["video-generation", "works-runtime"],
+      backendKey: input.backendKey,
+      displayLabel: input.displayLabel,
+      displayOrder: input.displayOrder,
+      baseUrls: [APIZ_API_BASE_URL],
+      platformBaseUrls: [APIZ_API_BASE_URL, APIZ_LEGACY_API_BASE_URL],
+      createPath: APIZ_TASK_CREATE_PATH,
+      queryPath: APIZ_TASK_QUERY_PATH,
+      queryMethod: "POST",
+      queryBodyMode: "task_id-json",
+      requestProfile: input.requestProfile,
+      taskModel,
+      textModel: input.textModel || taskModel,
+      imageModel: input.imageModel || input.textModel || taskModel,
+      supportsTextToVideo: input.supportsTextToVideo,
+      supportsImageToVideo: input.supportsImageToVideo,
+      durationOptions: input.durationOptions || [],
+      sourceFolder: "APIZ/NEX AI 视频生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createAgnesImageSeed(input: AgnesImageSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: AGNES_API_BASE_URL,
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "image-generation",
+      runtimeTags: ["image-generation", "works-runtime"],
+      baseUrls: [AGNES_API_BASE_URL],
+      platformBaseUrls: [AGNES_API_BASE_URL],
+      completionPath: "/v1/images/generations",
+      requestMode: "images-generations",
+      supportsTextToImage: input.supportsTextToImage,
+      supportsReferenceImages: input.supportsReferenceImages,
+      requiresReferenceImages: input.requiresReferenceImages === true,
+      displayOrder: input.displayOrder,
+      sourceFolder: "Agnes 图像生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createAgnesVideoSeed(input: AgnesVideoSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: AGNES_API_BASE_URL,
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "video-generation",
+      runtimeTags: ["video-generation", "works-runtime"],
+      backendKey: input.backendKey,
+      displayLabel: input.displayLabel,
+      displayOrder: input.displayOrder,
+      baseUrls: [AGNES_API_BASE_URL],
+      platformBaseUrls: [AGNES_API_BASE_URL],
+      createPath: "/v1/videos",
+      queryPath: "/v1/videos/{task_id}",
+      queryMethod: "GET",
+      requestProfile: "agnes_video_v20",
+      taskModel: input.modelId,
+      textModel: input.modelId,
+      imageModel: input.modelId,
+      supportsTextToVideo: input.supportsTextToVideo,
+      supportsImageToVideo: input.supportsImageToVideo,
+      durationOptions: input.durationOptions || [5, 8, 10, 15],
+      sourceFolder: "Agnes 视频生成",
+    },
+    remark: input.remark,
+  });
+}
+
+function createGlmToolSeed(input: GlmToolSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: input.providerType || "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: input.runtimeKey,
+      runtimeTags: input.runtimeTags,
+      baseUrls: ["https://open.bigmodel.cn/api/paas/v4"],
+      requestPath: input.requestPath,
+      queryPath: input.queryPath || "",
+      requestMode: "glm-tool",
+      modelId: input.modelId,
+      displayOrder: input.displayOrder,
+      sourceFolder: "GLM 工具能力",
+    },
+    remark: input.remark,
+  });
+}
+
+function createStepfunAudioSeed(input: StepfunAudioSeedInput) {
+  return createSeed({
+    id: input.id,
+    name: input.name,
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: STEPFUN_API_BASE_URL,
+    tutorialUrl: input.tutorialUrl,
+    modelWhitelist: [input.modelId],
+    apiKey: "",
+    defaultModel: input.modelId,
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: input.runtimeKey,
+      runtimeTags: input.runtimeTags,
+      baseUrls: [STEPFUN_API_BASE_URL],
+      requestPath: input.requestPath,
+      requestMode: "stepfun-audio",
+      modelId: input.modelId,
+      displayOrder: input.displayOrder,
+      sourceFolder: "StepFun 语音大模型",
+    },
+    remark: input.remark,
+  });
+}
+
+const VOLCENGINE_ARK_VIDEO_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createVolcengineArkVideoSeed({
+    id: "provider_runtime_video_volcengine_seedance_20",
+    name: "火山方舟 · Seedance 2.0",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1520757?lang=zh",
+    modelId: "doubao-seedance-2-0-260128",
+    backendKey: "volcengine_seedance_20",
+    displayLabel: "Seedance 2.0",
+    displayOrder: 60,
+    recommended: true,
+    remark: "火山方舟 Seedance 2.0 视频生成接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    durationOptions: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  }),
+  createVolcengineArkVideoSeed({
+    id: "provider_runtime_video_volcengine_seedance_20_fast",
+    name: "火山方舟 · Seedance 2.0 Fast",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1520757?lang=zh",
+    modelId: "doubao-seedance-2-0-fast-260128",
+    backendKey: "volcengine_seedance_20_fast",
+    displayLabel: "Seedance 2.0 Fast",
+    displayOrder: 61,
+    recommended: true,
+    remark: "火山方舟 Seedance 2.0 Fast 视频生成接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    durationOptions: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  }),
+  createVolcengineArkVideoSeed({
+    id: "provider_runtime_video_volcengine_seedance_20_mini_260615",
+    name: "火山方舟 · Seedance 2.0 Mini 260615",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1520757?lang=zh",
+    modelId: "doubao-seedance-2-0-mini-260615",
+    backendKey: "volcengine_seedance_20_mini_260615",
+    displayLabel: "Seedance 2.0 Mini 260615",
+    displayOrder: 62,
+    status: "ACTIVE",
+    remark: "火山方舟 Seedance 2.0 Mini 260615 视频生成接口，已加入抖音视频模型下拉供按需选择。",
+    durationOptions: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+  }),
+];
+
+const VOLCENGINE_ARK_EMBEDDING_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createVolcengineArkEmbeddingSeed({
+    id: "provider_runtime_embedding_volcengine_doubao_embedding_vision_250615",
+    name: "火山方舟 · Doubao Embedding Vision 250615",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1409291?lang=zh",
+    modelId: "doubao-embedding-vision-250615",
+    displayOrder: 40,
+    remark:
+      "火山方舟 Doubao 多模态向量化接口，支持文本、图片、视频混合输入；用于知识库/RAG 的多模态 embedding。平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    dimensions: [256, 512, 1024],
+    supportsText: true,
+    supportsImage: true,
+    supportsVideo: true,
+    supportsSparseEmbedding: true,
+  }),
+];
+
+const VOLCENGINE_ARK_IMAGE_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createVolcengineArkImageSeed({
+    id: "provider_runtime_image_volcengine_seedream_50_pro_260628",
+    name: "火山方舟 · Doubao Seedream 5.0 Pro 260628",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1541523?lang=zh",
+    modelId: "doubao-seedream-5-0-pro-260628",
+    displayOrder: 80,
+    remark: "火山方舟 Seedream 5.0 Pro 图像生成接口，支持文生图与参考图生成；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToImage: true,
+    supportsReferenceImages: true,
+  }),
+];
+
+const APIZ_IMAGE_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createApizTaskImageSeed({
+    id: "provider_runtime_image_apiz_gpt_image_2",
+    name: "APIZ · ChatGPT Images 2.0 文生图",
+    tutorialUrl: "https://apiz.ai/#/v2/models/openai%2Fgpt-image-2",
+    modelId: "openai/gpt-image-2",
+    displayOrder: 210,
+    remark: "APIZ/NEX AI 的 ChatGPT Images 2.0 文生图接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToImage: true,
+    supportsReferenceImages: false,
+  }),
+  createApizTaskImageSeed({
+    id: "provider_runtime_image_apiz_gpt_image_2_edit",
+    name: "APIZ · ChatGPT Images 2.0 Edit 图生图",
+    tutorialUrl: "https://apiz.ai/#/v2/models/openai%2Fgpt-image-2%2Fedit",
+    modelId: "openai/gpt-image-2/edit",
+    displayOrder: 211,
+    remark: "APIZ/NEX AI 的 ChatGPT Images 2.0 Edit 图生图接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToImage: false,
+    supportsReferenceImages: true,
+    requiresReferenceImages: true,
+  }),
+  createApizTaskImageSeed({
+    id: "provider_runtime_image_apiz_nano_banana_2",
+    name: "APIZ · Nano Banana 2",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fnano-banana-2",
+    modelId: "fal-ai/nano-banana-2",
+    displayOrder: 212,
+    remark: "APIZ/NEX AI 的 Nano Banana 2 文生图/图生图接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToImage: true,
+    supportsReferenceImages: true,
+  }),
+];
+
+const APIZ_VIDEO_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_seedance_20",
+    name: "APIZ · Seedance 2.0 (Ark API)",
+    tutorialUrl: "https://apiz.ai/#/v2/models/ark%2Fseedance-2.0",
+    modelId: "ark/seedance-2.0",
+    backendKey: "apiz_seedance_20",
+    displayLabel: "Seedance 2.0 (APIZ)",
+    displayOrder: 70,
+    requestProfile: "apiz_seedance",
+    remark: "APIZ/NEX AI 的 Seedance 2.0 视频生成接口，支持文生视频和图生视频；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: true,
+    durationOptions: [4, 5, 8, 10, 15],
+    textModel: "seedance_2.0_fast",
+    imageModel: "seedance_2.0_fast",
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_kling_v3_4k_i2v",
+    name: "APIZ · Kling V3 图生视频 [4K]",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fkling-video%2Fv3%2F4k%2Fimage-to-video",
+    modelId: "fal-ai/kling-video/v3/4k/image-to-video",
+    backendKey: "apiz_kling_v3_4k_i2v",
+    displayLabel: "Kling V3 图生视频 [4K]",
+    displayOrder: 71,
+    requestProfile: "apiz_kling_i2v",
+    remark: "APIZ/NEX AI 的 Kling V3 4K 图生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_kling_v3_standard_i2v",
+    name: "APIZ · Kling V3 图生视频 [Standard]",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fkling-video%2Fv3%2Fstandard%2Fimage-to-video",
+    modelId: "fal-ai/kling-video/v3/standard/image-to-video",
+    backendKey: "apiz_kling_v3_standard_i2v",
+    displayLabel: "Kling V3 图生视频 [Standard]",
+    displayOrder: 72,
+    requestProfile: "apiz_kling_i2v",
+    remark: "APIZ/NEX AI 的 Kling V3 Standard 图生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_kling_v3_4k_t2v",
+    name: "APIZ · Kling V3 文生视频 [4K]",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fkling-video%2Fv3%2F4k%2Ftext-to-video",
+    modelId: "fal-ai/kling-video/v3/4k/text-to-video",
+    backendKey: "apiz_kling_v3_4k_t2v",
+    displayLabel: "Kling V3 文生视频 [4K]",
+    displayOrder: 73,
+    requestProfile: "apiz_kling_t2v",
+    remark: "APIZ/NEX AI 的 Kling V3 4K 文生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: false,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_kling_v3_standard_t2v",
+    name: "APIZ · Kling V3 文生视频 [Standard]",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fkling-video%2Fv3%2Fstandard%2Ftext-to-video",
+    modelId: "fal-ai/kling-video/v3/standard/text-to-video",
+    backendKey: "apiz_kling_v3_standard_t2v",
+    displayLabel: "Kling V3 文生视频 [Standard]",
+    displayOrder: 74,
+    requestProfile: "apiz_kling_t2v",
+    remark: "APIZ/NEX AI 的 Kling V3 Standard 文生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: false,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_happyhorse_t2v",
+    name: "APIZ · Happy Horse 文生视频",
+    tutorialUrl: "https://apiz.ai/#/v2/models/alibaba%2Fhappy-horse%2Ftext-to-video",
+    modelId: "alibaba/happy-horse/text-to-video",
+    backendKey: "apiz_happyhorse_t2v",
+    displayLabel: "Happy Horse 文生视频",
+    displayOrder: 75,
+    requestProfile: "apiz_happyhorse_t2v",
+    remark: "APIZ/NEX AI 的 Happy Horse 文生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: false,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_happyhorse_i2v",
+    name: "APIZ · Happy Horse 图生视频",
+    tutorialUrl: "https://apiz.ai/#/v2/models/alibaba%2Fhappy-horse%2Fimage-to-video",
+    modelId: "alibaba/happy-horse/image-to-video",
+    backendKey: "apiz_happyhorse_i2v",
+    displayLabel: "Happy Horse 图生视频",
+    displayOrder: 76,
+    requestProfile: "apiz_happyhorse_i2v",
+    remark: "APIZ/NEX AI 的 Happy Horse 图生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_happyhorse_r2v",
+    name: "APIZ · Happy Horse 参考图生视频",
+    tutorialUrl: "https://apiz.ai/#/v2/models/alibaba%2Fhappy-horse%2Freference-to-video",
+    modelId: "alibaba/happy-horse/reference-to-video",
+    backendKey: "apiz_happyhorse_r2v",
+    displayLabel: "Happy Horse 参考图生视频",
+    displayOrder: 77,
+    requestProfile: "apiz_happyhorse_r2v",
+    remark: "APIZ/NEX AI 的 Happy Horse 参考图生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [3, 5, 8, 10, 15],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_veo_31_t2v",
+    name: "APIZ · Veo 3.1 文生视频",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fveo3.1",
+    modelId: "fal-ai/veo3.1",
+    backendKey: "apiz_veo_31_t2v",
+    displayLabel: "Veo 3.1 文生视频",
+    displayOrder: 78,
+    requestProfile: "apiz_veo_t2v",
+    remark: "APIZ/NEX AI 的 Veo 3.1 文生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: false,
+    durationOptions: [4, 6, 8],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_veo_31_r2v",
+    name: "APIZ · Veo 3.1 参考图视频",
+    tutorialUrl: "https://apiz.ai/#/v2/models/fal-ai%2Fveo3.1%2Freference-to-video",
+    modelId: "fal-ai/veo3.1/reference-to-video",
+    backendKey: "apiz_veo_31_r2v",
+    displayLabel: "Veo 3.1 参考图视频",
+    displayOrder: 79,
+    requestProfile: "apiz_veo_r2v",
+    remark: "APIZ/NEX AI 的 Veo 3.1 参考图生视频接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [4, 6, 8],
+  }),
+  createApizTaskVideoSeed({
+    id: "provider_runtime_video_apiz_veo_31_i2v",
+    name: "APIZ · Veo 3.1 图生视频",
+    tutorialUrl: "https://www.xskill.ai/#/v2/models/fal-ai%2Fveo3.1%2Fimage-to-video",
+    modelId: "fal-ai/veo3.1/image-to-video",
+    backendKey: "apiz_veo_31_i2v",
+    displayLabel: "Veo 3.1 图生视频",
+    displayOrder: 80,
+    requestProfile: "apiz_veo_i2v",
+    remark: "XSkill 文档页对应的 Veo 3.1 图生视频实际走 APIZ/NEX AI 任务接口；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+    supportsTextToVideo: false,
+    supportsImageToVideo: true,
+    durationOptions: [4, 6, 8],
+  }),
+];
+
+const AGNES_IMAGE_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createAgnesImageSeed({
+    id: "provider_runtime_image_agnes_image_21_flash",
+    name: "Agnes · Agnes Image 2.1 Flash",
+    tutorialUrl: "https://agnes-ai.com/zh-Hans/docs/agnes-image-21-flash",
+    modelId: "agnes-image-2.1-flash",
+    displayOrder: 230,
+    remark: "Agnes 平台的文生图/图生图模型；品牌 Owner 在个人中心第三方接口配置填写 Agnes API Key 后即可启用。",
+    supportsTextToImage: true,
+    supportsReferenceImages: true,
+  }),
+];
+
+const AGNES_VIDEO_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createAgnesVideoSeed({
+    id: "provider_runtime_video_agnes_video_v20",
+    name: "Agnes · Agnes Video V2.0",
+    tutorialUrl: "https://agnes-ai.com/zh-Hans/docs/agnes-video-v20",
+    modelId: "agnes-video-v2.0",
+    backendKey: "agnes_video_v20",
+    displayLabel: "Agnes Video V2.0",
+    displayOrder: 95,
+    remark: "Agnes 平台的视频生成模型，支持文生视频与图生视频；品牌 Owner 在个人中心第三方接口配置填写 Agnes API Key 后即可启用。",
+    supportsTextToVideo: true,
+    supportsImageToVideo: true,
+    durationOptions: [5, 8, 10, 15],
+  }),
+];
+
+const GLM_TOOL_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createSeed({
+    id: "provider_runtime_vision_glm",
+    name: "GLM · 视觉理解",
+    providerType: "OPENAI",
+    status: "ACTIVE",
+    baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+    tutorialUrl: "https://docs.bigmodel.cn/api-reference/%E6%A8%A1%E5%9E%8B-api/%E5%AF%B9%E8%AF%9D%E8%A1%A5%E5%85%A8",
+    modelWhitelist: ["glm-5v-turbo"],
+    apiKey: "",
+    defaultModel: "glm-5v-turbo",
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "visual-understanding-glm",
+      runtimeTags: ["visual-understanding", "collectors-runtime", "works-runtime"],
+      baseUrls: ["https://open.bigmodel.cn/api/paas/v4"],
+      completionPath: "/chat/completions",
+      sourceFolder: "GLM 视觉理解",
+    },
+    remark: "用于图像、视频等多模态理解场景；本轮主要接到收集数据的视频文案提取链路。",
+  }),
+  createGlmToolSeed({
+    id: "provider_runtime_audio_glm_voice",
+    name: "GLM · 音频模型",
+    tutorialUrl: "https://docs.bigmodel.cn/api-reference/%E6%A8%A1%E5%9E%8B-api/%E8%AF%AD%E9%9F%B3%E8%BD%AC%E6%96%87%E6%9C%AC",
+    modelId: "glm-4-voice",
+    runtimeKey: "audio-recognition-glm",
+    runtimeTags: ["audio-recognition", "knowledge-runtime", "transcript-runtime"],
+    requestPath: "/audio/transcriptions",
+    displayOrder: 37,
+    remark: "用于知识库音频文件识别；品牌 Owner 在个人中心配置 GLM API Key 后即可启用。",
+  }),
+  createGlmToolSeed({
+    id: "provider_runtime_file_parser_glm",
+    name: "GLM · 文件解析（同步）",
+    tutorialUrl: "https://docs.bigmodel.cn/api-reference/%E5%B7%A5%E5%85%B7-api/%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E5%90%8C%E6%AD%A5",
+    modelId: "prime-sync",
+    runtimeKey: "file-parser-glm",
+    runtimeTags: ["file-parser", "knowledge-runtime"],
+    requestPath: "/files/parser/sync",
+    displayOrder: 38,
+    remark: "用于知识库文件正文提取，支持常见办公文档和图片。",
+  }),
+  createGlmToolSeed({
+    id: "provider_runtime_web_reader_glm",
+    name: "GLM · 网页阅读",
+    tutorialUrl: "https://docs.bigmodel.cn/api-reference/%E5%B7%A5%E5%85%B7-api/%E7%BD%91%E9%A1%B5%E9%98%85%E8%AF%BB",
+    modelId: "reader",
+    runtimeKey: "web-reader-glm",
+    runtimeTags: ["web-reader", "knowledge-runtime"],
+    requestPath: "/reader",
+    displayOrder: 39,
+    remark: "用于知识库读取网页正文并生成可切片文本。",
+  }),
+];
+
+const STEPFUN_AUDIO_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createStepfunAudioSeed({
+    id: "provider_runtime_audio_stepfun_tts_25",
+    name: "StepFun · StepAudio 2.5 TTS",
+    tutorialUrl: "https://platform.stepfun.com/docs/zh/guides/models/stepaudio-2.5-tts",
+    modelId: "stepaudio-2.5-tts",
+    runtimeKey: "audio-speech-stepfun",
+    runtimeTags: ["audio-speech", "tts-runtime", "works-runtime"],
+    requestPath: "/v1/audio/speech",
+    displayOrder: 40,
+    remark: "用于文本转语音与品牌语音合成场景；品牌 Owner 可在个人中心配置 StepFun API Key 后启用。",
+  }),
+  createStepfunAudioSeed({
+    id: "provider_runtime_audio_stepfun_asr_25",
+    name: "StepFun · StepAudio 2.5 ASR",
+    tutorialUrl: "https://platform.stepfun.com/docs/zh/guides/models/stepaudio-2.5-asr",
+    modelId: "stepaudio-2.5-asr",
+    runtimeKey: "audio-recognition-stepfun",
+    runtimeTags: ["audio-recognition", "transcript-runtime", "knowledge-runtime"],
+    requestPath: "/v1/audio/transcriptions",
+    displayOrder: 41,
+    remark: "用于音频转写与语音识别场景；品牌 Owner 可在个人中心配置 StepFun API Key 后启用。",
+  }),
+];
+
+const MATHMIND_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createSeed({
+    id: "provider_runtime_mathmind_video_tools",
+    name: "MathMind · 视频工具平台",
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: MATHMIND_PLATFORM_BASE_URL,
+    tutorialUrl: MATHMIND_PLATFORM_BASE_URL,
+    modelWhitelist: [
+      "longVideoCopyExtract",
+      "longVideoCopyFetch",
+      "imgs2video",
+      "imgs2video_lite",
+      "video2video",
+      "videoCutRandom",
+      "videoDuration",
+      "videoFrames",
+      "videoAddSubtitle",
+      "subTaskFetch",
+      "videoAddGif",
+      "imgToVideo",
+      "videoAddAudio",
+      "subtitleRecognition",
+    ],
+    apiKey: "",
+    defaultModel: "imgs2video",
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "mathmind-video-tools",
+      runtimeTags: ["mathmind", "video-tools", "third-party-platform"],
+      baseUrls: [MATHMIND_API_BASE_URL],
+      platformBaseUrls: [MATHMIND_PLATFORM_BASE_URL, MATHMIND_API_BASE_URL],
+      endpointMap: {
+        longVideoCopyExtract: "https://api.mathmind.cn/355206439e0",
+        longVideoCopyFetch: "https://api.mathmind.cn/356729281e0",
+        imgs2video: "https://api.mathmind.cn/342940119e0",
+        imgs2video_lite: "https://api.mathmind.cn/342940120e0",
+        video2video: "https://api.mathmind.cn/342940121e0",
+        videoCutRandom: "https://api.mathmind.cn/342940124e0",
+        videoDuration: "https://api.mathmind.cn/342940125e0",
+        videoFrames: "https://api.mathmind.cn/342940126e0",
+        videoAddSubtitle: "https://api.mathmind.cn/342940127e0",
+        subTaskFetch: "https://api.mathmind.cn/355190704e0",
+        videoAddGif: "https://api.mathmind.cn/342940129e0",
+        imgToVideo: "https://api.mathmind.cn/342940132e0",
+        videoAddAudio: "https://api.mathmind.cn/342940133e0",
+        subtitleRecognition: "https://api.mathmind.cn/355189087e0",
+      },
+      sourceFolder: "MathMind 视频工具平台",
+    },
+    remark: "MathMind 第三方视频工具平台，包含长视频文案提取/查询、图片合成视频、视频转视频、随机切片、时长获取、截帧、加字幕/音频/GIF、单图转视频和字幕识别；平台 Key 由品牌 Owner 在个人中心第三方接口配置维护。",
+  }),
+];
+
+export const LEGACY_API_PROVIDER_IDS = ["provider_openai", "provider_gemini", "provider_doubao"];
+export const DECOMMISSIONED_SYSTEM_API_PROVIDER_IDS = [
+  "provider_runtime_text_global",
+  "provider_runtime_image_generation",
+  "provider_runtime_video_hailuo",
+  "provider_runtime_video_kling",
+  "provider_runtime_video_veo",
+  "provider_runtime_video_wan",
+  "provider_runtime_video_seedance",
+];
+
+export const SYSTEM_API_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
+  createSeedWithTimestamp({
+    id: "provider_runtime_text_duoyuanx_unified",
+    name: "多元探索 · 文生文/多模态",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/texts/model-matrix`,
+    modelWhitelist: DUOYUANX_TEXT_MODEL_WHITELIST,
+    apiKey: "",
+    defaultModel: "gpt-4o",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: true,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-global",
+      runtimeTags: ["text-global", "works-runtime", "reports-runtime", "image-analysis"],
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      completionPath: "/v1/chat/completions",
+      responsesPath: "/v1/responses",
+      messagesPath: "/v1/messages",
+      modelsPath: "/v1/models",
+      sourceFolder: "多元探索 文本与多模态",
+    },
+    remark: "预装多元探索统一网关的文本/多模态模型，覆盖 GPT、Claude、Gemini、DeepSeek、Qwen 等家族。为避免直接抢占现有默认运行时，本轮先以草稿供应商预装；品牌 Owner 可先在个人中心配置同一份 API Key，再由后台按需启用。",
+  }, DUOYUANX_UPDATED_AT),
+  createSeed({
+    id: "provider_runtime_text_global_right_codes",
+    name: "Right Codes · 文生文（可带图）",
+    providerType: "OPENAI",
+    status: "ACTIVE",
+    baseUrl: RIGHT_CODES_CODEX_BASE_URL,
+    tutorialUrl: RIGHT_CODES_CODEX_DOC_ROOT,
+    modelWhitelist: [
+      "gpt-5.3-codex",
+      "gpt-5.4",
+      "claude-opus-4-6",
+      "claude-opus-4-7",
+      "claude-sonnet-4-6",
+      "gemini-3.1-pro-preview",
+      "gemini-3-flash-preview",
+    ],
+    apiKey: "",
+    defaultModel: "gpt-5.4",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-global",
+      runtimeTags: ["text-global", "works-runtime", "reports-runtime"],
+      baseUrls: [RIGHT_CODES_CODEX_BASE_URL],
+      completionPath: "/v1/chat/completions",
+      sourceFolder: "Right Codes Codex 文生文/带图问答",
+    },
+    remark: "Right Codes 平台支持文生文与带图问答；当前平台级 API Key 需由品牌 Owner 在个人中心单独配置，技能里若选择同名模型，会继续按 Provider 作用域区分。",
+  }),
+  createSeed({
+    id: "provider_runtime_text_deepseek",
+    name: "国内文生文 · DeepSeek",
+    providerType: "OPENAI",
+    status: "DRAFT",
+    baseUrl: "https://api.deepseek.com",
+    tutorialUrl: "https://api-docs.deepseek.com/zh-cn/api/create-chat-completion",
+    modelWhitelist: ["deepseek-v4-pro", "deepseek-v4-flash"],
+    apiKey: "",
+    defaultModel: "deepseek-v4-pro",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-domestic-deepseek",
+      runtimeTags: ["text-domestic", "works-runtime", "reports-runtime"],
+      baseUrls: ["https://api.deepseek.com"],
+      apiKeys: [],
+      completionPath: "/chat/completions",
+      thinking: "disabled",
+      sourceFolder: "第三方api接口文生文国内.txt",
+    },
+    remark: "系统按用户提供的国内文生文接口资料初始化，适用于原创文案、二创文案、视频脚本与多类报告生成。",
+  }),
+  createSeed({
+    id: "provider_runtime_text_doubao",
+    name: "国内文生文 · Doubao",
+    providerType: "DOUBAO",
+    status: "DRAFT",
+    baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+    tutorialUrl: "https://www.volcengine.com/docs/82379/1399008?lang=zh",
+    modelWhitelist: [
+      "doubao-seed-1-8-251228",
+      "doubao-seed-2-0-pro-260215",
+      "doubao-seed-2-0-mini-260215",
+      "doubao-seed-2-1-pro-260628",
+      "doubao-seedream-5-0-pro-260628",
+    ],
+    apiKey: "",
+    defaultModel: "doubao-seed-2-0-pro-260215",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-domestic-doubao",
+      runtimeTags: ["text-domestic", "works-runtime", "reports-runtime", "image-analysis"],
+      baseUrls: ["https://ark.cn-beijing.volces.com/api/v3"],
+      apiKeys: [],
+      completionPath: "/chat/completions",
+      sourceFolder: "第三方api接口文生文国内.txt",
+    },
+    remark: "系统按用户提供的火山方舟接口资料初始化，兼容文生文与参考图分析场景。",
+  }),
+  createSeed({
+    id: "provider_runtime_text_agnes_20_flash",
+    name: "Agnes · Agnes 2.0 Flash",
+    providerType: "OPENAI",
+    status: "ACTIVE",
+    baseUrl: AGNES_API_BASE_URL,
+    tutorialUrl: "https://agnes-ai.com/zh-Hans/docs/agnes-20-flash",
+    modelWhitelist: ["agnes-2.0-flash"],
+    apiKey: "",
+    defaultModel: "agnes-2.0-flash",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-global",
+      runtimeTags: ["text-global", "works-runtime", "reports-runtime", "image-analysis"],
+      baseUrls: [AGNES_API_BASE_URL],
+      platformBaseUrls: [AGNES_API_BASE_URL],
+      completionPath: "/v1/chat/completions",
+      sourceFolder: "Agnes 文生文/图像理解",
+    },
+    remark: "Agnes 平台的文生文模型，兼容 OpenAI Chat Completions；品牌 Owner 在个人中心第三方接口配置填写 Agnes API Key 后即可启用。",
+  }),
+  ...VOLCENGINE_ARK_EMBEDDING_PROVIDER_SEEDS,
+  createSeed({
+    id: "provider_runtime_text_kimi",
+    name: "国内文生文 · Kimi",
+    providerType: "OPENAI",
+    status: "DRAFT",
+    baseUrl: "https://api.moonshot.cn/v1",
+    tutorialUrl: "https://platform.kimi.com/docs/api/chat",
+    modelWhitelist: ["kimi-k2.6"],
+    apiKey: "",
+    defaultModel: "kimi-k2.6",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-domestic-kimi",
+      runtimeTags: ["text-domestic", "works-runtime", "reports-runtime"],
+      baseUrls: ["https://api.moonshot.cn/v1"],
+      apiKeys: [],
+      completionPath: "/chat/completions",
+      tokenLimitField: "max_completion_tokens",
+      sourceFolder: "第三方api接口文生文国内.txt",
+    },
+    remark: "系统按用户提供的 Kimi 接口资料初始化，适用于需要长文本规划与内容梳理的场景。",
+  }),
+  createSeed({
+    id: "provider_runtime_text_glm",
+    name: "国内文生文 · GLM",
+    providerType: "OPENAI",
+    status: "DRAFT",
+    baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+    tutorialUrl: "https://docs.bigmodel.cn/api-reference/%E6%A8%A1%E5%9E%8B-api/%E5%AF%B9%E8%AF%9D%E8%A1%A5%E5%85%A8",
+    modelWhitelist: ["GLM-5.1", "glm-5.2"],
+    apiKey: "",
+    defaultModel: "glm-5.2",
+    organization: "",
+    project: "",
+    timeoutMs: 120000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "text-domestic-glm",
+      runtimeTags: ["text-domestic", "works-runtime", "reports-runtime"],
+      baseUrls: ["https://open.bigmodel.cn/api/paas/v4"],
+      apiKeys: [],
+      completionPath: "/chat/completions",
+      sourceFolder: "第三方api接口文生文国内.txt",
+    },
+    remark: "系统按用户提供的 GLM 接口资料初始化，用于可视化报告等国内文生文补位场景。",
+  }),
+  ...GLM_TOOL_PROVIDER_SEEDS,
+  ...STEPFUN_AUDIO_PROVIDER_SEEDS,
+  createSeed({
+    id: "provider_runtime_image_generation_right_codes",
+    name: "Right Codes · 文生图/图生图",
+    providerType: "OPENAI",
+    status: "ACTIVE",
+    baseUrl: RIGHT_CODES_DRAW_BASE_URL,
+    tutorialUrl: RIGHT_CODES_DRAW_DOC_ROOT,
+    modelWhitelist: ["gpt-image-2", "gpt-image-2-vip", "nano-banana-2"],
+    apiKey: "",
+    defaultModel: "gpt-image-2",
+    organization: "",
+    project: "",
+    timeoutMs: 240000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "image-generation",
+      runtimeTags: ["image-generation", "works-runtime"],
+      baseUrls: [RIGHT_CODES_DRAW_BASE_URL],
+      completionPath: "/v1/images/generations",
+      requestMode: "images-generations",
+      supportsTextToImage: true,
+      supportsReferenceImages: true,
+      requiresReferenceImages: false,
+      sourceFolder: "Right Codes 文生图/图生图",
+    },
+    remark: "Right Codes 平台支持文生图与图生图；运行时会使用 `/v1/images/generations`，并继续遵守品牌 Owner 私钥隔离规则。",
+  }),
+  createSeedWithTimestamp({
+    id: "provider_runtime_image_duoyuanx_unified",
+    name: "多元探索 · 文生图/图生图",
+    providerType: "CUSTOM",
+    status: "ACTIVE",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/images/model-matrix`,
+    modelWhitelist: DUOYUANX_IMAGE_MODEL_WHITELIST,
+    apiKey: "",
+    defaultModel: "gpt-image-2",
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "image-generation",
+      runtimeTags: ["image-generation", "works-runtime"],
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      completionPath: "/v1/images/generations",
+      requestMode: "images-generations",
+      supportsTextToImage: true,
+      supportsReferenceImages: true,
+      requiresReferenceImages: false,
+      sourceFolder: "多元探索 图像模型",
+    },
+    remark: "预装多元探索图像模型，覆盖 Gemini Image、gpt-image-2/2.5、即梦、豆包 Seedream、Grok Image 与 OpenAI Images 兼容模型。默认进入设计工作台可选模型列表，便于 AI 智控中心 与网页直接选用。",
+  }, DUOYUANX_UPDATED_AT),
+  ...VOLCENGINE_ARK_IMAGE_PROVIDER_SEEDS,
+  ...APIZ_IMAGE_PROVIDER_SEEDS,
+  ...AGNES_IMAGE_PROVIDER_SEEDS,
+  createSeedWithTimestamp({
+    id: "provider_runtime_video_duoyuanx_unified",
+    name: "多元探索 · 视频模型",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/videos/model-matrix`,
+    modelWhitelist: DUOYUANX_VIDEO_MODEL_WHITELIST,
+    apiKey: "",
+    defaultModel: "omni-fast",
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "video-generation",
+      runtimeTags: ["video-generation", "works-runtime"],
+      backendKey: "duoyuanx_unified_video",
+      displayLabel: "多元探索统一视频",
+      displayOrder: 320,
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      createPath: "/v1/videos",
+      queryPath: "/v1/videos/{task_id}",
+      queryMethod: "GET",
+      requestProfile: "duoyuanx_openai_videos",
+      taskModel: "omni-fast",
+      textModel: "omni-fast",
+      imageModel: "omni-fast-v2v",
+      supportsTextToVideo: true,
+      supportsImageToVideo: true,
+      durationOptions: [4, 5, 6, 8, 10, 12, 15, 20, 30],
+      sourceFolder: "多元探索 视频模型",
+    },
+    remark: "预装多元探索统一视频模型，覆盖 Veo、Grok Video、Omni、Seedance 1.0/1.5/2.0、wan2.6、Vidu、Kling、即梦与 Hailuo 等系列。默认保持草稿状态，避免直接切走当前线上视频链。",
+  }, DUOYUANX_UPDATED_AT),
+  ...VOLCENGINE_ARK_VIDEO_PROVIDER_SEEDS,
+  ...AGNES_VIDEO_PROVIDER_SEEDS,
+  ...APIZ_VIDEO_PROVIDER_SEEDS,
+  createSeedWithTimestamp({
+    id: "provider_runtime_audio_duoyuanx_speech",
+    name: "多元探索 · 文字转语音",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/audio/audio`,
+    modelWhitelist: DUOYUANX_AUDIO_SPEECH_MODELS,
+    apiKey: "",
+    defaultModel: "tts-1",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "audio-speech-duoyuanx",
+      runtimeTags: ["audio-speech", "tts-runtime", "works-runtime"],
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      requestPath: "/v1/audio/speech",
+      requestMode: "openai-audio",
+      modelId: "tts-1",
+      displayOrder: 321,
+      sourceFolder: "多元探索 音频模型",
+    },
+    remark: "预装多元探索 OpenAI 兼容 TTS 接口，支持 `tts-1`、`tts-1-hd`。当前先作为可配置供应商接入后台与个人中心，不自动替换现有语音链路。",
+  }, DUOYUANX_UPDATED_AT),
+  createSeedWithTimestamp({
+    id: "provider_runtime_audio_duoyuanx_recognition",
+    name: "多元探索 · 音频转写",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/audio/audio`,
+    modelWhitelist: DUOYUANX_AUDIO_RECOGNITION_MODELS,
+    apiKey: "",
+    defaultModel: "whisper-1",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "audio-recognition-duoyuanx",
+      runtimeTags: ["audio-recognition", "transcript-runtime", "knowledge-runtime"],
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      requestPath: "/v1/audio/transcriptions",
+      requestMode: "openai-audio",
+      modelId: "whisper-1",
+      displayOrder: 322,
+      sourceFolder: "多元探索 音频模型",
+    },
+    remark: "预装多元探索 OpenAI 兼容音频转写接口，支持 `whisper-1`，同一条能力也可用于 `/v1/audio/translations`。当前先作为可配置供应商接入后台与个人中心，不自动替换现有转写链路。",
+  }, DUOYUANX_UPDATED_AT),
+  createSeedWithTimestamp({
+    id: "provider_runtime_audio_duoyuanx_music",
+    name: "多元探索 · Suno 音乐生成",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: DUOYUANX_API_BASE_URL,
+    tutorialUrl: `${DUOYUANX_DOC_ROOT}/audio/suno`,
+    modelWhitelist: DUOYUANX_AUDIO_MUSIC_MODELS,
+    apiKey: "",
+    defaultModel: "chirp-v4",
+    organization: "",
+    project: "",
+    timeoutMs: 300000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "audio-music-duoyuanx",
+      runtimeTags: ["audio-music", "music-runtime", "works-runtime"],
+      baseUrls: [DUOYUANX_API_BASE_URL],
+      platformBaseUrls: [DUOYUANX_API_BASE_URL],
+      createPath: "/suno/submit/{action}",
+      queryPath: "/suno/fetch/{id}",
+      batchQueryPath: "/suno/fetch",
+      requestMode: "suno-task",
+      actionOptions: ["music", "lyrics", "custom"],
+      modelId: "chirp-v4",
+      displayOrder: 323,
+      sourceFolder: "多元探索 音乐模型",
+    },
+    remark: "预装多元探索 Suno 异步音乐任务接口，支持 `music`、`lyrics`、`custom` 三类动作，当前公开模型版本包括 `chirp-v3-5`、`chirp-v4`。当前先作为可配置供应商接入后台与个人中心，不自动接管现有音乐链路。",
+  }, DUOYUANX_UPDATED_AT),
+  ...MATHMIND_PROVIDER_SEEDS,
+];

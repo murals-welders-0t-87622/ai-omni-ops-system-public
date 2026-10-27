@@ -1,0 +1,255 @@
+"use client";
+
+import QRCode from "qrcode";
+import { useEffect, useState } from "react";
+import { notifyExtensionStartDraft, probeDesktopPublisher, startDesktopPublisherBridge } from "./desktop-publish-bridge";
+import { type PublishableWorkTarget } from "./publish-types";
+import { type PlatformAccount } from "./shared-types";
+import {
+  completeXiaohongshuMobileDraftSession,
+  createXiaohongshuDesktopDraftSession,
+  createXiaohongshuMobileDraftSession,
+  type XiaohongshuDesktopDraftSession,
+  type XiaohongshuMobileDraftSession,
+} from "../../../services/publishing";
+
+export function usePublishFlow(options: {
+  brandId: string;
+  defaultAccountId?: string;
+  platformAccounts: PlatformAccount[];
+  onRefreshWorkspace: (options?: { preserveMessages?: boolean }) => Promise<void>;
+  setNotice: (value: string) => void;
+  setErrorMessage: (value: string) => void;
+}) {
+  const [publishingTarget, setPublishingTarget] = useState<PublishableWorkTarget | null>(null);
+  const [publishingAccountValue, setPublishingAccountValue] = useState(options.defaultAccountId || "");
+  const [isDesktopExtensionReady, setIsDesktopExtensionReady] = useState(false);
+  const [isCreatingDesktopPublishSession, setIsCreatingDesktopPublishSession] = useState(false);
+  const [activeDesktopPublishSession, setActiveDesktopPublishSession] = useState<XiaohongshuDesktopDraftSession | null>(null);
+  const [isCreatingMobilePublishSession, setIsCreatingMobilePublishSession] = useState(false);
+  const [activeMobilePublishSession, setActiveMobilePublishSession] = useState<XiaohongshuMobileDraftSession | null>(null);
+  const [mobilePublishQrDataUrl, setMobilePublishQrDataUrl] = useState("");
+  const [isCompletingMobilePublishSession, setIsCompletingMobilePublishSession] = useState(false);
+
+  useEffect(() => {
+    if (!publishingAccountValue && options.defaultAccountId) {
+      setPublishingAccountValue(options.defaultAccountId);
+    }
+  }, [options.defaultAccountId, publishingAccountValue]);
+
+  useEffect(() => {
+    return startDesktopPublisherBridge({
+      onReady: () => {
+        setIsDesktopExtensionReady(true);
+      },
+      onDraftStarted: () => {
+        options.setNotice("电脑端发布扩展已接管本次发布，正在自动打开小红书创作者中心并写入草稿。");
+        options.setErrorMessage("");
+      },
+      onDraftProgress: (note?: string) => {
+        const detail = typeof note === "string" && note.trim() ? note.trim() : "电脑端发布扩展正在执行。";
+        options.setNotice(detail);
+        options.setErrorMessage("");
+      },
+      onDraftSuccess: () => {
+        options.setNotice("电脑端一键发布已完成，标题、正文和配图已自动写入小红书草稿箱。");
+        options.setErrorMessage("");
+        void options.onRefreshWorkspace({ preserveMessages: true });
+      },
+      onDraftFailed: (note?: string) => {
+        const detail = typeof note === "string" && note.trim() ? note.trim() : "请检查扩展日志和小红书创作者页是否已登录。";
+        options.setErrorMessage(`电脑端一键发布失败：${detail}`);
+        void options.onRefreshWorkspace({ preserveMessages: true });
+      },
+    });
+  }, [options]);
+
+  useEffect(() => {
+    if (!activeMobilePublishSession?.mobileUrl) {
+      setMobilePublishQrDataUrl("");
+      return;
+    }
+
+    let cancelled = false;
+    void QRCode.toDataURL(activeMobilePublishSession.mobileUrl, {
+      errorCorrectionLevel: "M",
+      margin: 1,
+      width: 220,
+    })
+      .then((value: string) => {
+        if (!cancelled) {
+          setMobilePublishQrDataUrl(value);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setMobilePublishQrDataUrl("");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeMobilePublishSession?.mobileUrl]);
+
+  useEffect(() => {
+    if (!publishingTarget || isDesktopExtensionReady) {
+      return;
+    }
+    let cancelled = false;
+    const probe = async () => {
+      const installed = await probeDesktopPublisher({
+        timeoutMs: 2400,
+        onReady: () => {
+          if (!cancelled) {
+            setIsDesktopExtensionReady(true);
+          }
+        },
+        onMissing: () => {
+          if (!cancelled) {
+            setIsDesktopExtensionReady(false);
+          }
+        },
+      });
+      if (!cancelled && installed) {
+        setIsDesktopExtensionReady(true);
+      }
+    };
+    void probe();
+    const timer = window.setInterval(() => {
+      void probe();
+    }, 3000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [isDesktopExtensionReady, publishingTarget]);
+
+  function openPublishModal(target: PublishableWorkTarget) {
+    setPublishingTarget(target);
+    setPublishingAccountValue(options.defaultAccountId || options.platformAccounts.find((item) => item.platform === "XIAOHONGSHU")?.id || "");
+    setActiveDesktopPublishSession(null);
+    setActiveMobilePublishSession(null);
+    setMobilePublishQrDataUrl("");
+    options.setNotice("");
+    options.setErrorMessage("");
+    void probeDesktopPublisher({
+      timeoutMs: 2400,
+      onReady: () => setIsDesktopExtensionReady(true),
+      onMissing: () => setIsDesktopExtensionReady(false),
+    });
+  }
+
+  function closePublishModal() {
+    setPublishingTarget(null);
+    setActiveDesktopPublishSession(null);
+    setActiveMobilePublishSession(null);
+    setMobilePublishQrDataUrl("");
+    setIsCreatingDesktopPublishSession(false);
+    setIsCreatingMobilePublishSession(false);
+    setIsCompletingMobilePublishSession(false);
+  }
+
+  async function createDesktopPublishSession() {
+    if (!publishingTarget) {
+      return;
+    }
+
+    setIsCreatingDesktopPublishSession(true);
+    options.setNotice("");
+    options.setErrorMessage("");
+
+    try {
+      const result = await createXiaohongshuDesktopDraftSession(options.brandId, publishingTarget.id, {
+        accountId: publishingAccountValue || undefined,
+      });
+
+      setActiveDesktopPublishSession(result.session);
+      const installed = await probeDesktopPublisher({
+        timeoutMs: 3600,
+        onReady: () => setIsDesktopExtensionReady(true),
+        onMissing: () => setIsDesktopExtensionReady(false),
+      });
+      if (installed) {
+        options.setNotice(`${publishingTarget.noteCategory}笔记的电脑端一键发布任务已创建，正在自动打开小红书创作者中心并写入草稿箱。`);
+        notifyExtensionStartDraft(result.session);
+      } else {
+        options.setErrorMessage("当前未检测到小红书图文发布扩展。原创笔记和二创笔记的电脑端发布只支持图文草稿流，请先安装/重载扩展，或改用手机扫码接力。");
+        options.setNotice("已保留本次电脑端图文草稿会话，但不会再自动打开小红书创作者页。安装或重载扩展后重新点击“电脑端一键发布到草稿箱”，或直接改用手机扫码接力。");
+      }
+      await options.onRefreshWorkspace({ preserveMessages: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "电脑端一键发布失败";
+      options.setErrorMessage(`发布失败：${message}`);
+    } finally {
+      setIsCreatingDesktopPublishSession(false);
+    }
+  }
+
+  async function createMobilePublishSession() {
+    if (!publishingTarget) {
+      return;
+    }
+
+    setIsCreatingMobilePublishSession(true);
+    options.setNotice("");
+    options.setErrorMessage("");
+
+    try {
+      const result = await createXiaohongshuMobileDraftSession(options.brandId, publishingTarget.id, {
+        accountId: publishingAccountValue || undefined,
+      });
+      setActiveMobilePublishSession(result.session);
+      options.setNotice(`${publishingTarget.noteCategory}笔记的手机扫码接力二维码已生成。`);
+      await options.onRefreshWorkspace({ preserveMessages: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "生成手机接力二维码失败";
+      options.setErrorMessage(`生成失败：${message}`);
+    } finally {
+      setIsCreatingMobilePublishSession(false);
+    }
+  }
+
+  async function completeMobilePublishSession() {
+    if (!activeMobilePublishSession?.token) {
+      return;
+    }
+
+    setIsCompletingMobilePublishSession(true);
+    options.setNotice("");
+    options.setErrorMessage("");
+
+    try {
+      const result = await completeXiaohongshuMobileDraftSession(activeMobilePublishSession.token, {
+        result: "SUCCESS",
+        note: "已在手机端完成草稿接力",
+      });
+      setActiveMobilePublishSession(result.session);
+      options.setNotice("已将本次手机接力保存草稿标记为完成。");
+      await options.onRefreshWorkspace({ preserveMessages: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "更新发布状态失败";
+      options.setErrorMessage(`更新失败：${message}`);
+    } finally {
+      setIsCompletingMobilePublishSession(false);
+    }
+  }
+
+  return {
+    publishingTarget,
+    publishingAccountValue,
+    setPublishingAccountValue,
+    isDesktopExtensionReady,
+    isCreatingDesktopPublishSession,
+    activeDesktopPublishSession,
+    isCreatingMobilePublishSession,
+    activeMobilePublishSession,
+    mobilePublishQrDataUrl,
+    isCompletingMobilePublishSession,
+    openPublishModal,
+    closePublishModal,
+    createDesktopPublishSession,
+    createMobilePublishSession,
+    completeMobilePublishSession,
+  };
+}

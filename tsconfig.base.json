@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@shared/*": ["packages/shared/dist/*", "packages/shared/src/*"],
+      "@ai-omni/shared/*": ["packages/shared/dist/*", "packages/shared/src/*"],
+      "@prompt-runtime/*": ["packages/prompt-runtime/src/*"],
+      "@ui/*": ["packages/ui/src/*"]
+    }
+  }
+}

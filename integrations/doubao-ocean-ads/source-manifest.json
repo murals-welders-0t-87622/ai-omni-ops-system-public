@@ -1,0 +1,411 @@
+{
+  "researchedOn": "2026-10-24",
+  "sourceCount": 10,
+  "sources": [
+    {
+      "catalogId": "@clawhub_aqzzzqa/oceanengine-ads",
+      "catalogVersion": "1.0.2",
+      "skillHeader": "\nname: oceanengine-ads\ndisplay_name: 巨量广告自动化投放\nversion: 1.0.0\ntags: [oceanengine, advertising, tiktok, bytedance, automation]\nlicense: MIT\nlicense_url: https://opensource.org/licenses/MIT\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "cd12129e2e6736bce409b3c365c23131811074f796b1a0461ae9c9b7dacca6db",
+          "bytes": 134
+        },
+        {
+          "path": "api_client.py",
+          "sha256": "9f7e8049ad5c8a2a4043b9e9cfdc3ce8b1ec8c43e42d5026a208616b2124207e",
+          "bytes": 10141
+        },
+        {
+          "path": "auth.py",
+          "sha256": "32b0d1b47b14a87beb3f97a268d5c01d46d0a59dc90054b8e11e623e5fec508b",
+          "bytes": 7919
+        },
+        {
+          "path": "automation.py",
+          "sha256": "c11ff56deb4fb932945938c194b47717488ae95df035a9e52b92d3a0fba7f68b",
+          "bytes": 7810
+        },
+        {
+          "path": "BUSINESS-INFO.md",
+          "sha256": "12fb28a5d6f31a12d0880a530d1efc6278e66dfb58ddb36d68cd7c5044708d7f",
+          "bytes": 2671
+        },
+        {
+          "path": "CHANGELOG.md",
+          "sha256": "89df477647bba81d87be861ae50b61e371a6f6990ee271427883e8cb978d3b4e",
+          "bytes": 6230
+        },
+        {
+          "path": "FINAL-REPORT.md",
+          "sha256": "66b156e894f829429c95282b7f874bc3781a7cba1cd00fb0e448c52e75aaa89a",
+          "bytes": 7149
+        },
+        {
+          "path": "main.py",
+          "sha256": "dd4899c4509649af58eb8daf70b2850627ebf0b8993be5f64054d47d9f39abb0",
+          "bytes": 12249
+        },
+        {
+          "path": "optimizer.py",
+          "sha256": "52d1ec855257538c9480be858bc00ac809b051de991857252ea8126a5d55b4a1",
+          "bytes": 14725
+        },
+        {
+          "path": "PUBLISH-GUIDE.md",
+          "sha256": "737659f8604e34ce1e4025889714c5b835261915dcb186ed620043e1c84a6a24",
+          "bytes": 3473
+        },
+        {
+          "path": "README.md",
+          "sha256": "d1c23ff788aa3e875ca0c1eedb1dcd2c267b35438d8c91ae4f700630ee9aa00f",
+          "bytes": 7250
+        },
+        {
+          "path": "requirements.txt",
+          "sha256": "078478c595d2b79d9ea5066d441e18048142bf80de2b3c6273fbfd2a6193be38",
+          "bytes": 260
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "6cff39839359e82230bbd09261496e6360df7232a1977bb35174c7869ea58259",
+          "bytes": 6971
+        },
+        {
+          "path": "test_suite.py",
+          "sha256": "e714d803e5f4dce55263131e0c781e2853a22206d9c9b1fb9f3c9a15b1277397",
+          "bytes": 7946
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@clawhub_zhitaog500-prog/qianchuan-doudian-daily-report",
+      "catalogVersion": "1.0.4",
+      "skillHeader": "no_frontmatter",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "974dd7a67c52a7fed48ec880bbdcc0bdafdf79be93a6f6c0eb1378bca8d28558",
+          "bytes": 149
+        },
+        {
+          "path": "config.example.json",
+          "sha256": "3428f0878a31ecfded17fa44069c423b39175e4f78c8aabd035e92279f3f0bf8",
+          "bytes": 743
+        },
+        {
+          "path": "feishu.js",
+          "sha256": "e1a07af460acad64c573cce9658903b819b33cb84b94477b5d569b0411fe398c",
+          "bytes": 10938
+        },
+        {
+          "path": "index.js",
+          "sha256": "2aa63ac9306d994d99d3ab0cce9a60088a50f73ffe7dcb12b172db731e65f508",
+          "bytes": 1555
+        },
+        {
+          "path": "package.json",
+          "sha256": "af9981969002e48d18d7140d8786e8ac13186c10dadd37cabae7e577661fc5d4",
+          "bytes": 372
+        },
+        {
+          "path": "report.js",
+          "sha256": "26a55adbb8055e09029e3afb623a9967c7a0ec054eac5b40b18bc3e4d89390d4",
+          "bytes": 2039
+        },
+        {
+          "path": "scraper.js",
+          "sha256": "5011c736ccab514fc0d5e9b5b3a2126dfab93658b7b032b60d39443efb9715f9",
+          "bytes": 4820
+        },
+        {
+          "path": "skill-card.md",
+          "sha256": "13b6635e6b8ee4955b69c632b1fa44194ffe0f192211e3a7c7ea7c61a6716319",
+          "bytes": 2776
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "0773d8235ddb975c44807d2e3ac4fc8499cb4b8eb6813730379044dd8ba86320",
+          "bytes": 5289
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@flamingotech/flamingotech-kb-qianchuan",
+      "catalogVersion": "1.0.0",
+      "skillHeader": "\nname: flamingotech-kb-qianchuan\nslug: flamingotech-kb-qianchuan\ndisplayName: 巨量千川知识库 - 千川开户到跑量一次翻明白\ndescription: 【FLAMINGOTECH】温州火烈鸟网络科技有限公司出品 - 客户问你千川开户到底要哪些资质，你记得大概是营业执照，但不敢拍板也不敢报给他？这些情况你是不是都碰到过——客户问开户要什么资质答不上来；千川和巨量引擎的区别老是讲混；行业禁投名单翻不到官方出处；素材老被拒却说不清违反了哪条；出价方式改了名字，老资料对不上；计划层级结构怎么搭没有统一说法；规则更新了，手里的截图已经过期；达人代投授权的流程记不全。巨量千川知识库把这块一次收全：覆盖五大板块：开户准入、账户与计划结构、出价与定向、素材与审核、数据与复盘，共 14 条收录条目、12 条硬事实。每条都能在官方页面上找到对照，回答时标注出处，不做凭记忆的推测。把巨量千川的开户准入、计划搭建、出价方式、素材规范与复盘诊断按板块讲清。权威来源：巨量千川官网与帮助中心（shoppingads.cn）、巨量引擎帮助中心（oceanengine.com）、抖音电商学习中心（school.jinritemai）、中国政府网广告法全文（gov.cn）。面向国内上百万投流与营销从业者。每个口径都能对着官网核。适用身份：刚开通千川的抖店商家、管着多个店铺的运营主管、做直播代运营的操盘手、刚接手账户的新人优化师、负责素材过审的创意剪辑。常见搜索说法：「巨量千川知识库」、「千川开户资质」、「千川怎么投放」、「千川出价方式」、「千川素材规范」、「千川审核被拒」。先收藏——下次被问千川开户资质，几秒给出准确答案\nversion: 1.0.0\ntags: [抖音电商, 巨量千川, 千川投放, 直播带货, 短视频带货, 信息流广告, 电商投流, 广告投放, 知识库]\nlicense: 商业授权（温州火烈鸟网络科技有限公司）\nagent_created: true\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "186109cec70847f39e88aa1ec8448f8523d48d11b43d98c1dec9ed9d3d133e75",
+          "bytes": 118
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "9bd88f94edac48cd66f4f4a7620476fb2e0f12b377c97a50ce82ec3241005a6b",
+          "bytes": 8706
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@org-fsaw2bbr/qianchuanbaokuanykt01",
+      "catalogVersion": "1.0.1",
+      "skillHeader": "\nname: qianchuan-baokuan-breakdown\ndescription: 千川爆款视频拆解专家。基于用户提供的视频文件、投放数据和目标定位（直播间引流 或 挂车成交），输出结构化素材诊断报告，包括逐字口播文案、分镜头拆解、黄金3秒钩子分析、脚本结构与节奏、卖点可视化、CTA结尾分析和节奏风格判断，并结合数据给出流量成因与优化建议。当用户需要分析、拆解、诊断抖音、千川、短视频、带货视频、信息流广告、种草视频、挂车成交素材，或提到爆款拆解、素材分析、投流诊断、投流素材、竞品视频分析、视频拆解、素材诊断、黄金3秒、钩子分析、分镜拆解、口播逐字稿、口播稿提取、短视频脚本、视频文案提取、爆款视频分析、素材优化等场景时使用本技能。\nagent_created: true\nversion: 1.1\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "45b619959daa687b566359e642dd3ca4b5cb3d576c1c6f84bf53e5000c4745c4",
+          "bytes": 114
+        },
+        {
+          "path": "references/analysis-framework.md",
+          "sha256": "73fbedd52ab7282ef2fc7bf50e2db5a218c8c56e83428ebad6f439717a13c34e",
+          "bytes": 3981
+        },
+        {
+          "path": "references/output-template.md",
+          "sha256": "56196d7cc07d8c4f487c83d4bf724ff22bf302ef270d24f2ecaea8f169367cd8",
+          "bytes": 1804
+        },
+        {
+          "path": "scripts/extract_audio.py",
+          "sha256": "f998fdfeb6d5884ebc6d67cb040dec56c5000f8ba27cfc04c8554e902d37e303",
+          "bytes": 1126
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "51f0c973a9d727e4633d870f8ebcb0fba156c5d918e3f1f559106f23484b5364",
+          "bytes": 5622
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_3d635e9b/baolu-ad-delivery-hub",
+      "catalogVersion": "1.1.0",
+      "skillHeader": "\nname: baolu-ad-delivery-hub\ndescription: 抖音投流诊断与设置方案引擎·云端版【思潼AI增长OS·出品】——把「要不要投、投多少、怎么投」算成可执行方案。覆盖巨量本地推（门店获客/线索）与 DOU+（内容加热/测爆款）两条线：保本线测算、日预算公式、分阶段出价、素材测试计划、审核风险排查、止损规则。触发词：本地推怎么投、抖加怎么投、投流诊断、日预算多少、出价多少、投流亏了、线索成本高、要不要投流。\ndisplayName: 抖音投流诊断与设置「思潼·出品」\nmetadata:\n  slug: baolu-ad-delivery-hub\n  version: 1.1.0\n  author: 保禄\n  requires:\n    bins:\n      - python3\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "6c4cf4ad140ebe8fbb17a8290cecfe38a37787fff0b5f08622a3c4ba4ee2a09f",
+          "bytes": 114
+        },
+        {
+          "path": "config.json",
+          "sha256": "8401aaf3d9a951f978f709b35a1cbcf92c60e6b6c6cb6ca4aa0d811d4e585745",
+          "bytes": 84
+        },
+        {
+          "path": "scripts/run.py",
+          "sha256": "5fd3b0142790add3d8da62eb20f6330c195153028898055030b2247cfdafe583",
+          "bytes": 7504
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "76263890108621cfc76a0f22e8e22006d1025f23b957960d953c8ba3b189fe0b",
+          "bytes": 9066
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_8d36cde0/qianchuan-audience-expansion",
+      "catalogVersion": "1.0.0",
+      "skillHeader": "\nname: qianchuan-audience-expansion\ndescription: 输入巨量千川人群分群的覆盖规模、曝光、触达、消耗、成交、订单、新客订单和目标ROI，生成人群拓展、保留、排除与复测草案。用于千川人群定向、相似人群扩量、新客定向、频次过高诊断和人群包组合；适合投手、商家和用户增长团队。\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "c4709d4d6e63bdc1ce8740b2734208e1ce709fa4dce0bcdf4493a6b0bb94d745",
+          "bytes": 121
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "1e30fb7e956403701c54b937c415c73a562682143ea04ecb58dc3c9a7a637588",
+          "bytes": 392
+        },
+        {
+          "path": "assets/icon.svg",
+          "sha256": "8648ddd6204d78c4ca0dba3157e2e86e84358251a7ce8732e0a10d273d15ad55",
+          "bytes": 495
+        },
+        {
+          "path": "references/method.md",
+          "sha256": "5262c2f1009e41b560294e4e62205540f8a4fc403197c7e5ea689ae47553603c",
+          "bytes": 1486
+        },
+        {
+          "path": "scripts/plan_audience_expansion.py",
+          "sha256": "7469a2fa66c73e154325b3033c2bae963642a1de6136734995114630aa8fef1d",
+          "bytes": 3792
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "a29dd9ab4a23bb29a0386ae75e6bcbc0890f61bab82535fd4b216f282392bc63",
+          "bytes": 1964
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_8d36cde0/qianchuan-product-competition",
+      "catalogVersion": "1.0.0",
+      "skillHeader": "\nname: qianchuan-product-competition\ndescription: 输入巨量千川商品的消耗、成交、订单、售价、成本、平台费、退款率、竞品价格指数、素材点击率和转化率，生成主推、稳定、修价、修素材、修承接或止损分层。用于千川选品、商品竞争分析、主推品排序和利润约束投放；适合商家、投手和商品运营。\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "3558fc867ae753cb4b6233b8a5e335e0eb0aa0e739ea9153756e7fc9e80bf6fc",
+          "bytes": 122
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "fce5e17210a7d228d0ebfa0d40c52b1ed80b76b611531d2919f8dac05a2d1140",
+          "bytes": 403
+        },
+        {
+          "path": "assets/icon.svg",
+          "sha256": "c54e4baaf028b748732b0fb42a752849f300c2ce4ca99318fed9fba4534ab6b0",
+          "bytes": 364
+        },
+        {
+          "path": "references/method.md",
+          "sha256": "8c9f4ac83b1c4aef5598340115dd14560451eafed2002733860107ae9b76cb0a",
+          "bytes": 1534
+        },
+        {
+          "path": "scripts/rank_product_competition.py",
+          "sha256": "2891b1a17f3f0ddc2ca6f8a79d6050a17b91ba1b8e9d892d3fc45bd974c15485",
+          "bytes": 4283
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "c62a3b27ea51b2ba39382981deea0f6230e69d3e1199bcdedc0caa96de362c5e",
+          "bytes": 2022
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_8d36cde0/qianchuan-search-term-growth",
+      "catalogVersion": "1.0.0",
+      "skillHeader": "\nname: qianchuan-search-term-growth\ndescription: 输入巨量千川搜索词或关键词的曝光、点击、消耗、成交、订单、当前投放状态和合规结果，生成拓词、保留、降级、否定词与合规拦截草案。用于千川搜索广告拓量、词包优化、否定词管理和关键词合规检查；适合搜索投手、商品运营和增长团队。\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "66d45400ff43947b1a53539655f6057559940132425a15f6de0ef31c4b8fdcb6",
+          "bytes": 121
+        },
+        {
+          "path": "agents/openai.yaml",
+          "sha256": "0af62ce0c855ef2c2479e5c6cea0d8f5dfe275e20b0c31640df9a6048fbef97d",
+          "bytes": 383
+        },
+        {
+          "path": "assets/icon.svg",
+          "sha256": "1e88f613f0afada9ab333daad1fbe3824ced19311f7b422d3a9ce53c2485a41b",
+          "bytes": 391
+        },
+        {
+          "path": "references/method.md",
+          "sha256": "cf7b2cb235ad32ac1e4d26c81cff0902f23aca232d0dd6f51dd6f6b3fd34a903",
+          "bytes": 1358
+        },
+        {
+          "path": "scripts/grow_search_terms.py",
+          "sha256": "783b9b17f178be206b5e4d9773193489fe51cd7a5813419aadca9cd7451fb3b7",
+          "bytes": 3865
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "8201f3ec8126f28731ca92d1f59b4484c1847ff8f3bd25b972c18f5c86326fdf",
+          "bytes": 1950
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_dac1a51d/douyin-qianchuan-caijie",
+      "catalogVersion": "1.0.0",
+      "skillHeader": "\nname: douyin-qianchuan-caijie\ndescription: 系统化拆解抖音千川爆款投流广告素材，输出标准化分析报告。覆盖开头钩子、脚本结构、画面运镜、配音文案、节奏时长、卖点呈现、用户痛点、CTA、投放场景九大维度；支持素材复盘诊断与可复用创作要素提取，直接指导新素材生产。当用户要求拆解素材、分析爆款广告、复盘投流素材、提取可复用元素、拆解千川素材时调用。\nallowed-tools: Read, Write\ncategory: 电商运营\ntags: 千川素材,抖音投流,广告拆解,爆款复盘,素材复刻,信息流优化\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "2963e90b3573045d730bb7d145c5fe2884c848f8b8d49feb46f15a17953d6edb",
+          "bytes": 116
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "c607a8e265dc36407bb0989b65c5b1ff0d9dc108c0fff566db978b83e67bbdec",
+          "bytes": 8672
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    },
+    {
+      "catalogId": "@user_e37a906a/touliu-data",
+      "catalogVersion": "1.0.1",
+      "skillHeader": "\nname: touliu-data\nslug: touliu-data\ndisplay_name: 投流数据官\ndisplayName: 投流数据官\ndisplay_name_en: Touliu Data\ndescription: 投手的素材衰减预警台。适用场景：多日多份报表合并（巨量/千川导出的素材维度 csv/xlsx 丢进一个文件夹，列名归一化——消耗/消费/花费、展示/曝光/展现、点击/转化各套别名都认，日期格式自动归一，同日期同素材新导出覆盖旧值，乱表跳过进清单）；衰减预警（规则写死可复核：≥3 天数据且 CTR 连续两降跌破峰值六成 → 红标「衰减」，最新消耗跌破峰值一半且峰值不在当天 → 红标「消耗腰斩」，上线不足 3 天 → 黄标「观察期」不瞎预警——素材生命周期就 3-7 天，早发现一天少烧一天冤枉钱）；诊断报告（素材台账红黄分级带改写建议、每日明细、汇总三表 + 自包含 HTML：账户消耗/CTR 双趋势、素材状态占比、消耗 TOP10，双击即看）。当用户说\"我的素材是不是衰减了\"、\"巨量导出报表帮我合一下\"、\"哪些素材该停了\"，或提到投流数据、巨量、千川、素材衰减、消耗、CTR、点击率、转化成本、跑量数据、素材报表时使用。默认演练不落盘，--do 才出台账和报告。纯本地，账户数据不出本机。\ndescription_zh: 巨量千川导出丢进来合并诊断：CTR连降消耗腰斩自动标红，观察期不瞎预警，台账报告一次出，纯本地。\ndescription_en: \"The creative-decay early-warning desk for media buyers. Drop a folder of Ocean Engine / Qianchuan per-creative exports (csv/xlsx) and they merge into one ledger: column-name aliases normalize cost/spend, impressions, clicks and conversions across platform dialects, dates auto-normalize, and newer exports overwrite older values for the same day and creative. Decay rules are deterministic: with 3+ days of data, CTR falling twice in a row below 60% of its peak flags red 'decaying'; latest-day spend under half its peak flags red 'spend halved'; creatives under 3 days get a yellow 'observation period', not a false alarm - creative lifespan is only 3-7 days, so catching decay one day earlier saves a day of wasted spend. Outputs a three-sheet xlsx ledger (graded creatives with fix advice, daily detail, summary) plus a self-contained HTML report (cost/CTR trends, status pie, top spenders). Dry-run by default; --do writes files. 100% local - account data never leaves your machine.\"\ncategory: development\nversion: 1.0.0\nauthor: Horizon\nexamples:\n  - 巨量导出的素材报表帮我合并一下，看哪些素材衰减了\n  - 我的计划消耗突然掉了，是素材疲劳还是出价问题\n  - 千川报表 CTR 趋势帮我出图，周报要用\n",
+      "files": [
+        {
+          "path": "_meta.json",
+          "sha256": "40eb1beeb0f62afa4a235fa19c64a4ab9b8d96c00307df98030a30b4cc626b3d",
+          "bytes": 104
+        },
+        {
+          "path": "scripts/chart_svg.py",
+          "sha256": "f1c14af307afa5066901051bd0b48067c08acd867fd18e0464035b990b7dd748",
+          "bytes": 8028
+        },
+        {
+          "path": "scripts/common.py",
+          "sha256": "c95c4b48299a0e91d7144d4c71985fc43551c2c815cbc82b99870826a65fceec",
+          "bytes": 4839
+        },
+        {
+          "path": "scripts/data_load.py",
+          "sha256": "00b2a83718706e6b1d0028f8bd4ace9b1513ab8deb874a6f780cdd900e488668",
+          "bytes": 3726
+        },
+        {
+          "path": "scripts/decay.py",
+          "sha256": "3bf93dcdada03b7e2041dbd5fbc764491063a7de69f0b844f8a366e5a45e5699",
+          "bytes": 13017
+        },
+        {
+          "path": "scripts/main.py",
+          "sha256": "11dc62c2ba1a9ec82ed1d1a70cfef7a61afc72a333c444b3ddc88be2f1504d6f",
+          "bytes": 4213
+        },
+        {
+          "path": "scripts/report.py",
+          "sha256": "dca4e3970a4cf7be9e15f76fc2daeb5cffbeebf374aec7f766e811ccdb6f8558",
+          "bytes": 1822
+        },
+        {
+          "path": "SKILL.md",
+          "sha256": "670da6730d893d8d581cf1ef66a4e08c4f96e6e663846dd37e1ad0cac88a38c3",
+          "bytes": 5560
+        }
+      ],
+      "executed": false,
+      "redistributed": false
+    }
+  ],
+  "notes": [
+    "Catalog and SKILL header versions may differ; exact contents hash recorded.",
+    "Research copies excluded from redistributable package.",
+    "Native model suggestions are not authority or business approval."
+  ]
+}

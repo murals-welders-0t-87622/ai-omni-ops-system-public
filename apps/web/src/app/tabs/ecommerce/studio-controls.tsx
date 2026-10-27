@@ -1,0 +1,16 @@
+"use client";
+const titles: Record<string, string> = { selling:"1. 卖点分析", main: "2. 主图与商品文案", detail: "3. 详情页", video: "4. 商品视频" };
+const states: Record<string, string> = { QUEUED: "等待Codex接单", RUNNING: "Codex制作中", SUCCESS: "已保存新版本", FAILED: "执行失败", CANCELLED: "已取消" };
+export default function StudioControls({ studio, setStudio, data, project, busy, disabled, onRequest }: any) {
+  const kind = ["selling","main"].includes(studio) ? "main_copy" : studio === "detail" ? "detail_copy" : "video_concept";
+  const mediaKind = studio === "main" ? "main_images" : studio === "detail" ? "detail_images" : "video_generate";
+  const jobs = (data.tasks || []).filter((t: any) => t.projectId === project?.id).slice(0, 6);
+  const mediaComplete = studio === "video" ? !!project?.body?.video?.mediaRef && !project?.body?.video?.mediaStale : (studio === "main" ? project?.body?.mainImages : project?.body?.pages)?.length > 0 && (studio === "main" ? project.body.mainImages : project.body.pages).every((p: any) => p.mediaRef && !p.mediaStale);
+  const active = jobs.some((t: any) => ["QUEUED", "RUNNING"].includes(t.state));
+  const can = (k: string) => data.executor?.online && data.executor.capabilities.includes(k);
+  return <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div role="tablist" aria-label="商品内容制作类型" className="flex flex-wrap gap-2">{Object.entries(titles).map(([key, title]) => <button key={key} role="tab" aria-selected={studio === key} onClick={() => setStudio(key)} className={"rounded-xl px-4 py-2.5 text-sm " + (studio === key ? "bg-indigo-600 text-white" : "bg-slate-50 text-slate-600")}>{title}</button>)}</div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><p className={"text-xs " + (data.executor?.online ? "text-emerald-700" : "text-amber-700")}>{data.executor?.online ? "本机Codex已连接 · 任务完成后自动保存新版本" : "本机Codex未连接 · 接通本地执行器后可直接生成"}</p><div className="flex flex-wrap gap-2"><button disabled={busy || disabled || active || !project || !can(kind)} onClick={() => onRequest(kind,studio==="selling"?{generationMode:"revise",revisionScope:"selling_points",targetIndexes:[]}:undefined)} className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm text-white disabled:opacity-40">{studio === "selling" ? "Codex分析用户需求与产品卖点" : studio === "main" ? "Codex生成主图方案与文案" : studio === "detail" ? "Codex生成逐页文案与提示词" : "Codex策划视频创意"}</button>{studio!=="selling"&&<button disabled={busy || disabled || active || !project || !can(mediaKind) || mediaComplete || (mediaKind === "video_generate" && project.videoConfirmation?.revision !== project.revision)} onClick={() => onRequest(mediaKind)} className="rounded-xl border border-indigo-200 px-4 py-2.5 text-sm text-indigo-700 disabled:opacity-40">{studio === "video" ? "生成已确认的商品视频" : "生成本页组画面"}</button>}</div></div>
+    {jobs.length > 0 && <div aria-label="商品制作任务" className="space-y-2">{jobs.map((t: any) => <article key={t.id} className="rounded-xl bg-slate-50 p-3 text-xs leading-6"><p className="font-medium">{t.title} · {t.interrupted ? "执行器已中断，需核对结果" : states[t.state] || t.state}</p><p className={t.state === "FAILED" ? "text-rose-700" : "text-slate-500"}>{t.message}{t.resultRevision ? ` · V${t.resultRevision}` : ""}</p></article>)}</div>}
+  </section>;
+}

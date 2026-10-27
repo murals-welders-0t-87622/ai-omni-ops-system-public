@@ -1,0 +1,154 @@
+name: ai-omni-ontology-lab
+
+x-server-image: &server-image
+  image: ai-omni-ontology-lab-server:dev
+  build:
+    context: ..
+    dockerfile: docker/ontology-lab.Dockerfile
+    target: server
+    args:
+      INSTALL_LOCAL_OCR: ${INSTALL_LOCAL_OCR:-1}
+      INSTALL_LOCAL_ASR: ${INSTALL_LOCAL_ASR:-0}
+      LOCAL_ASR_PRELOAD_WHISPER_MODEL: ${LOCAL_ASR_PRELOAD_WHISPER_MODEL:-small}
+
+x-lab-environment: &lab-environment
+  NODE_ENV: production
+  APP_ENVIRONMENT: ontology-lab
+  APP_RUNTIME_MODE: ${LAB_APP_RUNTIME_MODE:-standard}
+  SERVER_BOOT_MODE: api
+  SERVER_HOST: 0.0.0.0
+  PORT: "3011"
+  SERVER_BODY_LIMIT: ${SERVER_BODY_LIMIT:-200mb}
+  DATABASE_URL: postgresql://ontology_lab:${LAB_DATABASE_PASSWORD:?Required 64 hex characters}@ontology-postgres:5432/ontology_lab?schema=public
+  AUTH_TOKEN_SECRET: ${LAB_AUTH_TOKEN_SECRET:?Required independent 64 hex characters}
+  OPENCLAW_INSTALL_TOKEN_SECRET: ${LAB_INSTALL_TOKEN_SECRET:?Required independent 64 hex characters}
+  WEB_PUBLIC_BASE_URL: http://127.0.0.1:23001
+  API_PUBLIC_BASE_URL: http://127.0.0.1:23011/api
+  STORAGE_PROVIDER_MODE: local
+  LOCAL_APP_DATA_ROOT: /data
+  MANAGED_STORAGE_ROOT: /data/storage
+  MATERIAL_LIBRARY_BASE_ROOT: /data/materials
+  HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-1}
+  TRANSFORMERS_OFFLINE: ${TRANSFORMERS_OFFLINE:-1}
+  HF_ENDPOINT: ${HF_ENDPOINT:-https://hf-mirror.com}
+  VIDEO_TRANSCRIPT_ASR_PRIMARY: ${VIDEO_TRANSCRIPT_ASR_PRIMARY:-whisper}
+  VIDEO_TRANSCRIPT_ASR_FALLBACK: ${VIDEO_TRANSCRIPT_ASR_FALLBACK:-whisper}
+  LOCAL_ASR_PYTHON_BIN: ${LOCAL_ASR_PYTHON_BIN:-python3}
+  LOCAL_ASR_LANGUAGE: ${LOCAL_ASR_LANGUAGE:-zh}
+  WHISPER_MODEL_NAME: ${WHISPER_MODEL_NAME:-small}
+  WHISPER_DEVICE: ${WHISPER_DEVICE:-cpu}
+  WHISPER_COMPUTE_TYPE: ${WHISPER_COMPUTE_TYPE:-int8}
+  EXPERT_CONFIG_SOURCE_ROOT: /expert-source
+  EXPERT_CONFIG_GIT_ROOT: /expert-source
+  EXPERT_CONFIG_HISTORY_ROOT: /data/expert-config-history
+  EXPERT_CONFIG_SOURCE_HOST_HINT: ${WORKBUDDY_EXPERT_SOURCE_HOST_PATH:-../../../../A-专家团优化开发交接包/references/expert-source}
+  EXPERT_CONFIG_WRITE_ENABLED: ${EXPERT_CONFIG_WRITE_ENABLED:-0}
+  EXPERT_CONFIG_LOCAL_WRITEBACK_EXECUTOR_ENABLED: ${EXPERT_CONFIG_LOCAL_WRITEBACK_EXECUTOR_ENABLED:-0}
+
+services:
+  ontology-postgres:
+    image: postgres:16-bookworm
+    restart: "unless-stopped"
+    environment:
+      POSTGRES_DB: ontology_lab
+      POSTGRES_USER: ontology_lab
+      POSTGRES_PASSWORD: ${LAB_DATABASE_PASSWORD:?Required 64 hex characters}
+    volumes:
+      - lab-postgres:/var/lib/postgresql/data
+    networks: [lab-internal]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ontology_lab -d ontology_lab"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  db-init:
+    <<: *server-image
+    restart: "no"
+    depends_on:
+      ontology-postgres:
+        condition: service_healthy
+    environment:
+      <<: *lab-environment
+      LAB_OPERATOR_PASSWORD: ${LAB_OPERATOR_PASSWORD:?Required lab operator password}
+    command: ["node", "scripts/init-ontology-lab.cjs"]
+    networks: [lab-internal]
+
+  server:
+    <<: *server-image
+    restart: "unless-stopped"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      ontology-postgres:
+        condition: service_healthy
+    environment: *lab-environment
+    volumes:
+      - lab-storage:/data
+      - ${WORKBUDDY_EXPERT_SOURCE_HOST_PATH:-../../../../A-专家团优化开发交接包/references/expert-source}:/expert-source:ro
+    networks: [lab-internal, lab-egress]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3011/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  web:
+    image: ai-omni-ontology-lab-web:dev
+    build:
+      context: ..
+      dockerfile: docker/ontology-lab.Dockerfile
+      target: web
+    restart: "unless-stopped"
+    depends_on:
+      server:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      HOSTNAME: 0.0.0.0
+      NEXT_PUBLIC_APP_RUNTIME_MODE: ${LAB_APP_RUNTIME_MODE:-standard}
+      WEB_PUBLIC_BASE_URL: http://127.0.0.1:23001
+      NEXT_PUBLIC_WEB_BASE_URL: http://127.0.0.1:23001
+      API_PUBLIC_BASE_URL: http://127.0.0.1:23011/api
+      WEB_API_BASE_URL: http://127.0.0.1:23011
+      NEXT_PUBLIC_API_BASE_URL: http://127.0.0.1:23011/api
+      INTERNAL_API_BASE_URL: http://server:3011/api
+      API_PROXY_TARGET: http://server:3011/api
+      WEB_UPLOAD_BODY_LIMIT: ${WEB_UPLOAD_BODY_LIMIT:-2048mb}
+    networks: [lab-internal]
+
+  ingress:
+    image: ai-omni-ontology-lab-ingress:dev
+    build:
+      context: ..
+      dockerfile: docker/ontology-lab.Dockerfile
+      target: ingress
+    restart: "unless-stopped"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    sysctls:
+      net.ipv4.ip_forward: "0"
+    depends_on:
+      server:
+        condition: service_healthy
+      web:
+        condition: service_started
+    ports:
+      - "127.0.0.1:23001:3001"
+      - "127.0.0.1:23011:3011"
+    networks: [lab-internal, lab-ingress]
+
+networks:
+  lab-internal:
+    internal: true
+  lab-egress:
+    driver: bridge
+  lab-ingress:
+    driver: bridge
+
+volumes:
+  lab-postgres:
+  lab-storage:

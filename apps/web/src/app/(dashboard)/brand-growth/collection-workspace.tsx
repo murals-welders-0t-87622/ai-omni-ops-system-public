@@ -1,0 +1,6288 @@
+"use client";
+
+import { Fragment, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
+import type {
+  AsyncAction,
+  FeishuAppConfigForm,
+  FeishuBindingForm,
+  MediaPreviewState,
+  OptionalDateFormatter,
+  OptionalNumberFormatter,
+  ValueAction,
+} from "./shared-types";
+import type {
+  DouyinCollectedAccountRecord,
+  DouyinCityHotspotRecord,
+  DouyinCityOption,
+  DouyinCommentPaginationState,
+  DouyinCommentRecord,
+  DouyinContentTagOption,
+  DouyinCollectionWorkspace,
+  DouyinCreatorDeepFetchTaskRecord,
+  DouyinCreatorIdentityType,
+  DouyinCreatorSearchFieldOptions,
+  DouyinCreatorProfileRecord,
+  DouyinCreatorSearchRecord,
+  DouyinCollectedTargetUserRecord,
+  DouyinKeywordRecommendationRecord,
+  DouyinCollectedWorkRecord,
+  XhsAccountRole,
+  XhsCollectedAccountRecord,
+  XhsCommentPaginationState,
+  XhsCommentRecord,
+  XhsCollectedNoteRecord,
+  XhsCollectedTargetUserRecord,
+  XhsSubCommentPaginationState,
+  XhsSubCommentRecord,
+} from "../../../services/collectors";
+import type {
+  FeishuAppConfigRecord,
+  FeishuAuthStatusRecord,
+  FeishuBindingRecord,
+} from "../../../services/brand-growth";
+import type { DailyHotspotItem, DailyHotspotPlatformRecord } from "../../../services/daily-hotspots";
+import { API_BASE_URL, requestBlobByUrl } from "../../../services/http";
+
+export type XiaohongshuCollectionCardKey =
+  | "brandAccount"
+  | "competitorAccount"
+  | "brandWorks"
+  | "benchmarkWorks"
+  | "searchNotes"
+  | "commentData";
+
+export const xiaohongshuCollectionCards: Array<{
+  key: XiaohongshuCollectionCardKey;
+  label: string;
+}> = [
+  { key: "brandAccount", label: "品牌账号信息" },
+  { key: "competitorAccount", label: "竞品账号信息" },
+  { key: "brandWorks", label: "品牌作品信息及数据" },
+  { key: "benchmarkWorks", label: "对标作品信息及数据" },
+  { key: "searchNotes", label: "搜索笔记" },
+  { key: "commentData", label: "评论数据" },
+];
+
+export type XhsAccountBindingEntry = {
+  id: string;
+  locator: string;
+  accountRole?: XhsAccountRole;
+};
+
+export type DouyinCollectionCardKey =
+  | "brandAccount"
+  | "competitorAccount"
+  | "brandWorks"
+  | "competitorWorks"
+  | "benchmarkWorks"
+  | "searchWorks"
+  | "commentData"
+  | "keywordRecommendations"
+  | "lowFanExplosiveWorks"
+  | "highCompletionRateWorks"
+  | "highLikeRateWorks"
+  | "cityHotspots"
+  | "creatorSearch"
+  | "creatorDeepFetch"
+  | "creatorResultPool";
+
+export const douyinCollectionCards: Array<{
+  key: DouyinCollectionCardKey;
+  label: string;
+}> = [
+  { key: "brandAccount", label: "品牌账号信息" },
+  { key: "competitorAccount", label: "竞品账号信息" },
+  { key: "brandWorks", label: "品牌作品信息及数据" },
+  { key: "competitorWorks", label: "竞品作品信息及数据" },
+  { key: "benchmarkWorks", label: "对标作品信息及数据" },
+  { key: "searchWorks", label: "搜索关键词" },
+  { key: "commentData", label: "评论数据" },
+  { key: "keywordRecommendations", label: "关键词推荐" },
+  { key: "lowFanExplosiveWorks", label: "获取低粉爆款榜" },
+  { key: "highCompletionRateWorks", label: "获取高完播率榜" },
+  { key: "highLikeRateWorks", label: "获取高点赞率榜" },
+  { key: "cityHotspots", label: "同城热点榜" },
+  { key: "creatorSearch", label: "达人搜索抓取" },
+  { key: "creatorDeepFetch", label: "达人深度抓取" },
+  { key: "creatorResultPool", label: "达人结果池" },
+];
+
+type DouyinFieldPreviewRow = {
+  field: string;
+  label: string;
+  source: string;
+  path: string;
+  required: "必需" | "可选";
+  patch: "否" | "是";
+};
+
+type KeywordRecommendationEntry = {
+  id: string;
+  keyword: string;
+};
+
+const DOUYIN_SEARCH_SORT_OPTIONS = [
+  { value: "0", label: "综合排序" },
+  { value: "1", label: "最多点赞" },
+  { value: "2", label: "最新发布" },
+] as const;
+
+const DOUYIN_SEARCH_PUBLISH_TIME_OPTIONS = [
+  { value: "0", label: "不限" },
+  { value: "1", label: "最近一天" },
+  { value: "7", label: "最近一周" },
+  { value: "180", label: "最近半年" },
+] as const;
+
+const DOUYIN_SEARCH_DURATION_OPTIONS = [
+  { value: "0", label: "不限" },
+  { value: "0-1", label: "1 分钟以内" },
+  { value: "1-5", label: "1-5 分钟" },
+  { value: "5-10000", label: "5 分钟以上" },
+] as const;
+
+const DOUYIN_SEARCH_CONTENT_TYPE_OPTIONS = [
+  { value: "0", label: "不限" },
+  { value: "1", label: "视频" },
+  { value: "2", label: "图片" },
+  { value: "3", label: "文章" },
+] as const;
+
+const COLLECTION_PAGE_SIZE_OPTIONS = [10, 20, 30, 50] as const;
+
+function hasMeaningfulCollectedText(value?: string | null) {
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    return false;
+  }
+  return !/^手动输入/u.test(normalized) && normalized !== "-" && !/^未抓取/u.test(normalized);
+}
+
+function hasPositiveCollectedMetric(value?: number | null) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
+function hasCollectedXhsAccountProfile(account?: XhsCollectedAccountRecord | null) {
+  if (!account) {
+    return false;
+  }
+  return Boolean(
+    hasMeaningfulCollectedText(account.accountName)
+    || hasMeaningfulCollectedText(account.avatar)
+    || hasMeaningfulCollectedText(account.description)
+    || hasMeaningfulCollectedText(account.ipLocation)
+    || hasPositiveCollectedMetric(account.postedCount)
+    || hasPositiveCollectedMetric(account.likedCount)
+    || hasPositiveCollectedMetric(account.fanCount)
+    || hasPositiveCollectedMetric(account.followCount),
+  );
+}
+
+function hasCollectedDouyinAccountProfile(account?: DouyinCollectedAccountRecord | null) {
+  if (!account) {
+    return false;
+  }
+  return Boolean(
+    hasMeaningfulCollectedText(account.accountName)
+    || hasMeaningfulCollectedText(account.username)
+    || hasMeaningfulCollectedText(account.shortId)
+    || hasMeaningfulCollectedText(account.avatar)
+    || hasMeaningfulCollectedText(account.description)
+    || hasMeaningfulCollectedText(account.ipLocation)
+    || hasMeaningfulCollectedText(account.enterpriseVerifyReason)
+    || hasMeaningfulCollectedText(account.customVerify)
+    || hasPositiveCollectedMetric(account.postedCount)
+    || hasPositiveCollectedMetric(account.likedCount)
+    || hasPositiveCollectedMetric(account.fanCount)
+    || hasPositiveCollectedMetric(account.followCount),
+  );
+}
+
+const douyinFieldPreviewMap: Record<DouyinCollectionCardKey, DouyinFieldPreviewRow[]> = {
+  brandAccount: [
+    { field: "sourceAccountId", label: "账号抓取主键", source: "获取指定用户的信息", path: "data.user.sec_uid", required: "必需", patch: "否" },
+    { field: "externalUserId", label: "抖音内部用户 ID", source: "获取指定用户的信息", path: "data.user.uid", required: "必需", patch: "否" },
+    { field: "accountName", label: "用户昵称", source: "获取指定用户的信息", path: "data.user.nickname", required: "必需", patch: "否" },
+    { field: "username", label: "抖音号", source: "获取指定用户的信息", path: "data.user.unique_id", required: "可选", patch: "否" },
+    { field: "description", label: "个人签名/简介", source: "获取指定用户的信息", path: "data.user.signature", required: "可选", patch: "否" },
+    { field: "avatar", label: "头像 300 尺寸", source: "获取指定用户的信息", path: "data.user.avatar_300x300.url_list[0]", required: "可选", patch: "否" },
+    { field: "fanCount", label: "粉丝数", source: "获取指定用户的信息", path: "data.user.follower_count", required: "必需", patch: "否" },
+    { field: "followCount", label: "关注数", source: "获取指定用户的信息", path: "data.user.following_count", required: "可选", patch: "否" },
+    { field: "likedCount", label: "获赞总数", source: "获取指定用户的信息", path: "data.user.total_favorited", required: "可选", patch: "否" },
+    { field: "postedCount", label: "作品数", source: "获取指定用户的信息", path: "data.user.aweme_count", required: "可选", patch: "否" },
+  ],
+  competitorAccount: [
+    { field: "sourceAccountId", label: "账号抓取主键", source: "获取指定用户的信息", path: "data.user.sec_uid", required: "必需", patch: "否" },
+    { field: "externalUserId", label: "抖音内部用户 ID", source: "获取指定用户的信息", path: "data.user.uid", required: "必需", patch: "否" },
+    { field: "accountName", label: "用户昵称", source: "获取指定用户的信息", path: "data.user.nickname", required: "必需", patch: "否" },
+    { field: "username", label: "抖音号", source: "获取指定用户的信息", path: "data.user.unique_id", required: "可选", patch: "否" },
+    { field: "description", label: "账号简介", source: "获取指定用户的信息", path: "data.user.signature", required: "可选", patch: "否" },
+    { field: "avatar", label: "头像 300 尺寸", source: "获取指定用户的信息", path: "data.user.avatar_300x300.url_list[0]", required: "可选", patch: "否" },
+    { field: "followCount", label: "关注数", source: "获取指定用户的信息", path: "data.user.following_count", required: "可选", patch: "否" },
+    { field: "fanCount", label: "粉丝数", source: "获取指定用户的信息", path: "data.user.follower_count", required: "必需", patch: "否" },
+    { field: "likedCount", label: "获赞总数", source: "获取指定用户的信息", path: "data.user.total_favorited", required: "可选", patch: "否" },
+    { field: "postedCount", label: "作品数", source: "获取指定用户的信息", path: "data.user.aweme_count", required: "可选", patch: "否" },
+  ],
+  brandWorks: [
+    { field: "workId", label: "作品主键", source: "获取用户主页作品数据", path: "data.aweme_list[].aweme_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述/文案", source: "获取用户主页作品数据", path: "data.aweme_list[].desc", required: "必需", patch: "否" },
+    { field: "publishTimeText", label: "发布时间戳", source: "获取用户主页作品数据", path: "data.aweme_list[].create_time", required: "可选", patch: "否" },
+    { field: "mediaType", label: "媒体类型", source: "获取用户主页作品数据", path: "data.aweme_list[].media_type", required: "可选", patch: "否" },
+    { field: "durationMs", label: "视频时长(毫秒)", source: "获取用户主页作品数据", path: "data.aweme_list[].duration", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.digg_count", required: "可选", patch: "否" },
+    { field: "commentCount", label: "评论数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.comment_count", required: "可选", patch: "否" },
+    { field: "shareCount", label: "分享数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.share_count", required: "可选", patch: "否" },
+    { field: "collectCount", label: "收藏数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.collect_count", required: "可选", patch: "否" },
+    { field: "recommendCount", label: "推荐数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.recommend_count", required: "可选", patch: "否" },
+    { field: "imageList", label: "图文列表", source: "获取用户主页作品数据", path: "data.aweme_list[].images", required: "可选", patch: "否" },
+    { field: "awemeType", label: "作品类型", source: "获取用户主页作品数据", path: "data.aweme_list[].aweme_type", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "视频下载地址", source: "获取用户主页作品数据", path: "data.aweme_list[].video_download_addr", required: "可选", patch: "否" },
+  ],
+  competitorWorks: [
+    { field: "workId", label: "作品主键", source: "获取用户主页作品数据", path: "data.aweme_list[].aweme_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述/文案", source: "获取用户主页作品数据", path: "data.aweme_list[].desc", required: "必需", patch: "否" },
+    { field: "publishTimeText", label: "发布时间戳", source: "获取用户主页作品数据", path: "data.aweme_list[].create_time", required: "可选", patch: "否" },
+    { field: "mediaType", label: "媒体类型", source: "获取用户主页作品数据", path: "data.aweme_list[].media_type", required: "可选", patch: "否" },
+    { field: "durationMs", label: "视频时长(毫秒)", source: "获取用户主页作品数据", path: "data.aweme_list[].duration", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.digg_count", required: "可选", patch: "否" },
+    { field: "commentCount", label: "评论数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.comment_count", required: "可选", patch: "否" },
+    { field: "shareCount", label: "分享数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.share_count", required: "可选", patch: "否" },
+    { field: "collectCount", label: "收藏数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.collect_count", required: "可选", patch: "否" },
+    { field: "recommendCount", label: "推荐数", source: "获取用户主页作品数据", path: "data.aweme_list[].statistics.recommend_count", required: "可选", patch: "否" },
+    { field: "imageList", label: "图文列表", source: "获取用户主页作品数据", path: "data.aweme_list[].images", required: "可选", patch: "否" },
+    { field: "awemeType", label: "作品类型", source: "获取用户主页作品数据", path: "data.aweme_list[].aweme_type", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "视频下载地址", source: "获取用户主页作品数据", path: "data.aweme_list[].video_download_addr", required: "可选", patch: "否" },
+  ],
+  benchmarkWorks: [
+    { field: "description", label: "作品描述", source: "获取单个作品数据 V3", path: "data.aweme_detail.desc", required: "必需", patch: "否" },
+    { field: "durationMs", label: "作品时长", source: "获取单个作品数据 V3", path: "data.aweme_detail.video.duration", required: "可选", patch: "否" },
+    { field: "coverUrl", label: "视频封面", source: "获取单个作品数据 V3", path: "data.aweme_detail.video.cover.url_list[0]", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "视频播放地址", source: "获取单个作品数据 V3", path: "data.aweme_detail.video.play_addr.url_list[0]", required: "可选", patch: "否" },
+    { field: "authorName", label: "作者昵称", source: "获取单个作品数据 V3", path: "data.aweme_detail.author.nickname", required: "可选", patch: "否" },
+    { field: "authorUniqueId", label: "作者抖音号", source: "获取单个作品数据 V3", path: "data.aweme_detail.author.unique_id", required: "可选", patch: "否" },
+    { field: "authorFollowerCount", label: "作者粉丝数", source: "获取单个作品数据 V3", path: "data.aweme_detail.author.follower_count", required: "可选", patch: "否" },
+    { field: "authorLikedCount", label: "作者总获赞", source: "获取单个作品数据 V3", path: "data.aweme_detail.author.total_favorited", required: "可选", patch: "否" },
+    { field: "authorAvatar", label: "作者头像", source: "获取单个作品数据 V3", path: "data.aweme_detail.author.avatar_300x300.url_list[0]", required: "可选", patch: "否" },
+    { field: "playCount", label: "播放量", source: "获取作品的统计数据", path: "data.statistics_list[].play_count", required: "必需", patch: "是" },
+    { field: "likeCount", label: "点赞数", source: "获取单个作品数据 V3 / 统计数据", path: "data.aweme_detail.statistics.digg_count / data.statistics_list[].digg_count", required: "可选", patch: "是" },
+    { field: "shareCount", label: "分享数", source: "获取单个作品数据 V3 / 统计数据", path: "data.aweme_detail.statistics.share_count / data.statistics_list[].share_count", required: "可选", patch: "是" },
+    { field: "downloadCount", label: "下载数", source: "获取作品的统计数据", path: "data.statistics_list[].download_count", required: "可选", patch: "是" },
+    { field: "commentCount", label: "评论数", source: "获取单个作品数据 V3", path: "data.aweme_detail.statistics.comment_count", required: "可选", patch: "否" },
+  ],
+  searchWorks: [
+    { field: "workId", label: "作品 ID", source: "获取综合搜索 V1", path: "data[].aweme_info.aweme_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述", source: "获取综合搜索 V1", path: "data[].aweme_info.desc", required: "必需", patch: "否" },
+    { field: "coverUrl", label: "视频封面", source: "获取综合搜索 V1", path: "data[].aweme_info.video.cover.url_list[0]", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "视频地址", source: "获取综合搜索 V1", path: "data[].aweme_info.video.download_addr.url_list[0]", required: "可选", patch: "否" },
+    { field: "authorName", label: "作者昵称", source: "获取综合搜索 V1", path: "data[].aweme_info.author.nickname", required: "可选", patch: "否" },
+    { field: "authorUniqueId", label: "作者抖音号", source: "获取综合搜索 V1", path: "data[].aweme_info.author.unique_id", required: "可选", patch: "否" },
+    { field: "authorAvatar", label: "作者头像", source: "获取综合搜索 V1", path: "data[].aweme_info.author.avatar_medium.url_list[0]", required: "可选", patch: "否" },
+    { field: "durationMs", label: "作品时长", source: "获取综合搜索 V1", path: "data[].aweme_info.video.duration", required: "可选", patch: "否" },
+    { field: "publishTimeText", label: "发布时间", source: "获取综合搜索 V1", path: "data[].aweme_info.create_time", required: "可选", patch: "否" },
+    { field: "playCount", label: "播放量", source: "获取综合搜索 V1", path: "data[].aweme_info.statistics.play_count", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取综合搜索 V1", path: "data[].aweme_info.statistics.digg_count", required: "可选", patch: "否" },
+    { field: "commentCount", label: "评论数", source: "获取综合搜索 V1", path: "data[].aweme_info.statistics.comment_count", required: "可选", patch: "否" },
+    { field: "shareCount", label: "分享数", source: "获取综合搜索 V1", path: "data[].aweme_info.statistics.share_count", required: "可选", patch: "否" },
+    { field: "collectCount", label: "收藏数", source: "获取综合搜索 V1", path: "data[].aweme_info.statistics.collect_count", required: "可选", patch: "否" },
+  ],
+  commentData: [
+    { field: "sourceWorkId", label: "源作品 ID", source: "获取单个视频评论数据", path: "request.aweme_id", required: "必需", patch: "否" },
+    { field: "commentId", label: "评论 ID", source: "获取单个视频评论数据", path: "data.comments[].cid", required: "必需", patch: "否" },
+    { field: "commentText", label: "评论内容", source: "获取单个视频评论数据", path: "data.comments[].text", required: "可选", patch: "否" },
+    { field: "commentTime", label: "评论时间", source: "获取单个视频评论数据", path: "data.comments[].create_time", required: "可选", patch: "否" },
+    { field: "commentUserName", label: "评论用户昵称", source: "获取单个视频评论数据", path: "data.comments[].user.nickname", required: "可选", patch: "否" },
+    { field: "commentUserSecUserId", label: "评论用户 sec_user_id", source: "获取单个视频评论数据", path: "data.comments[].user.sec_uid", required: "必需", patch: "否" },
+    { field: "likeCount", label: "评论点赞数", source: "获取单个视频评论数据", path: "data.comments[].digg_count", required: "可选", patch: "否" },
+    { field: "replyCount", label: "评论回复数", source: "获取单个视频评论数据", path: "data.comments[].reply_comment_total", required: "可选", patch: "否" },
+  ],
+  keywordRecommendations: [
+    { field: "searchKeyword", label: "搜索关键词", source: "获取搜索关键词推荐", path: "data.sug_list[].content", required: "必需", patch: "否" },
+    { field: "recommendedKeyword", label: "推荐关键词", source: "获取搜索关键词推荐", path: "data.sug_list[].content / data.sug_list[].word_record.words_content", required: "必需", patch: "否" },
+    { field: "searchTime", label: "搜索时间", source: "获取搜索关键词推荐", path: "data.extra.now", required: "可选", patch: "否" },
+    { field: "queryId", label: "推荐查询 ID", source: "获取搜索关键词推荐", path: "data.sug_list[].words_query_record.query_id", required: "可选", patch: "否" },
+  ],
+  lowFanExplosiveWorks: [
+    { field: "workId", label: "作品 ID", source: "获取低粉爆款榜", path: "data.data.data[].item_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述", source: "获取低粉爆款榜", path: "data.data.data[].item_title", required: "必需", patch: "否" },
+    { field: "coverUrl", label: "作品封面", source: "获取低粉爆款榜", path: "data.data.data[].item_cover_url", required: "可选", patch: "否" },
+    { field: "durationMs", label: "作品时长", source: "获取低粉爆款榜", path: "data.data.data[].item_duration", required: "可选", patch: "否" },
+    { field: "authorName", label: "作者昵称", source: "获取低粉爆款榜", path: "data.data.data[].nick_name", required: "可选", patch: "否" },
+    { field: "authorAvatar", label: "作者头像", source: "获取低粉爆款榜", path: "data.data.data[].avatar_url", required: "可选", patch: "否" },
+    { field: "authorFollowerCount", label: "作者粉丝数", source: "获取低粉爆款榜", path: "data.data.data[].fans_cnt", required: "可选", patch: "否" },
+    { field: "playCount", label: "播放量", source: "获取低粉爆款榜", path: "data.data.data[].play_cnt", required: "可选", patch: "否" },
+    { field: "publishTimeText", label: "发布时间", source: "获取低粉爆款榜", path: "data.data.data[].publish_time", required: "可选", patch: "否" },
+    { field: "score", label: "榜单分数", source: "获取低粉爆款榜", path: "data.data.data[].score", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "作品链接", source: "获取低粉爆款榜", path: "data.data.data[].item_url", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取低粉爆款榜", path: "data.data.data[].like_cnt", required: "可选", patch: "否" },
+  ],
+  highCompletionRateWorks: [
+    { field: "workId", label: "作品 ID", source: "获取高完播率榜", path: "data.data.data[].item_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述", source: "获取高完播率榜", path: "data.data.data[].item_title", required: "必需", patch: "否" },
+    { field: "coverUrl", label: "作品封面", source: "获取高完播率榜", path: "data.data.data[].item_cover_url", required: "可选", patch: "否" },
+    { field: "durationMs", label: "作品时长", source: "获取高完播率榜", path: "data.data.data[].item_duration", required: "可选", patch: "否" },
+    { field: "authorName", label: "作者昵称", source: "获取高完播率榜", path: "data.data.data[].nick_name", required: "可选", patch: "否" },
+    { field: "authorAvatar", label: "作者头像", source: "获取高完播率榜", path: "data.data.data[].avatar_url", required: "可选", patch: "否" },
+    { field: "authorFollowerCount", label: "作者粉丝数", source: "获取高完播率榜", path: "data.data.data[].fans_cnt", required: "可选", patch: "否" },
+    { field: "playCount", label: "播放量", source: "获取高完播率榜", path: "data.data.data[].play_cnt", required: "可选", patch: "否" },
+    { field: "publishTimeText", label: "发布时间", source: "获取高完播率榜", path: "data.data.data[].publish_time", required: "可选", patch: "否" },
+    { field: "score", label: "榜单分数", source: "获取高完播率榜", path: "data.data.data[].score", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "作品链接", source: "获取高完播率榜", path: "data.data.data[].item_url", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取高完播率榜", path: "data.data.data[].like_cnt", required: "可选", patch: "否" },
+  ],
+  highLikeRateWorks: [
+    { field: "workId", label: "作品 ID", source: "获取高点赞率榜", path: "data.data.data[].item_id", required: "必需", patch: "否" },
+    { field: "description", label: "作品描述", source: "获取高点赞率榜", path: "data.data.data[].item_title", required: "必需", patch: "否" },
+    { field: "coverUrl", label: "作品封面", source: "获取高点赞率榜", path: "data.data.data[].item_cover_url", required: "可选", patch: "否" },
+    { field: "durationMs", label: "作品时长", source: "获取高点赞率榜", path: "data.data.data[].item_duration", required: "可选", patch: "否" },
+    { field: "authorName", label: "作者昵称", source: "获取高点赞率榜", path: "data.data.data[].nick_name", required: "可选", patch: "否" },
+    { field: "authorAvatar", label: "作者头像", source: "获取高点赞率榜", path: "data.data.data[].avatar_url", required: "可选", patch: "否" },
+    { field: "authorFollowerCount", label: "作者粉丝数", source: "获取高点赞率榜", path: "data.data.data[].fans_cnt", required: "可选", patch: "否" },
+    { field: "playCount", label: "播放量", source: "获取高点赞率榜", path: "data.data.data[].play_cnt", required: "可选", patch: "否" },
+    { field: "publishTimeText", label: "发布时间", source: "获取高点赞率榜", path: "data.data.data[].publish_time", required: "可选", patch: "否" },
+    { field: "score", label: "榜单分数", source: "获取高点赞率榜", path: "data.data.data[].score", required: "可选", patch: "否" },
+    { field: "videoUrl", label: "作品链接", source: "获取高点赞率榜", path: "data.data.data[].item_url", required: "可选", patch: "否" },
+    { field: "likeCount", label: "点赞数", source: "获取高点赞率榜", path: "data.data.data[].like_cnt", required: "可选", patch: "否" },
+  ],
+  cityHotspots: [
+    { field: "cityLabel", label: "城市名称", source: "获取中国城市列表", path: "data.data[].label", required: "必需", patch: "否" },
+    { field: "rank", label: "当前排名", source: "获取同城热点榜", path: "data.data.objs[].rank", required: "必需", patch: "否" },
+    { field: "rankDiff", label: "排名变化", source: "获取同城热点榜", path: "data.data.objs[].rank_diff", required: "可选", patch: "否" },
+    { field: "sentence", label: "热点词", source: "获取同城热点榜", path: "data.data.objs[].sentence", required: "必需", patch: "否" },
+    { field: "createAtText", label: "日期时间", source: "获取同城热点榜", path: "data.data.objs[].create_at", required: "可选", patch: "否" },
+    { field: "hotScore", label: "热度值", source: "获取同城热点榜", path: "data.data.objs[].hot_score", required: "可选", patch: "否" },
+    { field: "videoCount", label: "相关视频数", source: "获取同城热点榜", path: "data.data.objs[].video_count", required: "可选", patch: "否" },
+    { field: "sentenceTag", label: "热点分类标签", source: "获取同城热点榜", path: "data.data.objs[].sentence_tag", required: "可选", patch: "否" },
+    { field: "trends", label: "近一小时趋势", source: "获取同城热点榜", path: "data.data.objs[].trends[]", required: "可选", patch: "否" },
+  ],
+  creatorSearch: [
+    { field: "keyword", label: "搜索关键词", source: "搜索达人", path: "request.keyword", required: "必需", patch: "否" },
+    { field: "oAuthorId", label: "星图达人 ID", source: "搜索达人", path: "data.list[].author_id", required: "必需", patch: "否" },
+    { field: "nickname", label: "达人昵称", source: "搜索达人", path: "data.list[].nick_name", required: "必需", patch: "否" },
+    { field: "fansCount", label: "粉丝数", source: "搜索达人", path: "data.list[].fans_cnt", required: "可选", patch: "否" },
+    { field: "price", label: "商业报价", source: "搜索达人", path: "data.list[].price", required: "可选", patch: "否" },
+  ],
+  creatorDeepFetch: [
+    { field: "creatorIdentifier", label: "达人标识", source: "深抓任务", path: "task.inputJson.creatorIdentifier", required: "必需", patch: "否" },
+    { field: "identityType", label: "标识类型", source: "深抓任务", path: "task.inputJson.identityType", required: "必需", patch: "否" },
+    { field: "taskStatus", label: "任务状态", source: "深抓任务", path: "task.taskStatus", required: "必需", patch: "是" },
+    { field: "creatorId", label: "内部达人 ID", source: "深抓任务输出", path: "task.outputJson.creatorId", required: "可选", patch: "是" },
+    { field: "errorMessage", label: "错误信息", source: "深抓任务输出", path: "task.errorMessage", required: "可选", patch: "是" },
+  ],
+  creatorResultPool: [
+    { field: "creatorId", label: "达人 ID", source: "达人深抓结果", path: "metadataJson.creatorId", required: "必需", patch: "否" },
+    { field: "nickname", label: "达人昵称", source: "达人深抓结果", path: "metadataJson.nickname", required: "必需", patch: "否" },
+    { field: "fansDistributionSummary", label: "粉丝画像摘要", source: "达人深抓结果", path: "metadataJson.fansDistributionSummary[]", required: "可选", patch: "否" },
+    { field: "audienceDistributionSummary", label: "受众画像摘要", source: "达人深抓结果", path: "metadataJson.audienceDistributionSummary[]", required: "可选", patch: "否" },
+    { field: "hotCommentTokens", label: "评论热词", source: "达人深抓结果", path: "metadataJson.hotCommentTokens[]", required: "可选", patch: "否" },
+  ],
+};
+
+export interface BrandGrowthCollectionWorkspaceProps {
+  activePage: "feishuCollection" | "xiaohongshuCollection" | "douyinCollection" | "dailyHotspot";
+  pageTitle: string;
+  pageDescription: string;
+  dataSource: "api" | "error" | "loading";
+  notice: string;
+  errorMessage: string;
+  onRefreshData: AsyncAction;
+  templateUrl: string;
+  activeXhsCollectionCard: XiaohongshuCollectionCardKey;
+  onXhsCollectionCardChange: ValueAction<XiaohongshuCollectionCardKey>;
+  xhsSyncForm: {
+    brandAccountEntries: XhsAccountBindingEntry[];
+    competitorAccountEntries: XhsAccountBindingEntry[];
+    brandWorkLocators: string;
+    benchmarkNoteLocators: string;
+    searchKeyword: string;
+    commentSourceUrls: string;
+    targetUserMatchKeywords: string;
+  };
+  setXhsSyncForm: Dispatch<SetStateAction<{
+    brandAccountEntries: XhsAccountBindingEntry[];
+    competitorAccountEntries: XhsAccountBindingEntry[];
+    brandWorkLocators: string;
+    benchmarkNoteLocators: string;
+    searchKeyword: string;
+    commentSourceUrls: string;
+    targetUserMatchKeywords: string;
+  }>>;
+  activeDouyinCollectionCard: DouyinCollectionCardKey;
+  onDouyinCollectionCardChange: ValueAction<DouyinCollectionCardKey>;
+  feishuBinding: FeishuBindingRecord | null;
+  feishuAppConfig: FeishuAppConfigRecord | null;
+  feishuAuthStatus: FeishuAuthStatusRecord | null;
+  feishuBindingForm: FeishuBindingForm;
+  setFeishuBindingForm: Dispatch<SetStateAction<FeishuBindingForm>>;
+  feishuAppConfigForm: FeishuAppConfigForm;
+  setFeishuAppConfigForm: Dispatch<SetStateAction<FeishuAppConfigForm>>;
+  canSyncFeishuWorkspace: boolean;
+  isHydrating: boolean;
+  isSavingFeishuAppConfig: boolean;
+  isSavingFeishuBinding: boolean;
+  isSyncingFeishuWorkspace: boolean;
+  isSyncingXhsWorkspace: boolean;
+  douyinWorkspace: DouyinCollectionWorkspace;
+  creatorSearchFieldOptions: DouyinCreatorSearchFieldOptions;
+  isSyncingDouyinWorkspace: boolean;
+  douyinSyncForm: {
+    brandAccountEntries: XhsAccountBindingEntry[];
+    competitorAccountEntries: XhsAccountBindingEntry[];
+    benchmarkAwemeIds: string;
+    searchKeyword: string;
+    searchSortType: string;
+    searchPublishTime: string;
+    searchFilterDuration: string;
+    searchContentType: string;
+    commentSourceUrls: string;
+    targetUserMatchKeywords: string;
+    keywordRecommendationEntries: KeywordRecommendationEntry[];
+    lowFanExplosiveWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    highCompletionRateWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    highLikeRateWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    cityHotspots: {
+      cityCode: string;
+    };
+    creatorSearch: {
+      keyword: string;
+      seachType: string;
+      timeRangeDays: string;
+      sortField: string;
+      sortType: string;
+      firstIndustryId: string;
+      marketingTarget: string;
+      taskCategory: string;
+      tag: string;
+      fansMin: string;
+      fansMax: string;
+      expectedPlayMin: string;
+      expectedPlayMax: string;
+      interactRateMin: string;
+      interactRateMax: string;
+      priceMin: string;
+      priceMax: string;
+    };
+    creatorDeepFetch: {
+      identifiers: string;
+      identityType: DouyinCreatorIdentityType;
+      linkType: string;
+      homepageVideoPageLimit: string;
+    };
+  };
+  setDouyinSyncForm: Dispatch<SetStateAction<{
+    brandAccountEntries: XhsAccountBindingEntry[];
+    competitorAccountEntries: XhsAccountBindingEntry[];
+    benchmarkAwemeIds: string;
+    searchKeyword: string;
+    searchSortType: string;
+    searchPublishTime: string;
+    searchFilterDuration: string;
+    searchContentType: string;
+    commentSourceUrls: string;
+    targetUserMatchKeywords: string;
+    keywordRecommendationEntries: KeywordRecommendationEntry[];
+    lowFanExplosiveWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    highCompletionRateWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    highLikeRateWorks: {
+      primaryTagId: string;
+      secondaryTagId: string;
+    };
+    cityHotspots: {
+      cityCode: string;
+    };
+    creatorSearch: {
+      keyword: string;
+      seachType: string;
+      timeRangeDays: string;
+      sortField: string;
+      sortType: string;
+      firstIndustryId: string;
+      marketingTarget: string;
+      taskCategory: string;
+      tag: string;
+      fansMin: string;
+      fansMax: string;
+      expectedPlayMin: string;
+      expectedPlayMax: string;
+      interactRateMin: string;
+      interactRateMax: string;
+      priceMin: string;
+      priceMax: string;
+    };
+    creatorDeepFetch: {
+      identifiers: string;
+      identityType: DouyinCreatorIdentityType;
+      linkType: string;
+      homepageVideoPageLimit: string;
+    };
+  }>>;
+  onSaveFeishuAppConfig: AsyncAction;
+  onStartFeishuAuth: AsyncAction;
+  onSaveFeishuBinding: AsyncAction;
+  onSyncFeishuWorkspace: AsyncAction;
+  onSyncXhsWorkspace: AsyncAction;
+  onSyncXhsSearchNotes: AsyncAction;
+  onSyncXhsCommentData: AsyncAction;
+  onSyncXhsTargetUsers: AsyncAction;
+  onSyncAllXhsBrandAccounts: AsyncAction;
+  onSyncSingleXhsBrandAccount: ValueAction<XhsAccountBindingEntry>;
+  onSyncSingleXhsCompetitorAccount: ValueAction<XhsAccountBindingEntry>;
+  onLoadMoreXhsComments: AsyncAction;
+  onToggleXhsCommentReplies: ValueAction<string>;
+  onLoadXhsCommentReplies: (comment: XhsCommentRecord, loadMore?: boolean) => void | Promise<void>;
+  onSyncDouyinWorkspace: AsyncAction;
+  onSyncDouyinTargetUsers: AsyncAction;
+  onSyncAllDouyinBrandAccounts: AsyncAction;
+  onSyncAllDouyinCompetitorAccounts: AsyncAction;
+  onSyncSingleDouyinBrandAccount: ValueAction<XhsAccountBindingEntry>;
+  onSyncSingleDouyinCompetitorWork: ValueAction<XhsAccountBindingEntry>;
+  onSyncSingleDouyinCompetitorAccount: ValueAction<XhsAccountBindingEntry>;
+  onDeleteDouyinBrandAccount: ValueAction<DouyinCollectedAccountRecord>;
+  onDeleteDouyinCompetitorAccount: ValueAction<DouyinCollectedAccountRecord>;
+  onSyncSingleDouyinKeywordRecommendation: ValueAction<string>;
+  onSearchDouyinCreators: AsyncAction;
+  onCreateDouyinCreatorDeepFetchTasks: AsyncAction;
+  onCreateDouyinCreatorDeepFetchTasksFromSearchResults: ValueAction<DouyinCreatorSearchRecord[]>;
+  onAddDouyinCreatorsToResultPoolFromSearchResults: ValueAction<DouyinCreatorSearchRecord[]>;
+  onLoadMoreDouyinComments: AsyncAction;
+  sortedBrandAccounts: XhsCollectedAccountRecord[];
+  sortedCompetitorAccounts: XhsCollectedAccountRecord[];
+  sortedBrandNotes: XhsCollectedNoteRecord[];
+  sortedBenchmarkNotes: XhsCollectedNoteRecord[];
+  sortedSearchNotes: XhsCollectedNoteRecord[];
+  sortedXhsCommentData: XhsCommentRecord[];
+  sortedXhsTargetUsers: XhsCollectedTargetUserRecord[];
+  xhsCommentPagination: XhsCommentPaginationState[];
+  isLoadingMoreXhsComments: boolean;
+  expandedXhsCommentIds: string[];
+  xhsSubCommentsByParent: Record<string, XhsSubCommentRecord[]>;
+  xhsSubCommentPaginationMap: Record<string, XhsSubCommentPaginationState>;
+  loadingXhsSubCommentIds: string[];
+  loadingMoreXhsSubCommentIds: string[];
+  sortedDouyinBrandAccounts: DouyinCollectedAccountRecord[];
+  sortedDouyinCompetitorAccounts: DouyinCollectedAccountRecord[];
+  sortedDouyinBrandWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinCompetitorWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinBenchmarkWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinSearchWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinCommentData: DouyinCommentRecord[];
+  sortedDouyinTargetUsers: DouyinCollectedTargetUserRecord[];
+  douyinCommentPagination: DouyinCommentPaginationState[];
+  isLoadingMoreDouyinComments: boolean;
+  sortedDouyinKeywordRecommendations: DouyinKeywordRecommendationRecord[];
+  sortedDouyinLowFanExplosiveWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinHighCompletionRateWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinHighLikeRateWorks: DouyinCollectedWorkRecord[];
+  sortedDouyinCityHotspots: DouyinCityHotspotRecord[];
+  sortedDouyinCreatorSearchResults: DouyinCreatorSearchRecord[];
+  sortedDouyinCreatorProfiles: DouyinCreatorProfileRecord[];
+  sortedDouyinCreatorDeepFetchTasks: DouyinCreatorDeepFetchTaskRecord[];
+  brandNotesPage: number;
+  setBrandNotesPage: Dispatch<SetStateAction<number>>;
+  brandNotesPageCount: number;
+  brandNotesPageSize: number;
+  setBrandNotesPageSize: Dispatch<SetStateAction<number>>;
+  paginatedBrandNotes: XhsCollectedNoteRecord[];
+  addingMaterialAssetId: string;
+  extractingDouyinTranscriptAssetId: string;
+  onAddBenchmarkNoteToMaterial: ValueAction<string>;
+  onDeleteXhsCollectedNote: ValueAction<string>;
+  onAddDouyinBenchmarkWorkToMaterial: ValueAction<DouyinCollectedWorkRecord>;
+  onDeleteDouyinCollectedWork: ValueAction<string>;
+  onExtractDouyinTranscript: ValueAction<DouyinCollectedWorkRecord>;
+  onRemoveDouyinKeywordRecommendation: ValueAction<string>;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  buildFeishuMediaProxyUrl: (sourceUrl?: string, download?: boolean) => string;
+  formatDateTime: OptionalDateFormatter;
+  formatDateLabel: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric: OptionalNumberFormatter;
+  deletingDouyinAccountId: string;
+  deletingDouyinKeywordRecommendationId: string;
+  selectedHotspotDate: string;
+  hotspotAvailableDates: string[];
+  activeHotspotRecord?: DailyHotspotPlatformRecord;
+  sortedHotspotItems: DailyHotspotItem[];
+  paginatedHotspotItems: DailyHotspotItem[];
+  hotspotPage: number;
+  setHotspotPage: Dispatch<SetStateAction<number>>;
+  hotspotPageCount: number;
+  hotspotPageSize: number;
+  setHotspotPageSize: Dispatch<SetStateAction<number>>;
+  isSyncingDailyHotspots: boolean;
+  onDailyHotspotDateChange: ValueAction<string>;
+  onSyncDailyHotspots: (platformTitles?: string[]) => void | Promise<void>;
+  formatHotspotHeat: OptionalNumberFormatter;
+}
+
+function useProtectedMediaAsset(sourceUrl?: string) {
+  const [objectUrl, setObjectUrl] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (!sourceUrl) {
+      setObjectUrl("");
+      setFileName("");
+      setIsLoading(false);
+      setErrorMessage("");
+      return;
+    }
+
+    if (!isProtectedMediaSource(sourceUrl)) {
+      setObjectUrl(sourceUrl);
+      setFileName(buildMediaFileNameFromUrl(sourceUrl));
+      setIsLoading(false);
+      setErrorMessage("");
+      return;
+    }
+
+    let active = true;
+    let currentObjectUrl = "";
+    setIsLoading(true);
+    setErrorMessage("");
+
+    void requestBlobByUrl(sourceUrl)
+      .then(({ blob, fileName: resolvedFileName }) => {
+        if (!active) {
+          return;
+        }
+        currentObjectUrl = URL.createObjectURL(blob);
+        setObjectUrl(currentObjectUrl);
+        setFileName(resolvedFileName);
+      })
+      .catch((error: unknown) => {
+        if (!active) {
+          return;
+        }
+        setObjectUrl("");
+        setFileName("");
+        setErrorMessage(error instanceof Error ? error.message : "附件加载失败");
+      })
+      .finally(() => {
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+      }
+    };
+  }, [sourceUrl]);
+
+  return {
+    objectUrl,
+    fileName,
+    isLoading,
+    errorMessage,
+  };
+}
+
+function isProtectedMediaSource(sourceUrl?: string) {
+  if (!sourceUrl) {
+    return false;
+  }
+  const normalized = sourceUrl.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+  return normalized.startsWith("/")
+    || normalized.startsWith(API_BASE_URL.toLowerCase())
+    || normalized.includes("/api/collectors/")
+    || normalized.includes("/api/brand-growth/");
+}
+
+function buildMediaFileNameFromUrl(sourceUrl: string) {
+  try {
+    const resolved = new URL(sourceUrl, "https://local.invalid");
+    const segment = resolved.pathname.split("/").filter(Boolean).pop();
+    return segment || "asset";
+  } catch {
+    return "asset";
+  }
+}
+
+function useProtectedMediaGallery(sourceUrls: string[]) {
+  const [items, setItems] = useState<Array<{
+    sourceUrl: string;
+    objectUrl: string;
+    fileName: string;
+    isLoading: boolean;
+    errorMessage: string;
+  }>>([]);
+
+  useEffect(() => {
+    if (!sourceUrls.length) {
+      setItems([]);
+      return;
+    }
+
+    let active = true;
+    const createdObjectUrls: string[] = [];
+    setItems(
+      sourceUrls.map((sourceUrl) => ({
+        sourceUrl,
+        objectUrl: "",
+        fileName: "",
+        isLoading: true,
+        errorMessage: "",
+      })),
+    );
+
+    void Promise.allSettled(
+      sourceUrls.map(async (sourceUrl) => {
+        if (!isProtectedMediaSource(sourceUrl)) {
+          return {
+            objectUrl: sourceUrl,
+            fileName: buildMediaFileNameFromUrl(sourceUrl),
+            shouldRevoke: false,
+          };
+        }
+        const response = await requestBlobByUrl(sourceUrl);
+        const objectUrl = URL.createObjectURL(response.blob);
+        return {
+          objectUrl,
+          fileName: response.fileName,
+          shouldRevoke: true,
+        };
+      }),
+    )
+      .then((results) => {
+        if (!active) {
+          return;
+        }
+        setItems(
+          results.map((result, index) => {
+            const sourceUrl = sourceUrls[index] || "";
+            if (result.status === "fulfilled") {
+              if (result.value.shouldRevoke) {
+                createdObjectUrls.push(result.value.objectUrl);
+              }
+              return {
+                sourceUrl,
+                objectUrl: result.value.objectUrl,
+                fileName: result.value.fileName,
+                isLoading: false,
+                errorMessage: "",
+              };
+            }
+            return {
+              sourceUrl,
+              objectUrl: "",
+              fileName: "",
+              isLoading: false,
+              errorMessage: result.reason instanceof Error ? result.reason.message : "附件加载失败",
+            };
+          }),
+        );
+      });
+
+    return () => {
+      active = false;
+      createdObjectUrls.forEach((item) => URL.revokeObjectURL(item));
+    };
+  }, [sourceUrls]);
+
+  return items;
+}
+
+function ProtectedImageThumb(props: {
+  sourceUrl: string;
+  title: string;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  showDownloadLink?: boolean;
+}) {
+  const media = useProtectedMediaAsset(props.sourceUrl);
+
+  if (media.errorMessage) {
+    return <div className="note-empty-media">{media.errorMessage}</div>;
+  }
+
+  return (
+    <div className="note-image-card">
+      <button
+        type="button"
+        className="note-image-thumb"
+        title={props.title}
+        onClick={() => media.objectUrl && props.onPreviewMedia({ url: media.objectUrl, title: props.title })}
+        disabled={!media.objectUrl}
+      >
+        {media.objectUrl ? <img src={media.objectUrl} alt={props.title} /> : <span>{media.isLoading ? "附件加载中..." : "附件暂不可用"}</span>}
+      </button>
+      {props.showDownloadLink !== false && media.objectUrl ? (
+        <a href={media.objectUrl} download={media.fileName || undefined} className="note-data-link">
+          下载附件
+        </a>
+      ) : props.showDownloadLink !== false ? (
+        <span className="note-data-link">{media.isLoading ? "准备下载..." : "下载不可用"}</span>
+      ) : null}
+    </div>
+  );
+}
+
+function ProtectedImageGallery(props: {
+  sourceUrls: string[];
+  title: string;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+}) {
+  const mediaItems = useProtectedMediaGallery(props.sourceUrls);
+  const visibleItems = mediaItems.slice(0, 4);
+  const previewableUrls = mediaItems.map((item) => item.objectUrl).filter(Boolean);
+  const remainingCount = Math.max(props.sourceUrls.length - visibleItems.length, 0);
+
+  return (
+    <div className="note-image-card">
+      <div className="note-image-grid">
+        {visibleItems.map((item, index) => (
+          <div key={`${item.sourceUrl}-${index + 1}`} className="note-image-card">
+            <button
+              type="button"
+              className="note-image-thumb"
+              title={`${props.title} 第 ${index + 1} 张`}
+              onClick={() =>
+                item.objectUrl
+                  && props.onPreviewMedia({
+                    url: item.objectUrl,
+                    title: props.title,
+                    galleryUrls: previewableUrls,
+                    activeIndex: previewableUrls.indexOf(item.objectUrl),
+                  })}
+              disabled={!item.objectUrl}
+            >
+              {item.objectUrl ? (
+                <>
+                  <img src={item.objectUrl} alt={`${props.title} 第 ${index + 1} 张`} />
+                  {remainingCount > 0 && index === visibleItems.length - 1 ? (
+                    <span className="note-image-more-badge">+{remainingCount}</span>
+                  ) : null}
+                </>
+              ) : (
+                <span>{item.isLoading ? "附件加载中..." : item.errorMessage || "附件暂不可用"}</span>
+              )}
+            </button>
+          </div>
+        ))}
+      </div>
+      <span className="note-image-count">
+        共 {props.sourceUrls.length} 张
+      </span>
+    </div>
+  );
+}
+
+function ProtectedVideoPanel(props: {
+  sourceUrl?: string;
+}) {
+  const media = useProtectedMediaAsset(props.sourceUrl);
+
+  if (!props.sourceUrl) {
+    return null;
+  }
+
+  return (
+    <>
+      {media.objectUrl ? (
+        <div className="note-video-shell">
+          <video
+            controls
+            preload="metadata"
+            className="note-video-player"
+            src={media.objectUrl}
+          />
+        </div>
+      ) : media.errorMessage ? (
+        <div className="note-empty-media">{media.errorMessage}</div>
+      ) : (
+        <div className="note-empty-media">视频加载中...</div>
+      )}
+      <div className="note-media-actions">
+        {media.objectUrl ? (
+          <a
+            href={media.objectUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="note-data-link"
+          >
+            查看视频附件
+          </a>
+        ) : null}
+        {media.objectUrl ? (
+          <a href={media.objectUrl} download={media.fileName || undefined} className="note-data-link">
+            下载视频附件
+          </a>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
+function ProtectedVideoLink(props: {
+  sourceUrl?: string;
+  title?: string;
+  onPreviewMedia?: ValueAction<MediaPreviewState>;
+}) {
+  const media = useProtectedMediaAsset(props.onPreviewMedia ? undefined : props.sourceUrl);
+  const onPreviewMedia = props.onPreviewMedia;
+
+  if (!props.sourceUrl) {
+    return <span>-</span>;
+  }
+
+  if (!onPreviewMedia && media.errorMessage) {
+    return <span className="note-data-link">{media.errorMessage}</span>;
+  }
+
+  if (!onPreviewMedia && !media.objectUrl) {
+    return <span className="note-data-link">{media.isLoading ? "视频加载中..." : "视频暂不可用"}</span>;
+  }
+
+  if (onPreviewMedia) {
+    return (
+      <button
+        type="button"
+        className="note-data-link"
+        style={{ cursor: "pointer" }}
+        onClick={(event) => {
+          event.preventDefault();
+          void onPreviewMedia({
+            url: props.sourceUrl!,
+            title: props.title || "视频预览",
+            type: "VIDEO",
+            downloadUrl: props.sourceUrl!,
+            downloadName: buildMediaFileNameFromUrl(props.sourceUrl!),
+          });
+        }}
+      >
+        打开视频
+      </button>
+    );
+  }
+
+  return (
+    <a href={media.objectUrl} target="_blank" rel="noreferrer" className="note-data-link">
+      打开视频
+    </a>
+  );
+}
+
+function CollectionPageStatus(props: {
+  dataSource: "api" | "error" | "loading";
+  notice: string;
+  errorMessage: string;
+  isHydrating: boolean;
+}) {
+  return (
+    <div className="workspace-status" style={{ marginBottom: 16 }}>
+      <span
+        className={`archive-pill ${
+          props.dataSource === "api" ? "status-ready" : props.dataSource === "loading" ? "status-in_progress" : "status-pending"
+        }`}
+      >
+        {props.dataSource === "api" ? "接口数据" : props.dataSource === "loading" ? "加载中" : "接口异常"}
+      </span>
+      {props.isHydrating ? <span className="status-text">正在加载当前页面数据...</span> : null}
+      {!props.isHydrating && props.notice ? <span className="status-text success-text">{props.notice}</span> : null}
+      {!props.isHydrating && props.errorMessage ? <span className="status-text error-text">{props.errorMessage}</span> : null}
+    </div>
+  );
+}
+
+function useCollectionPagination<T>(items: T[], resetKey: string, initialPageSize = 20) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+  const paginatedItems = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return items.slice(startIndex, startIndex + pageSize);
+  }, [items, page, pageSize]);
+
+  useEffect(() => {
+    if (page > pageCount) {
+      setPage(pageCount);
+    }
+  }, [page, pageCount]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [resetKey]);
+
+  return {
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    pageCount,
+    paginatedItems,
+  };
+}
+
+function CollectionPaginationBar(props: {
+  totalCount: number;
+  currentCount: number;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  pageCount: number;
+  pageSize: number;
+  setPageSize: Dispatch<SetStateAction<number>>;
+  pageKeyPrefix: string;
+}) {
+  if (!props.totalCount) {
+    return null;
+  }
+
+  return (
+    <div className="note-pagination-bar">
+      <div className="note-pagination-summary">
+        <span>共 {props.totalCount} 条</span>
+        <span>
+          第 {props.page} / {props.pageCount} 页
+        </span>
+        <span>当前显示 {props.currentCount} 条</span>
+      </div>
+      <div className="note-pagination-actions">
+        <button
+          type="button"
+          className="note-inline-button"
+          onClick={() => props.setPage((current) => Math.max(1, current - 1))}
+          disabled={props.page === 1}
+        >
+          上一页
+        </button>
+        {Array.from({ length: props.pageCount }, (_, index) => index + 1).map((page) => (
+          <button
+            key={`${props.pageKeyPrefix}-page-${page}`}
+            type="button"
+            className={`note-page-button ${page === props.page ? "is-active" : ""}`}
+            onClick={() => props.setPage(page)}
+          >
+            {page}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="note-inline-button"
+          onClick={() => props.setPage((current) => Math.min(props.pageCount, current + 1))}
+          disabled={props.page === props.pageCount}
+        >
+          下一页
+        </button>
+        <label className="note-page-size-picker">
+          <span>每页</span>
+          <select
+            value={props.pageSize}
+            onChange={(event) => props.setPageSize(Number(event.target.value))}
+          >
+            {COLLECTION_PAGE_SIZE_OPTIONS.map((size) => (
+              <option key={`${props.pageKeyPrefix}-page-size-${size}`} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+          <span>个</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+const XHS_ACCOUNT_ROLE_OPTIONS: Array<{ value: XhsAccountRole; label: string; description: string }> = [
+  { value: "BRAND", label: "品牌号", description: "官方品牌主体账号，适合品牌内容与官方活动。" },
+  { value: "STAFF", label: "员工号", description: "员工或门店同事出镜账号，适合真实视角分享。" },
+  { value: "TALENT", label: "达人号", description: "达人/KOC/KOL 视角账号，适合种草合作内容。" },
+];
+
+function getXhsAccountRoleLabel(role?: XhsAccountRole) {
+  if (role === "STAFF") {
+    return "员工号";
+  }
+  if (role === "TALENT") {
+    return "达人号";
+  }
+  return "品牌号";
+}
+
+function normalizeXhsAccountEntryLocator(locator: string) {
+  const trimmed = locator.trim();
+  if (!trimmed) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+      .replace(/[#?].*$/, "")
+      .replace(/\/+$/, "")
+      .toLowerCase();
+  }
+  return trimmed.toLowerCase();
+}
+
+function buildXhsAccountEntryId(locator: string, target: "brand" | "competitor") {
+  const compact = normalizeXhsAccountEntryLocator(locator)
+    .replace(/^https?:\/\/(www\.)?/i, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 60);
+  return `xhs_${target}_account_${compact || "entry"}`;
+}
+
+function upsertXhsAccountEntries(
+  entries: XhsAccountBindingEntry[],
+  nextEntry: XhsAccountBindingEntry,
+  target: "brand" | "competitor",
+) {
+  const normalizedLocator = normalizeXhsAccountEntryLocator(nextEntry.locator);
+  if (!normalizedLocator) {
+    return entries;
+  }
+  const preparedEntry: XhsAccountBindingEntry = {
+    ...nextEntry,
+    id: nextEntry.id || buildXhsAccountEntryId(normalizedLocator, target),
+    locator: nextEntry.locator.trim(),
+  };
+  const matchedIndex = entries.findIndex((item) => normalizeXhsAccountEntryLocator(item.locator) === normalizedLocator);
+  if (matchedIndex < 0) {
+    return [...entries, preparedEntry];
+  }
+  return entries.map((item, index) => (index === matchedIndex ? { ...item, ...preparedEntry } : item));
+}
+
+function doesXhsAccountMatchEntry(account: XhsCollectedAccountRecord, entry: XhsAccountBindingEntry) {
+  const normalizedEntry = normalizeXhsAccountEntryLocator(entry.locator);
+  if (!normalizedEntry) {
+    return false;
+  }
+  const normalizedSourceLink = normalizeXhsAccountEntryLocator(account.sourceAccountLink || "");
+  const normalizedExternalUserId = normalizeXhsAccountEntryLocator(account.externalUserId || "");
+  return normalizedEntry === normalizedSourceLink || normalizedEntry === normalizedExternalUserId;
+}
+
+function buildDouyinAccountMatchTokens(value: string) {
+  const trimmed = value.trim();
+  const normalized = normalizeXhsAccountEntryLocator(trimmed);
+  if (!normalized) {
+    return [] as string[];
+  }
+
+  const tokens = new Set<string>();
+  const pushToken = (candidate?: string | null) => {
+    const normalizedCandidate = normalizeXhsAccountEntryLocator(candidate || "");
+    if (!normalizedCandidate) {
+      return;
+    }
+    tokens.add(normalizedCandidate);
+    tokens.add(normalizedCandidate.replace(/^@+/, ""));
+  };
+
+  pushToken(trimmed);
+
+  try {
+    const url = new URL(trimmed);
+    const pathSegments = url.pathname
+      .split("/")
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+    const userSegmentIndex = pathSegments.findIndex((segment) => segment.toLowerCase() === "user");
+    if (userSegmentIndex >= 0) {
+      pushToken(pathSegments[userSegmentIndex + 1]);
+    }
+    pushToken(url.searchParams.get("sec_uid"));
+    pushToken(url.searchParams.get("sec_user_id"));
+    pushToken(url.searchParams.get("uid"));
+    pushToken(url.searchParams.get("user_id"));
+  } catch {
+    // Ignore non-URL locators and rely on the raw normalized token instead.
+  }
+
+  const pathUserMatch = normalized.match(/\/user\/([^/?#]+)/i);
+  if (pathUserMatch) {
+    pushToken(pathUserMatch[1]);
+  }
+
+  return [...tokens].filter(Boolean);
+}
+
+function doesDouyinAccountMatchEntry(account: DouyinCollectedAccountRecord, entry: XhsAccountBindingEntry) {
+  const entryTokens = buildDouyinAccountMatchTokens(entry.locator);
+  if (!entryTokens.length) {
+    return false;
+  }
+  const accountTokens = new Set<string>();
+  [
+    account.sourceAccountLink,
+    account.accountLink,
+    account.externalUserId,
+    account.username,
+    account.sourceAccountId,
+    account.shortId,
+  ].forEach((value) => {
+    buildDouyinAccountMatchTokens(value || "").forEach((token) => accountTokens.add(token));
+  });
+  return entryTokens.some((token) => accountTokens.has(token));
+}
+
+function doesDouyinWorkMatchEntry(work: DouyinCollectedWorkRecord, entry: XhsAccountBindingEntry) {
+  const entryTokens = buildDouyinAccountMatchTokens(entry.locator);
+  if (!entryTokens.length) {
+    return false;
+  }
+  const workTokens = new Set<string>();
+  [
+    work.sourceAccountLink,
+    work.sourceAccountId,
+    work.externalUserId,
+    work.authorUniqueId,
+  ].forEach((value) => {
+    buildDouyinAccountMatchTokens(value || "").forEach((token) => workTokens.add(token));
+  });
+  return entryTokens.some((token) => workTokens.has(token));
+}
+
+function normalizeKeywordRecommendationKeyword(keyword: string) {
+  return keyword.trim().toLowerCase();
+}
+
+function buildKeywordRecommendationEntryId() {
+  return `douyin_keyword_${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function upsertKeywordRecommendationEntries(
+  entries: KeywordRecommendationEntry[],
+  nextEntry: KeywordRecommendationEntry,
+) {
+  const normalizedKeyword = normalizeKeywordRecommendationKeyword(nextEntry.keyword);
+  if (!normalizedKeyword) {
+    return entries;
+  }
+  const preparedEntry = {
+    ...nextEntry,
+    keyword: nextEntry.keyword.trim(),
+  };
+  const matchedIndex = entries.findIndex((item) => normalizeKeywordRecommendationKeyword(item.keyword) === normalizedKeyword);
+  if (matchedIndex < 0) {
+    return [...entries, preparedEntry];
+  }
+  return entries.map((item, index) => (index === matchedIndex ? { ...item, ...preparedEntry } : item));
+}
+
+function doesKeywordRecommendationMatchEntry(
+  item: DouyinKeywordRecommendationRecord,
+  entry: KeywordRecommendationEntry,
+) {
+  return normalizeKeywordRecommendationKeyword(item.searchKeyword) === normalizeKeywordRecommendationKeyword(entry.keyword);
+}
+
+function XhsAccountBindingSubmitPanel(props: {
+  title: string;
+  description: string;
+  modalTitle: string;
+  modalDescription: string;
+  emptyDescription: string;
+  target: "brand" | "competitor";
+  enableRoleSelection?: boolean;
+  entries: XhsAccountBindingEntry[];
+  syncedAccounts: XhsCollectedAccountRecord[];
+  isSubmitting: boolean;
+  onChangeEntries: ValueAction<XhsAccountBindingEntry[]>;
+  onSubmitEntry: ValueAction<XhsAccountBindingEntry>;
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [draftLocator, setDraftLocator] = useState("");
+  const [draftRole, setDraftRole] = useState<XhsAccountRole>("BRAND");
+
+  const handleSave = () => {
+    const trimmedLocator = draftLocator.trim();
+    if (!trimmedLocator) {
+      return;
+    }
+    props.onChangeEntries(
+      upsertXhsAccountEntries(props.entries, {
+        id: buildXhsAccountEntryId(trimmedLocator, props.target),
+        locator: trimmedLocator,
+        accountRole: props.enableRoleSelection ? draftRole : undefined,
+      }, props.target),
+    );
+    setDraftLocator("");
+    setDraftRole("BRAND");
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = (entryId: string) => {
+    props.onChangeEntries(props.entries.filter((item) => item.id !== entryId));
+  };
+
+  return (
+    <>
+      <article className="light-data-panel xhs-account-builder" style={{ marginBottom: 16 }}>
+        <div className="collection-result-head">
+          <div>
+            <h3>{props.title}</h3>
+            <p>{props.description}</p>
+          </div>
+          <button type="button" className="secondary-button" onClick={() => setIsModalOpen(true)} disabled={props.isSubmitting}>
+            添加账号
+          </button>
+        </div>
+        {props.entries.length ? (
+          <div className="xhs-account-entry-list">
+            {props.entries.map((entry) => {
+              const matchedAccount = props.syncedAccounts.find((item) => doesXhsAccountMatchEntry(item, entry));
+              const hasSyncedResult = hasCollectedXhsAccountProfile(matchedAccount);
+              return (
+                <div key={entry.id} className="xhs-account-entry-row">
+                  <div className="xhs-account-entry-row__body">
+                    <div className="xhs-account-entry-row__meta">
+                      {props.enableRoleSelection ? (
+                        <span className="xhs-account-role-badge">{getXhsAccountRoleLabel(entry.accountRole)}</span>
+                      ) : null}
+                      <span className={`archive-pill ${hasSyncedResult ? "status-ready" : "status-pending"}`}>
+                        {hasSyncedResult ? "已采集" : "待提交"}
+                      </span>
+                    </div>
+                    {matchedAccount?.accountName ? <strong>{matchedAccount.accountName}</strong> : null}
+                    <strong>{entry.locator}</strong>
+                  </div>
+                  <div className="xhs-account-entry-row__actions">
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void props.onSubmitEntry(entry)}
+                      disabled={props.isSubmitting}
+                    >
+                      {props.isSubmitting ? "提交中..." : "提交"}
+                    </button>
+                    <button
+                      type="button"
+                      className="note-inline-button"
+                      onClick={() => handleDelete(entry.id)}
+                      disabled={props.isSubmitting}
+                    >
+                      删除
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="xhs-account-entry-empty">
+            {props.emptyDescription}
+          </div>
+        )}
+      </article>
+      {isModalOpen ? (
+        <div className="xhs-account-modal-backdrop" role="dialog" aria-modal="true" onClick={() => setIsModalOpen(false)}>
+          <div className="xhs-account-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="xhs-account-modal__head">
+              <div>
+                <strong>{props.modalTitle}</strong>
+                <p>{props.modalDescription}</p>
+              </div>
+              <button type="button" className="xhs-account-modal__close" onClick={() => setIsModalOpen(false)}>
+                关闭
+              </button>
+            </div>
+            {props.enableRoleSelection ? (
+              <div className="xhs-account-role-grid">
+                {XHS_ACCOUNT_ROLE_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`xhs-account-role-card ${draftRole === option.value ? "is-active" : ""}`}
+                    onClick={() => setDraftRole(option.value)}
+                  >
+                    <strong>{option.label}</strong>
+                    <span>{option.description}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <label className="field">
+              <span>账号链接或 user_id</span>
+              <input
+                value={draftLocator}
+                onChange={(event) => setDraftLocator(event.target.value)}
+                placeholder="请输入主页链接、分享链接或 user_id"
+              />
+            </label>
+            <div className="xhs-account-modal__actions">
+              <button type="button" className="secondary-button" onClick={() => setIsModalOpen(false)}>
+                取消
+              </button>
+              <button type="button" className="primary-button" onClick={handleSave} disabled={!draftLocator.trim()}>
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function DouyinAccountBindingSubmitPanel(props: {
+  title: string;
+  description: string;
+  modalTitle: string;
+  modalDescription: string;
+  emptyDescription: string;
+  target: "brand" | "competitor";
+  enableRoleSelection?: boolean;
+  entries: XhsAccountBindingEntry[];
+  syncedAccounts: DouyinCollectedAccountRecord[];
+  isSubmitting: boolean;
+  deletingAccountId?: string;
+  onChangeEntries: ValueAction<XhsAccountBindingEntry[]>;
+  onSubmitEntry: ValueAction<XhsAccountBindingEntry>;
+  onDeleteSyncedAccount: ValueAction<DouyinCollectedAccountRecord>;
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [draftLocator, setDraftLocator] = useState("");
+  const [draftRole, setDraftRole] = useState<XhsAccountRole>("BRAND");
+
+  const handleSave = () => {
+    const trimmedLocator = draftLocator.trim();
+    if (!trimmedLocator) {
+      return;
+    }
+    props.onChangeEntries(
+      upsertXhsAccountEntries(props.entries, {
+        id: buildXhsAccountEntryId(trimmedLocator, props.target),
+        locator: trimmedLocator,
+        accountRole: props.enableRoleSelection ? draftRole : undefined,
+      }, props.target),
+    );
+    setDraftLocator("");
+    setDraftRole("BRAND");
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = async (entry: XhsAccountBindingEntry, matchedAccount?: DouyinCollectedAccountRecord) => {
+    if (matchedAccount) {
+      await props.onDeleteSyncedAccount(matchedAccount);
+      return;
+    }
+    props.onChangeEntries(props.entries.filter((item) => item.id !== entry.id));
+  };
+
+  return (
+    <>
+      <article className="light-data-panel xhs-account-builder" style={{ marginBottom: 16 }}>
+        <div className="collection-result-head">
+          <div>
+            <h3>{props.title}</h3>
+            <p>{props.description}</p>
+          </div>
+          <button type="button" className="secondary-button" onClick={() => setIsModalOpen(true)} disabled={props.isSubmitting}>
+            添加账号
+          </button>
+        </div>
+        {props.entries.length ? (
+          <div className="xhs-account-entry-list">
+            {props.entries.map((entry) => {
+              const matchedAccount = props.syncedAccounts.find((item) => doesDouyinAccountMatchEntry(item, entry));
+              const hasSyncedResult = hasCollectedDouyinAccountProfile(matchedAccount);
+              return (
+                <div key={entry.id} className="xhs-account-entry-row">
+                  <div className="xhs-account-entry-row__body">
+                    <div className="xhs-account-entry-row__meta">
+                      {props.enableRoleSelection ? (
+                        <span className="xhs-account-role-badge">{getXhsAccountRoleLabel(entry.accountRole)}</span>
+                      ) : null}
+                      <span className={`archive-pill ${hasSyncedResult ? "status-ready" : "status-pending"}`}>
+                        {hasSyncedResult ? "已采集" : "待提交"}
+                      </span>
+                    </div>
+                    {matchedAccount?.accountName ? <strong>{matchedAccount.accountName}</strong> : null}
+                    <strong>{entry.locator}</strong>
+                  </div>
+                  <div className="xhs-account-entry-row__actions">
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void props.onSubmitEntry(entry)}
+                      disabled={props.isSubmitting}
+                    >
+                      {props.isSubmitting ? "提交中..." : "提交"}
+                    </button>
+                    <button
+                      type="button"
+                      className="note-inline-button"
+                      onClick={() => void handleDelete(entry, matchedAccount)}
+                      disabled={props.isSubmitting || (matchedAccount ? props.deletingAccountId === matchedAccount.id : false)}
+                    >
+                      {matchedAccount && props.deletingAccountId === matchedAccount.id ? "删除中..." : "删除"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="xhs-account-entry-empty">
+            {props.emptyDescription}
+          </div>
+        )}
+      </article>
+      {isModalOpen ? (
+        <div className="xhs-account-modal-backdrop" role="dialog" aria-modal="true" onClick={() => setIsModalOpen(false)}>
+          <div className="xhs-account-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="xhs-account-modal__head">
+              <div>
+                <strong>{props.modalTitle}</strong>
+                <p>{props.modalDescription}</p>
+              </div>
+              <button type="button" className="xhs-account-modal__close" onClick={() => setIsModalOpen(false)}>
+                关闭
+              </button>
+            </div>
+            {props.enableRoleSelection ? (
+              <div className="xhs-account-role-grid">
+                {XHS_ACCOUNT_ROLE_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={`xhs-account-role-card ${draftRole === option.value ? "is-active" : ""}`}
+                    onClick={() => setDraftRole(option.value)}
+                  >
+                    <strong>{option.label}</strong>
+                    <span>{option.description}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <label className="field">
+              <span>账号链接或抖音号</span>
+              <input
+                value={draftLocator}
+                onChange={(event) => setDraftLocator(event.target.value)}
+                placeholder="请输入主页链接、分享链接、sec_uid 或抖音号"
+              />
+            </label>
+            <div className="xhs-account-modal__actions">
+              <button type="button" className="secondary-button" onClick={() => setIsModalOpen(false)}>
+                取消
+              </button>
+              <button type="button" className="primary-button" onClick={handleSave} disabled={!draftLocator.trim()}>
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function DouyinKeywordRecommendationBuilder(props: {
+  entries: KeywordRecommendationEntry[];
+  results: DouyinKeywordRecommendationRecord[];
+  isSubmitting: boolean;
+  onChangeEntries: ValueAction<KeywordRecommendationEntry[]>;
+  onSubmitEntry: ValueAction<string>;
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [draftKeyword, setDraftKeyword] = useState("");
+  const [historyKeyword, setHistoryKeyword] = useState("");
+
+  const handleSave = () => {
+    const trimmedKeyword = draftKeyword.trim();
+    if (!trimmedKeyword) {
+      return;
+    }
+    props.onChangeEntries(
+      upsertKeywordRecommendationEntries(props.entries, {
+        id: buildKeywordRecommendationEntryId(),
+        keyword: trimmedKeyword,
+      }),
+    );
+    setDraftKeyword("");
+    setIsModalOpen(false);
+  };
+
+  const handleDelete = (entryId: string) => {
+    props.onChangeEntries(props.entries.filter((item) => item.id !== entryId));
+  };
+
+  const historyItems = historyKeyword
+    ? props.results.filter((item) => normalizeKeywordRecommendationKeyword(item.searchKeyword) === normalizeKeywordRecommendationKeyword(historyKeyword))
+    : [];
+
+  return (
+    <>
+      <article className="light-data-panel xhs-account-builder keyword-recommendation-builder">
+        <div className="collection-result-head">
+          <div>
+            <h3>关键词推荐</h3>
+            <p>延续品牌账号信息的轻卡片管理方式，先维护关键词池，再按需逐条提交获取推荐词结果。</p>
+          </div>
+          <button type="button" className="secondary-button" onClick={() => setIsModalOpen(true)} disabled={props.isSubmitting}>
+            添加关键词
+          </button>
+        </div>
+        {props.entries.length ? (
+          <div className="keyword-recommendation-entry-grid">
+            {props.entries.map((entry) => {
+              const hasSyncedResult = props.results.some((item) => doesKeywordRecommendationMatchEntry(item, entry));
+              return (
+                <article key={entry.id} className="keyword-recommendation-entry-card">
+                  <div className="keyword-recommendation-entry-card__head">
+                    <span className={`archive-pill ${hasSyncedResult ? "status-ready" : "status-pending"}`}>
+                      {hasSyncedResult ? "已回填" : "待提交"}
+                    </span>
+                    <span className="keyword-recommendation-entry-card__meta">
+                      历史 {props.results.filter((item) => doesKeywordRecommendationMatchEntry(item, entry)).length} 条
+                    </span>
+                  </div>
+                  <strong>{entry.keyword}</strong>
+                  <div className="keyword-recommendation-entry-card__actions">
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void props.onSubmitEntry(entry.keyword)}
+                      disabled={props.isSubmitting}
+                    >
+                      {props.isSubmitting ? "提交中..." : "提交"}
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => setHistoryKeyword(entry.keyword)}
+                    >
+                      查看
+                    </button>
+                    <button
+                      type="button"
+                      className="note-inline-button"
+                      onClick={() => handleDelete(entry.id)}
+                      disabled={props.isSubmitting}
+                    >
+                      删除
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="xhs-account-entry-empty">
+            当前还没有添加推荐关键词，请先新增关键词后再逐条提交。
+          </div>
+        )}
+      </article>
+      {isModalOpen ? (
+        <div className="xhs-account-modal-backdrop" role="dialog" aria-modal="true" onClick={() => setIsModalOpen(false)}>
+          <div className="xhs-account-modal keyword-recommendation-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="xhs-account-modal__head">
+              <div>
+                <strong>添加关键词</strong>
+                <p>保存后进入待提交列表。每个关键词都支持单独提交并回填推荐结果。</p>
+              </div>
+              <button type="button" className="xhs-account-modal__close" onClick={() => setIsModalOpen(false)}>
+                关闭
+              </button>
+            </div>
+            <label className="field">
+              <span>关键词</span>
+              <input
+                value={draftKeyword}
+                onChange={(event) => setDraftKeyword(event.target.value)}
+                placeholder="请输入搜索关键词，例如：生日蛋糕、轻食沙拉、门店探店"
+              />
+            </label>
+            <div className="xhs-account-modal__actions">
+              <button type="button" className="secondary-button" onClick={() => setIsModalOpen(false)}>
+                取消
+              </button>
+              <button type="button" className="primary-button" onClick={handleSave} disabled={!draftKeyword.trim()}>
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {historyKeyword ? (
+        <div className="xhs-account-modal-backdrop" role="dialog" aria-modal="true" onClick={() => setHistoryKeyword("")}>
+          <div className="xhs-account-modal keyword-recommendation-history-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="xhs-account-modal__head">
+              <div>
+                <strong>历史记录</strong>
+                <p>关键词“{historyKeyword}”的历史推荐结果按时间倒序展示，最新结果排在最前面。</p>
+              </div>
+              <button type="button" className="xhs-account-modal__close" onClick={() => setHistoryKeyword("")}>
+                关闭
+              </button>
+            </div>
+            {historyItems.length ? (
+              <div className="keyword-recommendation-table keyword-recommendation-table--history">
+                <div className="keyword-recommendation-table__head">
+                  <span>搜索关键词</span>
+                  <span>推荐关键词</span>
+                  <span>搜索时间</span>
+                </div>
+                <div className="keyword-recommendation-table__body">
+                  {historyItems.map((item) => (
+                    <div key={item.id} className="keyword-recommendation-table__row">
+                      <strong>{item.searchKeyword || "-"}</strong>
+                      <strong>{item.recommendedKeyword || "-"}</strong>
+                      <strong>{item.searchTime || item.collectedAt || "-"}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="note-empty-state">当前关键词还没有历史记录，请先提交一次再查看。</div>
+            )}
+          </div>
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function DouyinKeywordRecommendationResults(props: {
+  items: DouyinKeywordRecommendationRecord[];
+  deletingItemId: string;
+  onDelete: ValueAction<string>;
+}) {
+  return (
+    <article className="light-data-panel">
+      <div className="collection-result-head">
+        <div>
+          <h3>关键词推荐结果</h3>
+          <p>调用采集接口回填搜索关键词、推荐关键词和搜索时间。</p>
+        </div>
+      </div>
+      {props.items.length ? (
+        <div className="keyword-recommendation-table">
+          <div className="keyword-recommendation-table__head keyword-recommendation-table__head--with-action">
+            <span>搜索关键词</span>
+            <span>推荐关键词</span>
+            <span>搜索时间</span>
+            <span>操作</span>
+          </div>
+          <div className="keyword-recommendation-table__body">
+            {props.items.map((item) => (
+              <div key={item.id} className="keyword-recommendation-table__row keyword-recommendation-table__row--with-action">
+                <strong>{item.searchKeyword || "-"}</strong>
+                <strong>{item.recommendedKeyword || "-"}</strong>
+                <strong>{item.searchTime || "-"}</strong>
+                <div className="keyword-recommendation-table__action">
+                  <button
+                    type="button"
+                    className="note-inline-button"
+                    onClick={() => void props.onDelete(item.id)}
+                    disabled={props.deletingItemId === item.id}
+                  >
+                    {props.deletingItemId === item.id ? "删除中..." : "删除"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="note-empty-state">当前还没有关键词推荐结果，请先提交右侧关键词。</div>
+      )}
+    </article>
+  );
+}
+
+function DouyinFieldPreviewTable(props: {
+  rows: DouyinFieldPreviewRow[];
+}) {
+  return (
+    <div className="collection-field-preview">
+      <table className="soft-table compact-table">
+        <thead>
+          <tr>
+            <th>字段</th>
+            <th>含义</th>
+            <th>来源接口</th>
+            <th>原始路径</th>
+            <th>必需</th>
+            <th>统计补丁</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.rows.map((row) => (
+            <tr key={`${row.field}-${row.path}`}>
+              <td><code>{row.field}</code></td>
+              <td>{row.label}</td>
+              <td>{row.source}</td>
+              <td><code>{row.path}</code></td>
+              <td>{row.required}</td>
+              <td>{row.patch}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function DouyinAccountPreviewCard(props: {
+  item: DouyinCollectedAccountRecord;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+}) {
+  const item = props.item;
+  return (
+    <article className="collection-sync-card">
+      <div className="collection-sync-head">
+        <div className="collection-sync-title">
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {item.avatar ? (
+              <img
+                src={item.avatar}
+                alt={item.accountName || "抖音头像"}
+                style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+              />
+            ) : null}
+            <div>
+              <strong>{item.accountName || "-"}</strong>
+              <div className="personal-meta">{item.username || item.shortId || "未提供抖音号"}</div>
+            </div>
+          </div>
+          <span>
+            {item.accountLink ? (
+              <a href={item.accountLink} target="_blank" rel="noreferrer">
+                {item.accountLink}
+              </a>
+            ) : (
+              "未提供主页链接"
+            )}
+          </span>
+        </div>
+        <span className="collection-sync-time">{props.formatDateTime(item.collectedAt)}</span>
+      </div>
+      <div className="collection-sync-grid">
+        <div className="collection-sync-item">
+          <span>sec_uid</span>
+          <strong className="collection-sync-code">{item.sourceAccountId}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>用户 ID</span>
+          <strong className="collection-sync-code">{item.externalUserId || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>抖音号</span>
+          <strong>{item.username || item.shortId || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作品数</span>
+          <strong>{props.formatCount(item.postedCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>粉丝数</span>
+          <strong>{props.formatCount(item.fanCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>获赞数</span>
+          <strong>{props.formatCount(item.likedCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>关注数</span>
+          <strong>{props.formatCount(item.followCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>IP 属地</span>
+          <strong>{item.ipLocation || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>认证信息</span>
+          <strong>{item.enterpriseVerifyReason || item.customVerify || "-"}</strong>
+        </div>
+        <div className="collection-sync-item collection-sync-item--full">
+          <span>账号简介</span>
+          <strong>{item.description || "未提供简介"}</strong>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function DouyinWorkPreviewCard(props: {
+  item: DouyinCollectedWorkRecord;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+}) {
+  const item = props.item;
+  const hashtagText = item.hashtags?.length ? item.hashtags.join(" / ") : "无";
+  return (
+    <article className="collection-sync-card">
+      <div className="collection-sync-head">
+        <div className="collection-sync-title">
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {item.authorAvatar ? (
+              <img
+                src={item.authorAvatar}
+                alt={item.authorName || "作者头像"}
+                style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+              />
+            ) : null}
+            <div>
+              <strong>{item.title || "-"}</strong>
+              <div className="personal-meta">{item.authorName || "-"}</div>
+            </div>
+          </div>
+          <span>
+            {item.workUrl ? (
+              <a href={item.workUrl} target="_blank" rel="noreferrer">
+                {item.workUrl}
+              </a>
+            ) : (
+              "未提供作品链接"
+            )}
+          </span>
+        </div>
+        <div className="collection-sync-actions">
+          <span className="collection-sync-time">{props.formatDateTime(item.collectedAt)}</span>
+          {item.statsPatched ? <span className="archive-pill status-ready">统计已补丁</span> : null}
+        </div>
+      </div>
+      <div className="collection-sync-grid">
+        <div className="collection-sync-item">
+          <span>作品 ID</span>
+          <strong className="collection-sync-code">{item.workId}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作品类型</span>
+          <strong>{item.workType || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>媒体类型</span>
+          <strong>{item.mediaType ?? "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作者</span>
+          <strong>{item.authorName || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作者抖音号</span>
+          <strong>{item.authorUniqueId || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>发布时间</span>
+          <strong>{item.publishTimeText || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>时长</span>
+          <strong>{item.durationMs ?? "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>播放</span>
+          <strong>{props.formatCount(item.playCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>点赞</span>
+          <strong>{props.formatCount(item.likeCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>评论</span>
+          <strong>{props.formatCount(item.commentCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>收藏</span>
+          <strong>{props.formatCount(item.collectCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>分享</span>
+          <strong>{props.formatCount(item.shareCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>下载</span>
+          <strong>{props.formatCount(item.downloadCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>推荐</span>
+          <strong>{props.formatCount(item.recommendCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>赞藏率</span>
+          <strong>{props.formatMetric(item.likeCollectRatio)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>分享率</span>
+          <strong>{props.formatMetric(item.shareRatio)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>配乐</span>
+          <strong>{item.musicTitle || "-"}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作者粉丝</span>
+          <strong>{props.formatCount(item.authorFollowerCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>作者总获赞</span>
+          <strong>{props.formatCount(item.authorLikedCount)}</strong>
+        </div>
+        <div className="collection-sync-item">
+          <span>爆款判断</span>
+          <strong>{item.isExplosive || "-"}</strong>
+        </div>
+        <div className="collection-sync-item collection-sync-item--full">
+          <span>话题标签</span>
+          <strong>{hashtagText}</strong>
+        </div>
+        <div className="collection-sync-item collection-sync-item--full">
+          <span>正文摘要</span>
+          <strong>{item.description || "暂无正文内容"}</strong>
+        </div>
+        {item.coverUrl ? (
+          <div className="collection-sync-item collection-sync-item--full">
+            <span>封面</span>
+            <a href={item.coverUrl} target="_blank" rel="noreferrer" className="note-data-link">
+              查看封面
+            </a>
+          </div>
+        ) : null}
+        {item.videoUrl ? (
+          <div className="collection-sync-item collection-sync-item--full">
+            <span>视频地址</span>
+            <ProtectedVideoLink
+              sourceUrl={item.videoUrl}
+              title={item.title || item.workId || "抖音视频预览"}
+              onPreviewMedia={props.onPreviewMedia}
+            />
+          </div>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+function DouyinSubmitPanel(props: {
+  title: string;
+  value: string;
+  placeholder: string;
+  isSubmitting: boolean;
+  onChange: ValueAction<string>;
+  onSubmit: AsyncAction;
+}) {
+  return (
+    <article className="light-data-panel" style={{ marginBottom: 16 }}>
+      <div className="collection-result-head">
+        <div>
+          <h3>{props.title}</h3>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "提交"}
+        </button>
+      </div>
+      <label className="field">
+        <textarea
+          rows={4}
+          value={props.value}
+          onChange={(event) => props.onChange(event.target.value)}
+          placeholder={props.placeholder}
+        />
+      </label>
+    </article>
+  );
+}
+
+function CommentTargetUserExtractPanel(props: {
+  title: string;
+  description: string;
+  matchKeywords: string;
+  placeholder: string;
+  isSubmitting: boolean;
+  onChangeMatchKeywords: ValueAction<string>;
+  onSubmit: AsyncAction;
+}) {
+  return (
+    <article className="light-data-panel" style={{ marginBottom: 16 }}>
+      <div className="collection-result-head">
+        <div>
+          <h3>{props.title}</h3>
+          <p>{props.description}</p>
+        </div>
+        <button type="button" className="secondary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提取中..." : "提取账号链接"}
+        </button>
+      </div>
+      <label className="field">
+        <span>匹配关键词（选填）</span>
+        <textarea
+          rows={3}
+          value={props.matchKeywords}
+          onChange={(event) => props.onChangeMatchKeywords(event.target.value)}
+          placeholder={props.placeholder}
+        />
+      </label>
+    </article>
+  );
+}
+
+function DouyinSearchSubmitPanel(props: {
+  title: string;
+  value: string;
+  placeholder: string;
+  isSubmitting: boolean;
+  sortType: string;
+  publishTime: string;
+  filterDuration: string;
+  contentType: string;
+  onChange: ValueAction<string>;
+  onChangeFilters: ValueAction<{
+    sortType: string;
+    publishTime: string;
+    filterDuration: string;
+    contentType: string;
+  }>;
+  onSubmit: AsyncAction;
+}) {
+  return (
+    <article className="light-data-panel" style={{ marginBottom: 16 }}>
+      <div className="collection-result-head">
+        <div>
+          <h3>{props.title}</h3>
+          <p>支持排序方式、发布时间、视频时长和内容类型筛选，帮助更快锁定目标搜索结果。</p>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "提交"}
+        </button>
+      </div>
+      <label className="field">
+        <textarea
+          rows={4}
+          value={props.value}
+          onChange={(event) => props.onChange(event.target.value)}
+          placeholder={props.placeholder}
+        />
+      </label>
+      <div className="form-grid two-column" style={{ marginTop: 16 }}>
+        <label className="field">
+          <span>排序方式</span>
+          <select
+            value={props.sortType}
+            onChange={(event) =>
+              props.onChangeFilters({
+                sortType: event.target.value,
+                publishTime: props.publishTime,
+                filterDuration: props.filterDuration,
+                contentType: props.contentType,
+              })}
+          >
+            {DOUYIN_SEARCH_SORT_OPTIONS.map((item) => (
+              <option key={`douyin-search-sort-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>发布时间</span>
+          <select
+            value={props.publishTime}
+            onChange={(event) =>
+              props.onChangeFilters({
+                sortType: props.sortType,
+                publishTime: event.target.value,
+                filterDuration: props.filterDuration,
+                contentType: props.contentType,
+              })}
+          >
+            {DOUYIN_SEARCH_PUBLISH_TIME_OPTIONS.map((item) => (
+              <option key={`douyin-search-publish-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>视频时长</span>
+          <select
+            value={props.filterDuration}
+            onChange={(event) =>
+              props.onChangeFilters({
+                sortType: props.sortType,
+                publishTime: props.publishTime,
+                filterDuration: event.target.value,
+                contentType: props.contentType,
+              })}
+          >
+            {DOUYIN_SEARCH_DURATION_OPTIONS.map((item) => (
+              <option key={`douyin-search-duration-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>内容类型</span>
+          <select
+            value={props.contentType}
+            onChange={(event) =>
+              props.onChangeFilters({
+                sortType: props.sortType,
+                publishTime: props.publishTime,
+                filterDuration: props.filterDuration,
+                contentType: event.target.value,
+              })}
+          >
+            {DOUYIN_SEARCH_CONTENT_TYPE_OPTIONS.map((item) => (
+              <option key={`douyin-search-content-type-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+    </article>
+  );
+}
+
+function DouyinCategorySubmitPanel(props: {
+  title: string;
+  tags: DouyinContentTagOption[];
+  value: {
+    primaryTagId: string;
+    secondaryTagId: string;
+  };
+  isSubmitting: boolean;
+  onChange: ValueAction<{
+    primaryTagId: string;
+    secondaryTagId: string;
+  }>;
+  onSubmit: AsyncAction;
+}) {
+  const selectedPrimaryTag = props.tags.find((item) => String(item.value) === props.value.primaryTagId);
+  const secondaryTags = selectedPrimaryTag?.children ?? [];
+
+  return (
+    <article className="light-data-panel" style={{ marginBottom: 16 }}>
+      <div className="collection-result-head">
+        <div>
+          <h3>{props.title}</h3>
+          <p>先选择一级分类和二级分类，再提交当前榜单采集。</p>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "提交"}
+        </button>
+      </div>
+      <div className="form-grid two-column">
+        <label className="field">
+          <span>一级分类</span>
+          <select
+            value={props.value.primaryTagId}
+            onChange={(event) =>
+              props.onChange({
+                primaryTagId: event.target.value,
+                secondaryTagId: "",
+              })
+            }
+          >
+            <option value="">请选择一级分类</option>
+            {props.tags.map((item) => (
+              <option key={`douyin-primary-tag-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>二级分类</span>
+          <select
+            value={props.value.secondaryTagId}
+            onChange={(event) =>
+              props.onChange({
+                primaryTagId: props.value.primaryTagId,
+                secondaryTagId: event.target.value,
+              })
+            }
+            disabled={!selectedPrimaryTag}
+          >
+            <option value="">{selectedPrimaryTag ? "请选择二级分类" : "请先选择一级分类"}</option>
+            {secondaryTags.map((item) => (
+              <option key={`douyin-secondary-tag-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+    </article>
+  );
+}
+
+function DouyinCitySubmitPanel(props: {
+  title: string;
+  cities: DouyinCityOption[];
+  value: {
+    cityCode: string;
+  };
+  isSubmitting: boolean;
+  onChange: ValueAction<{
+    cityCode: string;
+  }>;
+  onSubmit: AsyncAction;
+}) {
+  return (
+    <article className="light-data-panel" style={{ marginBottom: 16 }}>
+      <div className="collection-result-head">
+        <div>
+          <h3>{props.title}</h3>
+          <p>先选择城市，再提交同城热点榜采集。返回的是近一小时内的热点变化数据。</p>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "提交"}
+        </button>
+      </div>
+      <div className="form-grid two-column">
+        <label className="field">
+          <span>城市</span>
+          <select
+            value={props.value.cityCode}
+            onChange={(event) => props.onChange({ cityCode: event.target.value })}
+          >
+            <option value="">请选择城市</option>
+            {props.cities.map((item) => (
+              <option key={`douyin-city-option-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+    </article>
+  );
+}
+
+function DouyinCreatorSearchSubmitPanel(props: {
+  value: BrandGrowthCollectionWorkspaceProps["douyinSyncForm"]["creatorSearch"];
+  onChange: ValueAction<BrandGrowthCollectionWorkspaceProps["douyinSyncForm"]["creatorSearch"]>;
+  options: BrandGrowthCollectionWorkspaceProps["creatorSearchFieldOptions"];
+  isSubmitting: boolean;
+  onSubmit: AsyncAction;
+}) {
+  const isContentSearch = props.value.seachType === "3";
+  return (
+    <article className="light-data-panel">
+      <div className="collection-result-head">
+        <div>
+          <h3>达人搜索抓取</h3>
+          <p>按关键词、行业和核心商业指标抓取达人基础信息，第一期只做搜索结果沉淀，不做分析判断。</p>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "提交"}
+        </button>
+      </div>
+      <div className="form-grid two-column">
+        <label className="field">
+          <span>关键词</span>
+          <input
+            value={props.value.keyword}
+            onChange={(event) => props.onChange({ ...props.value, keyword: event.target.value })}
+            placeholder="例如：烘焙、美妆探店、母婴达人"
+          />
+        </label>
+        <label className="field">
+          <span>搜索类型</span>
+          <select
+            value={props.value.seachType}
+            onChange={(event) => props.onChange({ ...props.value, seachType: event.target.value })}
+          >
+            {props.options.searchTypes.map((item) => (
+              <option key={`creator-search-type-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>内容时间范围</span>
+          <select
+            value={props.value.timeRangeDays}
+            onChange={(event) => props.onChange({ ...props.value, timeRangeDays: event.target.value })}
+            disabled={!isContentSearch}
+          >
+            {props.options.timeRangeDays.map((item) => (
+              <option key={`creator-time-range-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>排序字段</span>
+          <select
+            value={props.value.sortField}
+            onChange={(event) => props.onChange({ ...props.value, sortField: event.target.value })}
+          >
+            {props.options.sortFields.map((item) => (
+              <option key={`creator-sort-field-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>排序方向</span>
+          <select
+            value={props.value.sortType}
+            onChange={(event) => props.onChange({ ...props.value, sortType: event.target.value })}
+          >
+            {props.options.sortTypes.map((item) => (
+              <option key={`creator-sort-type-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>一级行业</span>
+          <select
+            value={props.value.firstIndustryId}
+            onChange={(event) => props.onChange({ ...props.value, firstIndustryId: event.target.value })}
+          >
+            <option value="">请选择一级行业</option>
+            {props.options.firstIndustries.map((item) => (
+              <option key={`creator-first-industry-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>营销目标</span>
+          <select
+            value={props.value.marketingTarget}
+            onChange={(event) => props.onChange({ ...props.value, marketingTarget: event.target.value })}
+          >
+            <option value="">请选择营销目标</option>
+            {props.options.marketingTargets.map((item) => (
+              <option key={`creator-marketing-target-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>任务分类</span>
+          <select
+            value={props.value.taskCategory}
+            onChange={(event) => props.onChange({ ...props.value, taskCategory: event.target.value })}
+          >
+            <option value="">请选择任务分类</option>
+            {props.options.taskCategories.map((item) => (
+              <option key={`creator-task-category-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>达人标签</span>
+          <select
+            value={props.value.tag}
+            onChange={(event) => props.onChange({ ...props.value, tag: event.target.value })}
+          >
+            <option value="">请选择达人标签</option>
+            {props.options.tags.map((item) => (
+              <option key={`creator-tag-${item.value}`} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>粉丝数区间</span>
+          <div className="field-inline">
+            <input
+              value={props.value.fansMin}
+              onChange={(event) => props.onChange({ ...props.value, fansMin: event.target.value })}
+              placeholder="最小值"
+            />
+            <input
+              value={props.value.fansMax}
+              onChange={(event) => props.onChange({ ...props.value, fansMax: event.target.value })}
+              placeholder="最大值"
+            />
+          </div>
+        </label>
+        <label className="field">
+          <span>预估播放区间</span>
+          <div className="field-inline">
+            <input
+              value={props.value.expectedPlayMin}
+              onChange={(event) => props.onChange({ ...props.value, expectedPlayMin: event.target.value })}
+              placeholder="最小值"
+            />
+            <input
+              value={props.value.expectedPlayMax}
+              onChange={(event) => props.onChange({ ...props.value, expectedPlayMax: event.target.value })}
+              placeholder="最大值"
+            />
+          </div>
+        </label>
+        <label className="field">
+          <span>互动率区间</span>
+          <div className="field-inline">
+            <input
+              value={props.value.interactRateMin}
+              onChange={(event) => props.onChange({ ...props.value, interactRateMin: event.target.value })}
+              placeholder="最小值"
+            />
+            <input
+              value={props.value.interactRateMax}
+              onChange={(event) => props.onChange({ ...props.value, interactRateMax: event.target.value })}
+              placeholder="最大值"
+            />
+          </div>
+        </label>
+        <label className="field">
+          <span>报价区间</span>
+          <div className="field-inline">
+            <input
+              value={props.value.priceMin}
+              onChange={(event) => props.onChange({ ...props.value, priceMin: event.target.value })}
+              placeholder="最小值"
+            />
+            <input
+              value={props.value.priceMax}
+              onChange={(event) => props.onChange({ ...props.value, priceMax: event.target.value })}
+              placeholder="最大值"
+            />
+          </div>
+        </label>
+      </div>
+    </article>
+  );
+}
+
+function DouyinCreatorDeepFetchSubmitPanel(props: {
+  value: BrandGrowthCollectionWorkspaceProps["douyinSyncForm"]["creatorDeepFetch"];
+  onChange: ValueAction<BrandGrowthCollectionWorkspaceProps["douyinSyncForm"]["creatorDeepFetch"]>;
+  isSubmitting: boolean;
+  onSubmit: AsyncAction;
+}) {
+  const identityOptions: DouyinCreatorIdentityType[] = ["AUTO", "O_AUTHOR_ID", "UID", "SEC_USER_ID", "UNIQUE_ID"];
+  return (
+    <article className="light-data-panel">
+      <div className="collection-result-head">
+        <div>
+          <h3>达人深度抓取</h3>
+          <p>输入达人标识批量创建深抓任务，后台异步拉达人画像、热词和主页作品摘要，工作台自动刷新任务进度。</p>
+        </div>
+        <button type="button" className="primary-button" onClick={() => void props.onSubmit()} disabled={props.isSubmitting}>
+          {props.isSubmitting ? "提交中..." : "创建任务"}
+        </button>
+      </div>
+      <div className="form-grid two-column">
+        <label className="field field-span-2">
+          <span>达人标识</span>
+          <textarea
+            value={props.value.identifiers}
+            onChange={(event) => props.onChange({ ...props.value, identifiers: event.target.value })}
+            placeholder="每行一个标识，可填星图达人ID、UID、sec_user_id 或抖音号"
+            rows={5}
+          />
+        </label>
+        <label className="field">
+          <span>标识类型</span>
+          <select
+            value={props.value.identityType}
+            onChange={(event) => props.onChange({ ...props.value, identityType: event.target.value as DouyinCreatorIdentityType })}
+          >
+            {identityOptions.map((item) => (
+              <option key={`creator-identity-${item}`} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="field">
+          <span>linkType</span>
+          <input
+            value={props.value.linkType}
+            onChange={(event) => props.onChange({ ...props.value, linkType: event.target.value })}
+            placeholder="可选"
+          />
+        </label>
+        <label className="field">
+          <span>主页抓取页数</span>
+          <input
+            value={props.value.homepageVideoPageLimit}
+            onChange={(event) => props.onChange({ ...props.value, homepageVideoPageLimit: event.target.value })}
+            placeholder="默认 1，最多 5"
+          />
+        </label>
+      </div>
+    </article>
+  );
+}
+
+function getDouyinCreatorTaskStatusLabel(status: DouyinCreatorDeepFetchTaskRecord["taskStatus"]) {
+  switch (status) {
+    case "PENDING":
+      return "待执行";
+    case "QUEUED":
+      return "已排队";
+    case "RUNNING":
+      return "执行中";
+    case "SUCCESS":
+      return "成功";
+    case "FAILED":
+      return "失败";
+    case "CANCELLED":
+      return "已取消";
+    default:
+      return status;
+  }
+}
+
+function stringifyCreatorSummary(values?: string[]) {
+  if (!values?.length) {
+    return "-";
+  }
+  return values.join("；");
+}
+
+function DouyinCreatorSearchTable(props: {
+  items: DouyinCreatorSearchRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric: OptionalNumberFormatter;
+  selectedIds: string[];
+  allSelected: boolean;
+  onToggleSelect: (id: string, checked: boolean) => void;
+  onSelectAll: (checked: boolean) => void;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>
+              <TableSelectionCheckbox
+                checked={props.allSelected}
+                title="全选当前达人搜索结果"
+                onChange={(checked) => props.onSelectAll(checked)}
+              />
+            </th>
+            <th>达人昵称</th>
+            <th>头像</th>
+            <th>达人 ID</th>
+            <th>星图达人 ID</th>
+            <th>抖音号</th>
+            <th>达人主页</th>
+            <th>地区</th>
+            <th>分类标签</th>
+            <th>内容主题</th>
+            <th>粉丝数</th>
+            <th>预估播放</th>
+            <th>互动率</th>
+            <th>完播率</th>
+            <th>传播指数</th>
+            <th>报价</th>
+            <th>CPM</th>
+            <th>CPE</th>
+            <th>签名</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>
+                <TableSelectionCheckbox
+                  checked={props.selectedIds.includes(item.id)}
+                  title={`勾选 ${item.nickname || item.creatorId || "达人"}`}
+                  onChange={(checked) => props.onToggleSelect(item.id, checked)}
+                />
+              </td>
+              <td>{item.nickname || "-"}</td>
+              <td><AvatarPreviewLink src={item.avatar} alt={`${item.nickname || "达人"}头像`} /></td>
+              <td><CopyableCell value={item.creatorId} /></td>
+              <td><CopyableCell value={item.oAuthorId} /></td>
+              <td><CopyableCell value={item.uniqueId || item.secUserId || item.douyinUid} /></td>
+              <td>
+                {item.profileUrl ? (
+                  <a href={item.profileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td>{item.region || "-"}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.categoryLabels)} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.contentThemeLabels)} emptyText="-" compactRows={2} />
+              </td>
+              <td>{props.formatCount(item.fansCount)}</td>
+              <td>{props.formatCount(item.expectedPlayCount)}</td>
+              <td>{props.formatMetric(item.interactRate)}</td>
+              <td>{props.formatMetric(item.playOverRate)}</td>
+              <td>{props.formatCount(item.spreadIndex)}</td>
+              <td>{props.formatCount(item.price)}</td>
+              <td>{props.formatCount(item.cpm)}</td>
+              <td>{props.formatCount(item.cpe)}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.signature} emptyText="-" compactRows={2} />
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinCreatorDeepFetchTaskTable(props: {
+  items: DouyinCreatorDeepFetchTaskRecord[];
+  formatDateTime: OptionalDateFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>任务标题</th>
+            <th>状态</th>
+            <th>输入标识</th>
+            <th>标识类型</th>
+            <th>达人昵称</th>
+            <th>达人 ID</th>
+            <th>星图达人 ID</th>
+            <th>linkType</th>
+            <th>开始时间</th>
+            <th>完成时间</th>
+            <th>更新时间</th>
+            <th>错误信息</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.taskTitle} emptyText="-" compactRows={2} />
+              </td>
+              <td>{getDouyinCreatorTaskStatusLabel(item.taskStatus)}</td>
+              <td><CopyableCell value={item.creatorIdentifier} /></td>
+              <td>{item.identityType || "-"}</td>
+              <td>{item.creatorName || "-"}</td>
+              <td><CopyableCell value={item.creatorId} /></td>
+              <td><CopyableCell value={item.oAuthorId} /></td>
+              <td>{item.linkType ?? "-"}</td>
+              <td>{props.formatDateTime(item.startedAt)}</td>
+              <td>{props.formatDateTime(item.finishedAt)}</td>
+              <td>{props.formatDateTime(item.updatedAt)}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.errorMessage} emptyText="-" compactRows={2} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinCreatorProfileTable(props: {
+  items: DouyinCreatorProfileRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric: OptionalNumberFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>达人昵称</th>
+            <th>头像</th>
+            <th>达人 ID</th>
+            <th>星图达人 ID</th>
+            <th>抖音号</th>
+            <th>达人主页</th>
+            <th>地区</th>
+            <th>分类标签</th>
+            <th>粉丝数</th>
+            <th>预估播放</th>
+            <th>互动率</th>
+            <th>报价</th>
+            <th>联系电话</th>
+            <th>微信号</th>
+            <th>邮箱</th>
+            <th>MCN</th>
+            <th>粉丝画像摘要</th>
+            <th>受众画像摘要</th>
+            <th>评论热词</th>
+            <th>内容热词</th>
+            <th>推荐视频标题</th>
+            <th>主页视频数</th>
+            <th>推荐视频数</th>
+            <th>最近抓取时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>{item.nickname || "-"}</td>
+              <td><AvatarPreviewLink src={item.avatar} alt={`${item.nickname || "达人"}头像`} /></td>
+              <td><CopyableCell value={item.creatorId} /></td>
+              <td><CopyableCell value={item.oAuthorId} /></td>
+              <td><CopyableCell value={item.uniqueId || item.secUserId || item.douyinUid} /></td>
+              <td>
+                {item.profileUrl ? (
+                  <a href={item.profileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td>{item.region || "-"}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.categoryLabels)} emptyText="-" compactRows={2} />
+              </td>
+              <td>{props.formatCount(item.fansCount)}</td>
+              <td>{props.formatCount(item.expectedPlayCount)}</td>
+              <td>{props.formatMetric(item.interactRate)}</td>
+              <td>{props.formatCount(item.price)}</td>
+              <td><CopyableCell value={item.contactPhone} /></td>
+              <td><CopyableCell value={item.contactWechat} /></td>
+              <td><CopyableCell value={item.contactEmail} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.mcnName} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.fansDistributionSummary)} emptyText="-" compactRows={3} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.audienceDistributionSummary)} emptyText="-" compactRows={3} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.hotCommentTokens)} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.contentHotKeywords)} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={stringifyCreatorSummary(item.recommendedVideoTitles)} emptyText="-" compactRows={3} />
+              </td>
+              <td>{props.formatCount(item.homepageVideoCount)}</td>
+              <td>{props.formatCount(item.recommendedVideoCount)}</td>
+              <td>{props.formatDateTime(item.lastFetchedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function ScrollableTableShell(props: {
+  children: ReactNode;
+}) {
+  const topScrollRef = useRef<HTMLDivElement | null>(null);
+  const bottomScrollRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const [scrollWidth, setScrollWidth] = useState(0);
+
+  useEffect(() => {
+    const contentNode = contentRef.current;
+    if (!contentNode) {
+      return;
+    }
+
+    const syncWidth = () => {
+      setScrollWidth(contentNode.scrollWidth);
+    };
+
+    syncWidth();
+    const observer = new ResizeObserver(syncWidth);
+    observer.observe(contentNode);
+    return () => observer.disconnect();
+  }, []);
+
+  const syncScroll = (source: "top" | "bottom") => {
+    const top = topScrollRef.current;
+    const bottom = bottomScrollRef.current;
+    if (!top || !bottom) {
+      return;
+    }
+    if (source === "top") {
+      bottom.scrollLeft = top.scrollLeft;
+      return;
+    }
+    top.scrollLeft = bottom.scrollLeft;
+  };
+
+  return (
+    <div className="table-scroll-shell">
+      <div className="table-scrollbar-top" ref={topScrollRef} onScroll={() => syncScroll("top")}>
+        <div style={{ width: `${scrollWidth}px` }} />
+      </div>
+      <div className="table-scrollbar-body" ref={bottomScrollRef} onScroll={() => syncScroll("bottom")}>
+        <div ref={contentRef}>
+          {props.children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExpandableTextCell(props: {
+  value?: string;
+  emptyText?: string;
+  compactRows?: 1 | 2 | 3;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const text = String(props.value || "").trim();
+  if (!text) {
+    return <span className="table-cell-empty">{props.emptyText || "-"}</span>;
+  }
+
+  useEffect(() => {
+    if (!expanded) {
+      return undefined;
+    }
+    const handlePointerDown = (event: PointerEvent) => {
+      if (shellRef.current?.contains(event.target as Node)) {
+        return;
+      }
+      setExpanded(false);
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [expanded]);
+
+  return (
+    <div ref={shellRef} className={`table-text-shell ${expanded ? "is-expanded" : ""}`} data-rows={props.compactRows || 2}>
+      <button
+        type="button"
+        className="table-text-cell"
+        data-rows={props.compactRows || 2}
+        onClick={() => setExpanded((current) => !current)}
+        title={expanded ? "点击收起" : "点击展开查看"}
+      >
+        {text}
+      </button>
+      {expanded ? (
+        <div className="table-text-popover" role="dialog" aria-label="单元格完整内容">
+          {text}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function AvatarPreviewLink(props: {
+  src?: string;
+  alt: string;
+}) {
+  if (!props.src) {
+    return <span className="table-cell-empty">-</span>;
+  }
+
+  return (
+    <a href={props.src} target="_blank" rel="noreferrer" className="table-avatar-link" title="点击查看原图">
+      <img src={props.src} alt={props.alt} className="table-avatar-thumb" />
+    </a>
+  );
+}
+
+function CopyableCell(props: {
+  value?: string | number;
+  emptyText?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  const text = String(props.value ?? "").trim();
+  if (!text) {
+    return <span className="table-cell-empty">{props.emptyText || "-"}</span>;
+  }
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      notifyCopyToast(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      window.alert("复制失败，请手动选中文本复制。");
+    }
+  };
+
+  return (
+    <div className={`table-text-shell table-text-shell--copyable ${copied ? "is-copied" : ""}`} data-rows="1">
+      <button
+        type="button"
+        className="table-text-cell"
+        data-rows={1}
+        onClick={() => void handleCopy()}
+        title={copied ? "已复制" : "点击复制"}
+      >
+        {text}
+      </button>
+    </div>
+  );
+}
+
+function formatDurationSeconds(value?: number) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "-";
+  }
+  return `${Math.max(0, Math.round(value / 1000))} 秒`;
+}
+
+function formatOptionalCount(value?: number) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return "-";
+  }
+  return value.toLocaleString("zh-CN");
+}
+
+function isTranscriptPendingExpired(item: DouyinCollectedWorkRecord) {
+  if (item.transcriptStatus !== "PENDING") {
+    return false;
+  }
+  const timestamp = Date.parse(item.transcriptStatusUpdatedAt || "");
+  if (!Number.isFinite(timestamp)) {
+    return false;
+  }
+  return Date.now() - timestamp > 15 * 60 * 1000;
+}
+
+function isQuotaOrBalanceError(message?: string) {
+  return /余额|欠费|充值|insufficient|quota|credit|balance|bill|payment/i.test(String(message || ""));
+}
+
+function DouyinVideoPreviewCell(props: {
+  item: DouyinCollectedWorkRecord;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+}) {
+  const { item } = props;
+  if (item.videoUrl) {
+    return (
+      <div className="stack gap-8">
+        <ProtectedVideoLink
+          sourceUrl={item.videoUrl}
+          title={item.title || item.workId || "抖音视频预览"}
+          onPreviewMedia={props.onPreviewMedia}
+        />
+      </div>
+    );
+  }
+  if (item.videoCacheStatus === "PENDING") {
+    return (
+      <div className="stack gap-8">
+        <span className="note-data-link">缓存中</span>
+        {item.videoSourceUrl ? <span className="panel-subtext">源地址已记录，缓存完成后可预览。</span> : null}
+      </div>
+    );
+  }
+  if (item.videoCacheStatus === "FAILED") {
+    return (
+      <div className="stack gap-8">
+        <span className="note-data-link" title={item.videoCacheLastError || undefined}>缓存失败</span>
+        {item.videoSourceUrl ? <span className="panel-subtext">系统会继续补缓存，刷新后可再试。</span> : null}
+        {item.workUrl ? (
+          <a href={item.workUrl} target="_blank" rel="noreferrer" className="note-data-link">
+            打开原作品
+          </a>
+        ) : null}
+      </div>
+    );
+  }
+  if (item.videoCacheStatus === "EXPIRED") {
+    return (
+      <div className="stack gap-8">
+        <span className="note-data-link">缓存已过期</span>
+        {item.workUrl ? (
+          <a href={item.workUrl} target="_blank" rel="noreferrer" className="note-data-link">
+            打开原作品
+          </a>
+        ) : null}
+      </div>
+    );
+  }
+  return <span>-</span>;
+}
+
+// 模块级复制提醒 toast：多个单元格共享一个浮动弹窗，避免每行都挂一个 DOM 节点。
+let copyToastTimer: number | undefined;
+let copyToastListeners: Array<(visible: boolean) => void> = [];
+function notifyCopyToast(visible: boolean) {
+  if (visible) {
+    if (copyToastTimer) {
+      window.clearTimeout(copyToastTimer);
+    }
+  }
+  for (const listener of copyToastListeners) {
+    try {
+      listener(visible);
+    } catch {
+      // 忽略监听器异常
+    }
+  }
+  if (visible) {
+    copyToastTimer = window.setTimeout(() => {
+      notifyCopyToast(false);
+    }, 1600);
+  }
+}
+function useCopyToastVisible() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const listener = (next: boolean) => setVisible(next);
+    copyToastListeners.push(listener);
+    return () => {
+      copyToastListeners = copyToastListeners.filter((item) => item !== listener);
+    };
+  }, []);
+  return visible;
+}
+function CopyToastPortal() {
+  const visible = useCopyToastVisible();
+  return (
+    <div className={`copy-toast ${visible ? "is-visible" : ""}`} role="status" aria-live="polite">
+      <span className="copy-toast__icon" aria-hidden="true">✓</span>
+      <span className="copy-toast__text">已复制</span>
+    </div>
+  );
+}
+
+function TranscriptHoverPreview(props: {
+  visible: boolean;
+  x: number;
+  y: number;
+  text: string;
+}) {
+  if (!props.visible || !props.text || typeof document === "undefined") {
+    return null;
+  }
+  const maxWidth = 420;
+  const offset = 18;
+  const viewportWidth = typeof window === "undefined" ? 1280 : window.innerWidth;
+  const viewportHeight = typeof window === "undefined" ? 720 : window.innerHeight;
+  const left = Math.min(props.x + offset, Math.max(16, viewportWidth - maxWidth - 16));
+  const top = Math.min(props.y + offset, Math.max(16, viewportHeight - 240));
+  return (
+    <div
+      className="table-text-hover-card"
+      role="tooltip"
+      aria-label="视频文案完整内容"
+      style={{ left, top }}
+    >
+      {props.text}
+    </div>
+  );
+}
+
+function DouyinTranscriptCell(props: {
+  item: DouyinCollectedWorkRecord;
+  extractingAssetId?: string;
+  onExtract: ValueAction<DouyinCollectedWorkRecord>;
+}) {
+  const { item } = props;
+  const hasTranscript = Boolean(item.transcript?.trim());
+  const pendingExpired = isTranscriptPendingExpired(item);
+  const isExtracting = props.extractingAssetId === item.id || (item.transcriptStatus === "PENDING" && !pendingExpired);
+  const canExtract = Boolean(item.videoUrl || item.videoSourceUrl || item.workUrl) || item.videoCacheStatus === "READY";
+  const [copied, setCopied] = useState(false);
+  const [hoverPreview, setHoverPreview] = useState({ visible: false, x: 0, y: 0 });
+
+  if (!canExtract && !hasTranscript) {
+    return <span>-</span>;
+  }
+
+  if (hasTranscript) {
+    const transcriptText = String(item.transcript || "").trim();
+    const handleCopy = async () => {
+      try {
+        await navigator.clipboard.writeText(transcriptText);
+        setCopied(true);
+        notifyCopyToast(true);
+        window.setTimeout(() => setCopied(false), 1500);
+      } catch {
+        window.alert("复制失败，请手动选中文案复制。");
+      }
+    };
+    return (
+      <div className={`table-text-shell table-text-shell--copyable ${copied ? "is-copied" : ""}`} data-rows="1">
+        <button
+          type="button"
+          className="table-text-cell"
+          data-rows={1}
+          onClick={() => void handleCopy()}
+          onMouseEnter={(event) => setHoverPreview({ visible: true, x: event.clientX, y: event.clientY })}
+          onMouseMove={(event) => {
+            if (!hoverPreview.visible || hoverPreview.x !== event.clientX || hoverPreview.y !== event.clientY) {
+              setHoverPreview({ visible: true, x: event.clientX, y: event.clientY });
+            }
+          }}
+          onMouseLeave={() => setHoverPreview({ visible: false, x: 0, y: 0 })}
+          onBlur={() => setHoverPreview({ visible: false, x: 0, y: 0 })}
+          title={copied ? "已复制该行视频文案" : "点击复制该行完整视频文案"}
+        >
+          {transcriptText}
+        </button>
+        <TranscriptHoverPreview
+          visible={hoverPreview.visible}
+          x={hoverPreview.x}
+          y={hoverPreview.y}
+          text={transcriptText}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="stack gap-8">
+      <button
+        type="button"
+        className="note-inline-button"
+        onClick={() => void props.onExtract(item)}
+        disabled={isExtracting}
+        title={
+          pendingExpired
+            ? "上次提取长时间没有完成，当前已允许重新提取。"
+            : item.transcriptLastError || undefined
+        }
+      >
+        {isExtracting ? "提取中..." : item.transcriptStatus === "FAILED" || pendingExpired ? "重新提取" : "提取文案"}
+      </button>
+      {!hasTranscript && pendingExpired ? (
+        <span
+          className="transcript-error-pill"
+          title="上次提取长时间没有完成，可能是 API Key 额度不足、网络中断或上游任务卡住。补充额度后可直接重新提取。"
+          aria-label="上次提取长时间没有完成，可能是 API Key 额度不足、网络中断或上游任务卡住。补充额度后可直接重新提取。"
+        >
+          可重试
+        </span>
+      ) : null}
+      {!hasTranscript && item.transcriptStatus === "FAILED" && item.transcriptLastError ? (
+        <span
+          className="transcript-error-pill"
+          title={item.transcriptLastError}
+          aria-label={item.transcriptLastError}
+        >
+          {isQuotaOrBalanceError(item.transcriptLastError) ? "待充值后重试" : "提取失败"}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function formatTrendSummary(trends: DouyinCityHotspotRecord["trends"]) {
+  if (!trends.length) {
+    return "-";
+  }
+  const latest = trends[trends.length - 1];
+  return latest?.datetime
+    ? `${trends.length} 个点，最新 ${latest.datetime}`
+    : `${trends.length} 个点`;
+}
+
+function MaterialLibraryCheckbox(props: {
+  checked: boolean;
+  busy: boolean;
+  title: string;
+  onToggle: AsyncAction;
+}) {
+  return (
+    <button
+      type="button"
+      className={`material-library-checkbox ${props.checked ? "is-checked" : ""}`}
+      onClick={() => void props.onToggle()}
+      disabled={props.busy}
+      role="checkbox"
+      aria-checked={props.checked}
+      aria-label={props.title}
+      title={props.busy ? "处理中..." : props.title}
+    >
+      <span className="material-library-checkbox__box" aria-hidden="true">
+        <span className="material-library-checkbox__mark" />
+      </span>
+    </button>
+  );
+}
+
+function TableSelectionCheckbox(props: {
+  checked: boolean;
+  disabled?: boolean;
+  title: string;
+  onChange: ValueAction<boolean>;
+}) {
+  return (
+    <input
+      type="checkbox"
+      checked={props.checked}
+      disabled={props.disabled}
+      aria-label={props.title}
+      title={props.title}
+      onChange={(event) => props.onChange(event.target.checked)}
+    />
+  );
+}
+
+function CollectionBatchActionButtons(props: {
+  selectedCount: number;
+  isAdding: boolean;
+  isDeleting: boolean;
+  onAdd: AsyncAction;
+  onDelete: AsyncAction;
+}) {
+  return (
+    <div className="strategy-inline-actions">
+      <span className={`archive-pill ${props.selectedCount ? "status-ready" : "status-pending"}`}>
+        已勾选 {props.selectedCount} 条
+      </span>
+      <button
+        type="button"
+        className="secondary-button"
+        onClick={() => void props.onAdd()}
+        disabled={!props.selectedCount || props.isAdding || props.isDeleting}
+      >
+        {props.isAdding ? "加入中..." : "加入素材库"}
+      </button>
+      <button
+        type="button"
+        className="note-inline-button"
+        onClick={() => void props.onDelete()}
+        disabled={!props.selectedCount || props.isDeleting || props.isAdding}
+      >
+        {props.isDeleting ? "删除中..." : "删除"}
+      </button>
+    </div>
+  );
+}
+
+function DouyinAccountTable(props: {
+  items: DouyinCollectedAccountRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>昵称</th>
+            <th>抖音号</th>
+            <th>简介</th>
+            <th>头像</th>
+            <th>粉丝数</th>
+            <th>关注数</th>
+            <th>作品数</th>
+            <th>总获赞</th>
+            <th>主页链接</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>{item.accountName || "-"}</td>
+              <td>{item.username || item.shortId || "-"}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.description} emptyText="未提供简介" compactRows={2} />
+              </td>
+              <td>
+                <AvatarPreviewLink src={item.avatar} alt={`${item.accountName || "抖音账号"}头像`} />
+              </td>
+              <td>{props.formatCount(item.fanCount)}</td>
+              <td>{props.formatCount(item.followCount)}</td>
+              <td>{props.formatCount(item.postedCount)}</td>
+              <td>{props.formatCount(item.likedCount)}</td>
+              <td>
+                {item.accountLink ? (
+                  <a href={item.accountLink} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : "-"}
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinBrandWorksTable(props: {
+  items: DouyinCollectedWorkRecord[];
+  addingMaterialAssetId?: string;
+  extractingTranscriptAssetId?: string;
+  onAddToMaterialLibrary?: ValueAction<DouyinCollectedWorkRecord>;
+  onExtractTranscript: ValueAction<DouyinCollectedWorkRecord>;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  selectedIds?: string[];
+  allSelected?: boolean;
+  onToggleSelect?: (id: string, checked: boolean) => void;
+  onSelectAll?: (checked: boolean) => void;
+}) {
+  const showMaterialLibraryColumn = Boolean(props.onAddToMaterialLibrary);
+  const showSelectionColumn = Boolean(props.selectedIds && props.onToggleSelect && props.onSelectAll);
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            {showSelectionColumn ? (
+              <th>
+                <TableSelectionCheckbox
+                  checked={Boolean(props.allSelected)}
+                  title="全选当前列表"
+                  onChange={(checked) => props.onSelectAll?.(checked)}
+                />
+              </th>
+            ) : null}
+            {showMaterialLibraryColumn ? <th>素材库</th> : null}
+            <th>作品 ID</th>
+            <th>作者昵称</th>
+            <th>作品描述/文案</th>
+            <th>发布时间</th>
+            <th>媒体类型</th>
+            <th>时长</th>
+            <th>点赞</th>
+            <th>评论</th>
+            <th>分享</th>
+            <th>收藏</th>
+            <th>推荐</th>
+            <th>图文列表</th>
+            <th>作品类型</th>
+            <th>视频预览/存储</th>
+            <th>视频文案</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              {showSelectionColumn ? (
+                <td>
+                  <TableSelectionCheckbox
+                    checked={Boolean(props.selectedIds?.includes(item.id))}
+                    title={`勾选 ${item.title || item.workId || "作品"}`}
+                    onChange={(checked) => props.onToggleSelect?.(item.id, checked)}
+                  />
+                </td>
+              ) : null}
+              {showMaterialLibraryColumn ? (
+                <td>
+                  <MaterialLibraryCheckbox
+                    checked={Boolean(item.isInMaterialLibrary)}
+                    busy={props.addingMaterialAssetId === item.id}
+                    title={item.isInMaterialLibrary ? "取消加入素材库" : "加入素材库"}
+                    onToggle={() => props.onAddToMaterialLibrary?.(item)}
+                  />
+                </td>
+              ) : null}
+              <td><CopyableCell value={item.workId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.authorName} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.description || item.title} emptyText="暂无作品描述" compactRows={2} />
+              </td>
+              <td>{item.publishTimeText || "-"}</td>
+              <td>{item.mediaType ?? "-"}</td>
+              <td>{formatDurationSeconds(item.durationMs)}</td>
+              <td>{props.formatCount(item.likeCount)}</td>
+              <td>{props.formatCount(item.commentCount)}</td>
+              <td>{props.formatCount(item.shareCount)}</td>
+              <td>{props.formatCount(item.collectCount)}</td>
+              <td>{props.formatCount(item.recommendCount)}</td>
+              <td>{item.imageList?.length ? `${item.imageList.length} 张` : "-"}</td>
+              <td>{(item.awemeType ?? item.workType) || "-"}</td>
+              <td><DouyinVideoPreviewCell item={item} onPreviewMedia={props.onPreviewMedia} /></td>
+              <td className="table-cell-wide">
+                <DouyinTranscriptCell
+                  item={item}
+                  extractingAssetId={props.extractingTranscriptAssetId}
+                  onExtract={props.onExtractTranscript}
+                />
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinMaterialReadyWorksTable(props: {
+  items: DouyinCollectedWorkRecord[];
+  addingMaterialAssetId: string;
+  onAddToMaterialLibrary: ValueAction<DouyinCollectedWorkRecord>;
+  extractingTranscriptAssetId?: string;
+  onExtractTranscript: ValueAction<DouyinCollectedWorkRecord>;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  showBillboardColumns?: boolean;
+  showWorkUrlColumn?: boolean;
+  videoColumnLabel?: string;
+  selectedIds?: string[];
+  allSelected?: boolean;
+  onToggleSelect?: (id: string, checked: boolean) => void;
+  onSelectAll?: (checked: boolean) => void;
+}) {
+  const showBillboardColumns = props.showBillboardColumns ?? true;
+  const showWorkUrlColumn = props.showWorkUrlColumn ?? false;
+  const videoColumnLabel = props.videoColumnLabel || "视频地址";
+  const showSelectionColumn = Boolean(props.selectedIds && props.onToggleSelect && props.onSelectAll);
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            {showSelectionColumn ? (
+              <th>
+                <TableSelectionCheckbox
+                  checked={Boolean(props.allSelected)}
+                  title="全选当前列表"
+                  onChange={(checked) => props.onSelectAll?.(checked)}
+                />
+              </th>
+            ) : null}
+            <th>素材库</th>
+            <th>作品 ID</th>
+            <th>作者昵称</th>
+            <th>作品描述</th>
+            {showBillboardColumns ? <th>来源榜单</th> : null}
+            {showBillboardColumns ? <th>一级分类</th> : null}
+            {showBillboardColumns ? <th>二级分类</th> : null}
+            <th>作品时长</th>
+            <th>作品封面</th>
+            {showWorkUrlColumn ? <th>作品链接</th> : null}
+            <th>{videoColumnLabel}</th>
+            <th>视频文案</th>
+            <th>作品点赞数</th>
+            <th>作品评论数</th>
+            <th>作品分享数</th>
+            <th>作品收藏数</th>
+            <th>作者抖音号</th>
+            <th>作者粉丝数</th>
+            <th>作者总获赞</th>
+            <th>作者头像</th>
+            <th>播放量</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              {showSelectionColumn ? (
+                <td>
+                  <TableSelectionCheckbox
+                    checked={Boolean(props.selectedIds?.includes(item.id))}
+                    title={`勾选 ${item.title || item.workId || "作品"}`}
+                    onChange={(checked) => props.onToggleSelect?.(item.id, checked)}
+                  />
+                </td>
+              ) : null}
+              <td>
+                <MaterialLibraryCheckbox
+                  checked={Boolean(item.isInMaterialLibrary)}
+                  busy={props.addingMaterialAssetId === item.id}
+                  title={item.isInMaterialLibrary ? "取消加入素材库" : "加入素材库"}
+                  onToggle={() => props.onAddToMaterialLibrary(item)}
+                />
+              </td>
+              <td><CopyableCell value={item.workId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.authorName} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.description || item.title} emptyText="暂无作品描述" compactRows={2} />
+              </td>
+              {showBillboardColumns ? <td>{item.billboardLabel || "-"}</td> : null}
+              {showBillboardColumns ? <td>{item.primaryTagLabel || "-"}</td> : null}
+              {showBillboardColumns ? <td>{item.secondaryTagLabel || "-"}</td> : null}
+              <td>{formatDurationSeconds(item.durationMs)}</td>
+              <td>
+                <AvatarPreviewLink src={item.coverUrl} alt={`${item.title || item.workId}封面`} />
+              </td>
+              {showWorkUrlColumn ? (
+                <td>
+                  {item.workUrl ? (
+                    <a href={item.workUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                      打开作品
+                    </a>
+                  ) : "-"}
+                </td>
+              ) : null}
+              <td><DouyinVideoPreviewCell item={item} onPreviewMedia={props.onPreviewMedia} /></td>
+              <td className="table-cell-wide">
+                <DouyinTranscriptCell
+                  item={item}
+                  extractingAssetId={props.extractingTranscriptAssetId}
+                  onExtract={props.onExtractTranscript}
+                />
+              </td>
+              <td>{props.formatCount(item.likeCount)}</td>
+              <td>{props.formatCount(item.commentCount)}</td>
+              <td>{props.formatCount(item.shareCount)}</td>
+              <td>{props.formatCount(item.collectCount)}</td>
+              <td><CopyableCell value={item.authorUniqueId} /></td>
+              <td>{formatOptionalCount(item.authorFollowerCount)}</td>
+              <td>{formatOptionalCount(item.authorLikedCount)}</td>
+              <td>
+                <AvatarPreviewLink src={item.authorAvatar} alt={`${item.authorName || "作者"}头像`} />
+              </td>
+              <td>{formatOptionalCount(item.playCount)}</td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinCommentTable(props: {
+  items: DouyinCommentRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>源作品 ID</th>
+            <th>作品链接</th>
+            <th>评论 ID</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>评论用户昵称</th>
+            <th>评论用户 sec_user_id</th>
+            <th>评论用户主页</th>
+            <th>评论点赞数</th>
+            <th>评论回复数</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td><CopyableCell value={item.sourceWorkId} /></td>
+              <td>
+                {item.sourceWorkUrl ? (
+                  <a href={item.sourceWorkUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开作品
+                  </a>
+                ) : "-"}
+              </td>
+              <td><CopyableCell value={item.commentId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.commentText} emptyText="暂无评论内容" compactRows={3} />
+              </td>
+              <td>{item.commentTime || "-"}</td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.commentUserName} emptyText="-" compactRows={2} />
+              </td>
+              <td><CopyableCell value={item.commentUserSecUserId} /></td>
+              <td>
+                {item.commentUserProfileUrl ? (
+                  <a href={item.commentUserProfileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : "-"}
+              </td>
+              <td>{props.formatCount(item.likeCount)}</td>
+              <td>{props.formatCount(item.replyCount)}</td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinTargetUserTable(props: {
+  items: DouyinCollectedTargetUserRecord[];
+  formatDateTime: OptionalDateFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>来源作品链接</th>
+            <th>目标用户昵称</th>
+            <th>sec_user_id</th>
+            <th>账号链接</th>
+            <th>匹配关键词</th>
+            <th>来源评论</th>
+            <th>来源评论 ID</th>
+            <th>作品标题</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>
+                {item.sourceUrl ? (
+                  <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开作品
+                  </a>
+                ) : "-"}
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.nickname} emptyText="-" compactRows={2} />
+              </td>
+              <td><CopyableCell value={item.secUserId} /></td>
+              <td>
+                {item.profileUrl ? (
+                  <a href={item.profileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : "-"}
+              </td>
+              <td><CopyableCell value={item.matchedKeyword} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.commentText} emptyText="-" compactRows={3} />
+              </td>
+              <td><CopyableCell value={item.sourceCommentId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.workTitle} emptyText="-" compactRows={2} />
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function XhsCommentTable(props: {
+  items: XhsCommentRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  expandedCommentIds: string[];
+  subCommentsByParent: Record<string, XhsSubCommentRecord[]>;
+  subCommentPaginationMap: Record<string, XhsSubCommentPaginationState>;
+  loadingCommentIds: string[];
+  loadingMoreCommentIds: string[];
+  onToggleReplies: ValueAction<string>;
+  onLoadReplies: (comment: XhsCommentRecord, loadMore?: boolean) => void | Promise<void>;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>笔记 ID</th>
+            <th>笔记链接</th>
+            <th>评论 ID</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>评论用户昵称</th>
+            <th>评论用户 ID</th>
+            <th>评论用户主页</th>
+            <th>评论点赞数</th>
+            <th>二级评论数</th>
+            <th>采集时间</th>
+            <th>二级评论</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => {
+            const commentId = item.commentId;
+            const subComments = props.subCommentsByParent[commentId] ?? [];
+            const subPagination = props.subCommentPaginationMap[commentId];
+            const isExpanded = props.expandedCommentIds.includes(commentId);
+            const isLoading = props.loadingCommentIds.includes(commentId);
+            const isLoadingMore = props.loadingMoreCommentIds.includes(commentId);
+            const canLoadReplies = (item.replyCount || 0) > 0;
+            const canToggleReplies = subComments.length > 0;
+
+            return (
+              <Fragment key={item.id}>
+                <tr
+                  onClick={canToggleReplies ? () => props.onToggleReplies(commentId) : undefined}
+                  style={canToggleReplies ? { cursor: "pointer" } : undefined}
+                  title={canToggleReplies ? (isExpanded ? "点击收起二级评论" : "点击展开二级评论") : undefined}
+                >
+                  <td><CopyableCell value={item.noteId} /></td>
+                  <td>
+                    {item.noteUrl || item.sourceUrl ? (
+                      <a href={item.noteUrl || item.sourceUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                        打开笔记
+                      </a>
+                    ) : "-"}
+                  </td>
+                  <td><CopyableCell value={commentId} /></td>
+                  <td className="table-cell-wide">
+                    <ExpandableTextCell value={item.commentText} emptyText="暂无评论内容" compactRows={3} />
+                  </td>
+                  <td>{item.commentTime || "-"}</td>
+                  <td className="table-cell-wide">
+                    <ExpandableTextCell value={item.commentUserName} emptyText="-" compactRows={2} />
+                  </td>
+                  <td><CopyableCell value={item.commentUserId} /></td>
+                  <td>
+                    {item.commentUserProfileUrl ? (
+                      <a href={item.commentUserProfileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                        打开主页
+                      </a>
+                    ) : "-"}
+                  </td>
+                  <td>{props.formatCount(item.likeCount)}</td>
+                  <td>{props.formatCount(item.replyCount)}</td>
+                  <td>{props.formatDateTime(item.collectedAt)}</td>
+                  <td>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                      {canLoadReplies ? (
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void props.onLoadReplies(item);
+                          }}
+                          disabled={isLoading || isLoadingMore}
+                        >
+                          {isLoading ? "加载中..." : "查看二级评论"}
+                        </button>
+                      ) : (
+                        <span className="table-cell-empty">-</span>
+                      )}
+                      {canToggleReplies ? (
+                        <button
+                          type="button"
+                          className="note-inline-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            props.onToggleReplies(commentId);
+                          }}
+                        >
+                          {isExpanded ? "收起" : "展开"}
+                        </button>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+                {isExpanded ? (
+                  <tr>
+                    <td colSpan={11} style={{ background: "rgba(15, 23, 42, 0.03)" }}>
+                      <div style={{ display: "grid", gap: 10, padding: "12px 0" }}>
+                        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                          <strong>二级评论列表</strong>
+                          <span className={`archive-pill ${subComments.length ? "status-ready" : "status-pending"}`}>
+                            已加载 {subComments.length} 条
+                          </span>
+                          <span className={`archive-pill ${subPagination?.hasMore ? "status-ready" : "status-pending"}`}>
+                            {subPagination?.hasMore ? "还有更多" : "已无更多"}
+                          </span>
+                          {subPagination ? (
+                            <span className="archive-pill status-pending">当前游标 {subPagination.fetchedCount} 条</span>
+                          ) : null}
+                          {subPagination?.hasMore ? (
+                            <button
+                              type="button"
+                              className="secondary-button"
+                              onClick={() => void props.onLoadReplies(item, true)}
+                              disabled={isLoading || isLoadingMore}
+                            >
+                              {isLoadingMore ? "加载中..." : "加载更多二级评论"}
+                            </button>
+                          ) : null}
+                        </div>
+                        {subComments.length ? (
+                          <div style={{ display: "grid", gap: 10 }}>
+                            {subComments.map((reply) => (
+                              <div
+                                key={reply.id}
+                                style={{
+                                  display: "grid",
+                                  gap: 8,
+                                  padding: 12,
+                                  borderRadius: 12,
+                                  border: "1px solid rgba(148, 163, 184, 0.25)",
+                                  background: "#fff",
+                                }}
+                              >
+                                <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+                                  <strong>{reply.commentUserName || "匿名用户"}</strong>
+                                  <span className="personal-meta">{reply.commentTime || props.formatDateTime(reply.collectedAt)}</span>
+                                </div>
+                                <div style={{ color: "var(--text-color, #0f172a)", whiteSpace: "pre-wrap", lineHeight: 1.65 }}>
+                                  {reply.commentText || "暂无二级评论内容"}
+                                </div>
+                                <div style={{ display: "flex", gap: 12, flexWrap: "wrap", color: "var(--muted-text-color, #64748b)" }}>
+                                  <span>评论 ID：{reply.commentId || "-"}</span>
+                                  <span>用户 ID：{reply.commentUserId || "-"}</span>
+                                  <span>点赞：{formatOptionalCount(reply.likeCount)}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="note-empty-state" style={{ margin: 0 }}>
+                            该一级评论下暂未加载到二级评论，可再次点击“查看二级评论”重试。
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ) : null}
+              </Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function XhsTargetUserTable(props: {
+  items: XhsCollectedTargetUserRecord[];
+  formatDateTime: OptionalDateFormatter;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>来源笔记链接</th>
+            <th>目标用户昵称</th>
+            <th>用户 ID</th>
+            <th>账号链接</th>
+            <th>匹配关键词</th>
+            <th>来源评论</th>
+            <th>来源评论 ID</th>
+            <th>笔记标题</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>
+                {item.sourceUrl ? (
+                  <a href={item.sourceUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开笔记
+                  </a>
+                ) : "-"}
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.nickname} emptyText="-" compactRows={2} />
+              </td>
+              <td><CopyableCell value={item.userId} /></td>
+              <td>
+                {item.profileUrl ? (
+                  <a href={item.profileUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : "-"}
+              </td>
+              <td><CopyableCell value={item.matchedKeyword} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.commentText} emptyText="-" compactRows={3} />
+              </td>
+              <td><CopyableCell value={item.sourceCommentId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.noteTitle} emptyText="-" compactRows={2} />
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function DouyinCityHotspotTable(props: {
+  items: DouyinCityHotspotRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+}) {
+  const PAGE_SIZE = 20;
+  const [page, setPage] = useState(1);
+  const pageCount = Math.max(1, Math.ceil(props.items.length / PAGE_SIZE));
+  const paginatedItems = useMemo(() => {
+    const startIndex = (page - 1) * PAGE_SIZE;
+    return props.items.slice(startIndex, startIndex + PAGE_SIZE);
+  }, [page, props.items]);
+
+  useEffect(() => {
+    if (page > pageCount) {
+      setPage(pageCount);
+    }
+  }, [page, pageCount]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [props.items.length]);
+
+  return (
+    <div style={{ display: "grid", gap: 14 }}>
+      <div className="hotspot-list-tools" style={{ justifyContent: "space-between" }}>
+        <span className="archive-pill status-ready">共 {props.items.length} 条</span>
+        <span className="archive-pill status-pending">每页 20 行</span>
+      </div>
+      <ScrollableTableShell>
+        <table className="soft-table douyin-data-table">
+          <thead>
+            <tr>
+              <th>城市</th>
+              <th>排名</th>
+              <th>排名变化</th>
+              <th>日期+时间</th>
+              <th>热点词</th>
+              <th>热度值</th>
+              <th>相关视频数</th>
+              <th>热点分类标签</th>
+              <th>热点资料</th>
+              <th>采集时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedItems.map((item) => (
+              <tr key={item.id}>
+                <td>{item.cityLabel || "-"}</td>
+                <td>{item.rank || "-"}</td>
+                <td>{item.rankDiff ?? "-"}</td>
+                <td>{item.createAtText || "-"}</td>
+                <td className="table-cell-wide">
+                  <ExpandableTextCell value={item.sentence} emptyText="暂无热点词" compactRows={2} />
+                </td>
+                <td>{props.formatCount(item.hotScore)}</td>
+                <td>{props.formatCount(item.videoCount)}</td>
+                <td>{item.sentenceTag ?? "-"}</td>
+                <td className="table-cell-wide">
+                  <ExpandableTextCell
+                    value={[
+                      item.sentenceId ? `热点ID：${item.sentenceId}` : "",
+                      item.cityCode ? `城市编码：${item.cityCode}` : "",
+                      `趋势：${formatTrendSummary(item.trends)}`,
+                    ].filter(Boolean).join("；")}
+                    emptyText="-"
+                    compactRows={2}
+                  />
+                </td>
+                <td>{props.formatDateTime(item.collectedAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollableTableShell>
+      {props.items.length > PAGE_SIZE ? (
+        <div className="note-pagination-bar hotspot-pagination-bar">
+          <div className="note-pagination-summary">
+            <span>第 {page} / {pageCount} 页</span>
+            <span>当前显示 {paginatedItems.length} 条</span>
+          </div>
+          <div className="note-pagination-actions">
+            <button
+              type="button"
+              className="note-inline-button"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={page === 1}
+            >
+              上一页
+            </button>
+            {Array.from({ length: pageCount }, (_, index) => index + 1).map((currentPage) => (
+              <button
+                key={`city-hotspot-page-${currentPage}`}
+                type="button"
+                className={`note-page-button ${currentPage === page ? "is-active" : ""}`}
+                onClick={() => setPage(currentPage)}
+              >
+                {currentPage}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="note-inline-button"
+              onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
+              disabled={page === pageCount}
+            >
+              下一页
+            </button>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function XhsAccountTable(props: {
+  items: XhsCollectedAccountRecord[];
+  showAccountRole?: boolean;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+}) {
+  const showAccountRole = props.showAccountRole ?? false;
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>昵称</th>
+            {showAccountRole ? <th>账号类型</th> : null}
+            <th>用户 ID</th>
+            <th>简介</th>
+            <th>头像</th>
+            <th>粉丝数</th>
+            <th>关注数</th>
+            <th>作品数</th>
+            <th>获赞数</th>
+            <th>收藏数</th>
+            <th>IP 属地</th>
+            <th>主页链接</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>{item.accountName || "-"}</td>
+              {showAccountRole ? <td>{getXhsAccountRoleLabel(item.accountRole)}</td> : null}
+              <td><CopyableCell value={item.externalUserId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.description} emptyText="未提供简介" compactRows={2} />
+              </td>
+              <td>
+                <AvatarPreviewLink src={item.avatar} alt={`${item.accountName || "小红书账号"}头像`} />
+              </td>
+              <td>{props.formatCount(item.fanCount)}</td>
+              <td>{props.formatCount(item.followCount)}</td>
+              <td>{props.formatCount(item.postedCount)}</td>
+              <td>{props.formatCount(item.likedCount)}</td>
+              <td>{props.formatCount(item.collectedCount)}</td>
+              <td>{item.ipLocation || "-"}</td>
+              <td>
+                {item.sourceAccountLink ? (
+                  <a href={item.sourceAccountLink} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开主页
+                  </a>
+                ) : "-"}
+              </td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+function XhsNoteMetricChip(props: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="xhs-note-metric-chip">
+      <span>{props.label}</span>
+      <strong>{props.value}</strong>
+    </div>
+  );
+}
+
+function XhsNoteCard(props: {
+  item: XhsCollectedNoteRecord;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric?: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  materialAction?: ReactNode;
+  linkUrl?: string;
+  showRatioMetrics?: boolean;
+}) {
+  const linkUrl = props.linkUrl || props.item.noteUrl || props.item.sourceUrl;
+  const metrics = [
+    { label: "点赞", value: props.formatCount(props.item.likeCount) },
+    { label: "收藏", value: props.formatCount(props.item.collectCount) },
+    { label: "分享", value: props.formatCount(props.item.shareCount) },
+    { label: "评论", value: props.formatCount(props.item.commentCount) },
+  ];
+  if (props.showRatioMetrics && props.formatMetric) {
+    metrics.push(
+      { label: "赞藏率", value: props.formatMetric(props.item.likeCollectRatio) },
+      { label: "赞评率", value: props.formatMetric(props.item.likeCommentRatio) },
+      { label: "分享率", value: props.formatMetric(props.item.shareRatio) },
+    );
+  }
+
+  return (
+    <article className="xhs-note-card">
+      <div className="xhs-note-card__content">
+        <div className="xhs-note-card__header">
+          <div className="xhs-note-card__title-block">
+            <div className="xhs-note-card__chips">
+              <span className="xhs-note-chip xhs-note-chip--strong">笔记 ID {props.item.noteId || "-"}</span>
+              <span className="xhs-note-chip">{props.item.noteType || "未标注类型"}</span>
+              <span className="xhs-note-chip">{props.item.nickname || "未提供作者"}</span>
+              {props.item.externalUserId ? <span className="xhs-note-chip">用户 {props.item.externalUserId}</span> : null}
+              {props.item.createdAtText ? <span className="xhs-note-chip">发布 {props.item.createdAtText}</span> : null}
+            </div>
+            <h4 className="xhs-note-card__title">{props.item.title || "未提供标题"}</h4>
+            <div className="xhs-note-card__description">
+              <ExpandableTextCell value={props.item.description} emptyText="暂无正文内容" compactRows={2} />
+            </div>
+          </div>
+          <div className="xhs-note-card__actions">
+            {props.materialAction}
+            {linkUrl ? (
+              <a href={linkUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                查看作品
+              </a>
+            ) : null}
+            <span className="xhs-note-card__collected-at">
+              采集于 {props.formatDateTime(props.item.collectedAt)}
+            </span>
+          </div>
+        </div>
+        <div className="xhs-note-metric-grid">
+          {metrics.map((metric) => (
+            <XhsNoteMetricChip key={`${props.item.id}-${metric.label}`} label={metric.label} value={metric.value} />
+          ))}
+        </div>
+      </div>
+      <aside className="xhs-note-card__media">
+        <div className="xhs-note-card__media-block">
+          <span className="xhs-note-card__media-label">图片</span>
+          {props.item.imageList?.length ? (
+            <ProtectedImageGallery
+              sourceUrls={props.item.imageList}
+              title={props.item.title || props.item.noteId}
+              onPreviewMedia={props.onPreviewMedia}
+            />
+          ) : (
+            <div className="note-empty-media">暂无图片</div>
+          )}
+        </div>
+        <div className="xhs-note-card__media-block xhs-note-card__media-block--compact">
+          <span className="xhs-note-card__media-label">视频</span>
+          <div className="xhs-note-card__video-link">
+            <ProtectedVideoLink
+              sourceUrl={props.item.videoUrl}
+              title={props.item.title || props.item.noteId || "视频预览"}
+              onPreviewMedia={props.onPreviewMedia}
+            />
+          </div>
+        </div>
+      </aside>
+    </article>
+  );
+}
+
+function XhsNotesTable(props: {
+  items: XhsCollectedNoteRecord[];
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+}) {
+  return (
+    <div className="xhs-note-card-list">
+      {props.items.map((item) => (
+        <XhsNoteCard
+          key={item.id}
+          item={item}
+          formatDateTime={props.formatDateTime}
+          formatCount={props.formatCount}
+          onPreviewMedia={props.onPreviewMedia}
+        />
+      ))}
+    </div>
+  );
+}
+
+function XhsBenchmarkNotesTable(props: {
+  items: XhsCollectedNoteRecord[];
+  addingMaterialAssetId: string;
+  formatDateTime: OptionalDateFormatter;
+  formatCount: OptionalNumberFormatter;
+  formatMetric: OptionalNumberFormatter;
+  onPreviewMedia: ValueAction<MediaPreviewState>;
+  selectedIds: string[];
+  allSelected: boolean;
+  onToggleSelect: (id: string, checked: boolean) => void;
+  onSelectAll: (checked: boolean) => void;
+}) {
+  return (
+    <ScrollableTableShell>
+      <table className="soft-table douyin-data-table">
+        <thead>
+          <tr>
+            <th>
+              <TableSelectionCheckbox
+                checked={props.allSelected}
+                title="全选当前列表"
+                onChange={props.onSelectAll}
+              />
+            </th>
+            <th>素材库</th>
+            <th>笔记 ID</th>
+            <th>作者昵称</th>
+            <th>标题/文案</th>
+            <th>发布时间</th>
+            <th>笔记类型</th>
+            <th>图片</th>
+            <th>视频</th>
+            <th>作品链接</th>
+            <th>点赞</th>
+            <th>评论</th>
+            <th>分享</th>
+            <th>收藏</th>
+            <th>赞藏率</th>
+            <th>赞评率</th>
+            <th>分享率</th>
+            <th>采集时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.items.map((item) => (
+            <tr key={item.id}>
+              <td>
+                <TableSelectionCheckbox
+                  checked={props.selectedIds.includes(item.id)}
+                  title={`勾选 ${item.title || item.noteId || "笔记"}`}
+                  onChange={(checked) => props.onToggleSelect(item.id, checked)}
+                />
+              </td>
+              <td>{item.isInMaterialLibrary ? "已加入" : props.addingMaterialAssetId === item.id ? "加入中..." : "未加入"}</td>
+              <td><CopyableCell value={item.noteId} /></td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.nickname} emptyText="-" compactRows={2} />
+              </td>
+              <td className="table-cell-wide">
+                <ExpandableTextCell value={item.description || item.title} emptyText="暂无作品文案" compactRows={2} />
+              </td>
+              <td>{item.createdAtText || "-"}</td>
+              <td>{item.noteType || (item.videoUrl ? "视频笔记" : "图文笔记")}</td>
+              <td className="table-cell-wide">
+                {item.imageList?.length ? (
+                  <ProtectedImageGallery
+                    sourceUrls={item.imageList}
+                    title={item.title || item.noteId || "小红书图片"}
+                    onPreviewMedia={props.onPreviewMedia}
+                  />
+                ) : (
+                  <span className="table-cell-empty">-</span>
+                )}
+              </td>
+              <td>
+                <ProtectedVideoLink
+                  sourceUrl={item.videoUrl}
+                  title={item.title || item.noteId || "小红书视频"}
+                  onPreviewMedia={props.onPreviewMedia}
+                />
+              </td>
+              <td>
+                {item.sourceUrl || item.noteUrl ? (
+                  <a href={item.sourceUrl || item.noteUrl} target="_blank" rel="noreferrer" className="note-data-link">
+                    打开作品
+                  </a>
+                ) : "-"}
+              </td>
+              <td>{props.formatCount(item.likeCount)}</td>
+              <td>{props.formatCount(item.commentCount)}</td>
+              <td>{props.formatCount(item.shareCount)}</td>
+              <td>{props.formatCount(item.collectCount)}</td>
+              <td>{props.formatMetric(item.likeCollectRatio)}</td>
+              <td>{props.formatMetric(item.likeCommentRatio)}</td>
+              <td>{props.formatMetric(item.shareRatio)}</td>
+              <td>{props.formatDateTime(item.collectedAt)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ScrollableTableShell>
+  );
+}
+
+export function BrandGrowthCollectionWorkspace(props: BrandGrowthCollectionWorkspaceProps) {
+  const [selectedXhsNoteIds, setSelectedXhsNoteIds] = useState<string[]>([]);
+  const [selectedDouyinWorkIds, setSelectedDouyinWorkIds] = useState<string[]>([]);
+  const [selectedDouyinCreatorSearchIds, setSelectedDouyinCreatorSearchIds] = useState<string[]>([]);
+  const [isBatchAddingToMaterial, setIsBatchAddingToMaterial] = useState(false);
+  const [isBatchDeletingItems, setIsBatchDeletingItems] = useState(false);
+  const xiaohongshuSyncedCount =
+    props.sortedBrandAccounts.length +
+    props.sortedCompetitorAccounts.length +
+    props.sortedBrandNotes.length +
+    props.sortedBenchmarkNotes.length +
+    props.sortedSearchNotes.length +
+    props.sortedXhsCommentData.length;
+  const douyinSyncedCount =
+    props.sortedDouyinBrandAccounts.length +
+    props.sortedDouyinCompetitorAccounts.length +
+    props.sortedDouyinBrandWorks.length +
+    props.sortedDouyinCompetitorWorks.length +
+    props.sortedDouyinBenchmarkWorks.length +
+    props.sortedDouyinSearchWorks.length +
+    props.sortedDouyinCommentData.length +
+    props.sortedDouyinKeywordRecommendations.length +
+    props.sortedDouyinLowFanExplosiveWorks.length +
+    props.sortedDouyinHighCompletionRateWorks.length +
+    props.sortedDouyinHighLikeRateWorks.length +
+    props.sortedDouyinCityHotspots.length +
+    props.sortedDouyinCreatorSearchResults.length +
+    props.sortedDouyinCreatorProfiles.length +
+    props.sortedDouyinCreatorDeepFetchTasks.length;
+  const feishuConfigReady = Boolean(props.feishuAppConfig?.appId || props.feishuAppConfigForm.appId.trim());
+  const feishuBindingReady = Boolean(props.feishuBinding?.wikiUrl || props.feishuBindingForm.wikiUrl.trim());
+  const douyinContentTags = props.douyinWorkspace.contentTags ?? [];
+  const douyinCityOptions = props.douyinWorkspace.cityOptions ?? [];
+  const xhsCommentHasMoreCount = props.xhsCommentPagination.filter((item) => item.hasMore).length;
+  const xhsCommentRequestCount = props.xhsCommentPagination.length;
+  const douyinCommentHasMoreCount = props.douyinCommentPagination.filter((item) => item.hasMore).length;
+  const douyinCommentRequestCount = props.douyinCommentPagination.length;
+  const currentXhsSelectableItems = props.activeXhsCollectionCard === "benchmarkWorks"
+    ? props.sortedBenchmarkNotes
+    : props.activeXhsCollectionCard === "searchNotes"
+      ? props.sortedSearchNotes
+      : [];
+  const xhsPreviewPagination = useCollectionPagination(
+    currentXhsSelectableItems,
+    `${props.activePage}-${props.activeXhsCollectionCard}`,
+  );
+  const currentXhsVisibleItems = xhsPreviewPagination.paginatedItems;
+  const douyinPreviewItems =
+    props.activeDouyinCollectionCard === "brandAccount"
+      ? props.sortedDouyinBrandAccounts
+      : props.activeDouyinCollectionCard === "competitorAccount"
+        ? props.sortedDouyinCompetitorAccounts
+        : props.activeDouyinCollectionCard === "brandWorks"
+          ? props.sortedDouyinBrandWorks
+          : props.activeDouyinCollectionCard === "competitorWorks"
+            ? props.sortedDouyinCompetitorWorks
+          : props.activeDouyinCollectionCard === "benchmarkWorks"
+            ? props.sortedDouyinBenchmarkWorks
+            : props.activeDouyinCollectionCard === "searchWorks"
+              ? props.sortedDouyinSearchWorks
+              : props.activeDouyinCollectionCard === "lowFanExplosiveWorks"
+                ? props.sortedDouyinLowFanExplosiveWorks
+                : props.activeDouyinCollectionCard === "highCompletionRateWorks"
+                  ? props.sortedDouyinHighCompletionRateWorks
+                  : props.sortedDouyinHighLikeRateWorks;
+  const currentDouyinWorkItems = [
+    "brandWorks",
+    "competitorWorks",
+    "benchmarkWorks",
+    "searchWorks",
+    "lowFanExplosiveWorks",
+    "highCompletionRateWorks",
+    "highLikeRateWorks",
+  ].includes(props.activeDouyinCollectionCard)
+    ? (douyinPreviewItems as DouyinCollectedWorkRecord[])
+    : [];
+  const douyinPreviewPagination = useCollectionPagination(
+    currentDouyinWorkItems,
+    `${props.activePage}-${props.activeDouyinCollectionCard}`,
+  );
+  const currentDouyinVisibleItems = douyinPreviewPagination.paginatedItems;
+  const currentDouyinSelectableItems = [
+    "competitorWorks",
+    "benchmarkWorks",
+    "searchWorks",
+    "lowFanExplosiveWorks",
+    "highCompletionRateWorks",
+    "highLikeRateWorks",
+  ].includes(props.activeDouyinCollectionCard)
+    ? currentDouyinWorkItems
+    : [];
+  const allXhsSelected = currentXhsVisibleItems.length > 0 && currentXhsVisibleItems.every((item) => selectedXhsNoteIds.includes(item.id));
+  const allDouyinSelected =
+    currentDouyinVisibleItems.length > 0 && currentDouyinVisibleItems.every((item) => selectedDouyinWorkIds.includes(item.id));
+  const allDouyinCreatorSearchSelected =
+    props.sortedDouyinCreatorSearchResults.length > 0
+    && props.sortedDouyinCreatorSearchResults.every((item) => selectedDouyinCreatorSearchIds.includes(item.id));
+
+  useEffect(() => {
+    const currentIds = new Set(currentXhsSelectableItems.map((item) => item.id));
+    setSelectedXhsNoteIds((current) => current.filter((id) => currentIds.has(id)));
+  }, [currentXhsSelectableItems]);
+
+  useEffect(() => {
+    const currentIds = new Set(currentDouyinSelectableItems.map((item) => item.id));
+    setSelectedDouyinWorkIds((current) => current.filter((id) => currentIds.has(id)));
+  }, [currentDouyinSelectableItems]);
+
+  useEffect(() => {
+    const currentIds = new Set(props.sortedDouyinCreatorSearchResults.map((item) => item.id));
+    setSelectedDouyinCreatorSearchIds((current) => current.filter((id) => currentIds.has(id)));
+  }, [props.sortedDouyinCreatorSearchResults]);
+
+  async function handleBatchAddXhsNotesToMaterial() {
+    const selectedItems = currentXhsSelectableItems.filter((item) => selectedXhsNoteIds.includes(item.id) && !item.isInMaterialLibrary);
+    if (!selectedItems.length) {
+      return;
+    }
+    setIsBatchAddingToMaterial(true);
+    try {
+      for (const item of selectedItems) {
+        await props.onAddBenchmarkNoteToMaterial(item.id);
+      }
+    } finally {
+      setIsBatchAddingToMaterial(false);
+    }
+  }
+
+  async function handleBatchDeleteXhsNotes() {
+    const selectedItems = currentXhsSelectableItems.filter((item) => selectedXhsNoteIds.includes(item.id));
+    if (!selectedItems.length) {
+      return;
+    }
+    setIsBatchDeletingItems(true);
+    try {
+      for (const item of selectedItems) {
+        await props.onDeleteXhsCollectedNote(item.id);
+      }
+      setSelectedXhsNoteIds([]);
+    } finally {
+      setIsBatchDeletingItems(false);
+    }
+  }
+
+  async function handleBatchAddDouyinWorksToMaterial() {
+    const selectedItems = currentDouyinSelectableItems.filter((item) => selectedDouyinWorkIds.includes(item.id) && !item.isInMaterialLibrary);
+    if (!selectedItems.length) {
+      return;
+    }
+    setIsBatchAddingToMaterial(true);
+    try {
+      for (const item of selectedItems) {
+        await props.onAddDouyinBenchmarkWorkToMaterial(item);
+      }
+    } finally {
+      setIsBatchAddingToMaterial(false);
+    }
+  }
+
+  async function handleBatchDeleteDouyinWorks() {
+    const selectedItems = currentDouyinSelectableItems.filter((item) => selectedDouyinWorkIds.includes(item.id));
+    if (!selectedItems.length) {
+      return;
+    }
+    setIsBatchDeletingItems(true);
+    try {
+      for (const item of selectedItems) {
+        await props.onDeleteDouyinCollectedWork(item.id);
+      }
+      setSelectedDouyinWorkIds([]);
+    } finally {
+      setIsBatchDeletingItems(false);
+    }
+  }
+
+  async function handleBatchCreateDouyinCreatorDeepFetchTasks() {
+    const selectedItems = props.sortedDouyinCreatorSearchResults.filter((item) => selectedDouyinCreatorSearchIds.includes(item.id));
+    if (!selectedItems.length) {
+      return;
+    }
+    await props.onCreateDouyinCreatorDeepFetchTasksFromSearchResults(selectedItems);
+    setSelectedDouyinCreatorSearchIds([]);
+  }
+
+  async function handleBatchAddDouyinCreatorsToResultPool() {
+    const selectedItems = props.sortedDouyinCreatorSearchResults.filter((item) => selectedDouyinCreatorSearchIds.includes(item.id));
+    if (!selectedItems.length) {
+      return;
+    }
+    await props.onAddDouyinCreatorsToResultPoolFromSearchResults(selectedItems);
+    setSelectedDouyinCreatorSearchIds([]);
+  }
+  if (props.activePage === "dailyHotspot") {
+    return (
+      <article className="workspace-panel strategy-page-card hotspot-page-card">
+        <div className="strategy-card-toolbar">
+          <div>
+            <strong>{props.pageTitle}</strong>
+            <p>{props.pageDescription}</p>
+          </div>
+          <div className="strategy-inline-actions">
+            <button type="button" className="secondary-button" onClick={() => void props.onRefreshData()} disabled={props.isHydrating}>
+              刷新数据
+            </button>
+          </div>
+        </div>
+        <CollectionPageStatus
+          dataSource={props.dataSource}
+          notice={props.notice}
+          errorMessage={props.errorMessage}
+          isHydrating={props.isHydrating}
+        />
+        <article className="light-data-panel hotspot-overview-panel">
+          <div className="hotspot-panel-head">
+            <div className="hotspot-panel-copy">
+              <h3>{props.activeHotspotRecord?.title || "热搜榜"}</h3>
+              <p>{props.activeHotspotRecord?.description || "这里展示每日热点搜索结果。"}</p>
+              <span className="hotspot-auto-tip">每天 4:00 自动更新当天热搜榜</span>
+            </div>
+            <div className="hotspot-panel-actions">
+              <label className="hotspot-date-picker">
+                <span>查看日期</span>
+                <select
+                  value={props.selectedHotspotDate}
+                  onChange={(event) => void props.onDailyHotspotDateChange(event.target.value)}
+                  disabled={props.isSyncingDailyHotspots || !props.hotspotAvailableDates.length}
+                >
+                  {props.hotspotAvailableDates.map((date) => (
+                    <option key={date} value={date}>
+                      {props.formatDateLabel(date)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span
+                className={`archive-pill ${
+                  props.activeHotspotRecord?.syncStatus === "SUCCESS"
+                    ? "status-ready"
+                    : props.activeHotspotRecord?.syncStatus === "FAILED"
+                      ? "status-pending"
+                      : "status-in_progress"
+                }`}
+              >
+                {props.activeHotspotRecord?.syncStatus || "IDLE"}
+              </span>
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() =>
+                  void props.onSyncDailyHotspots(props.activeHotspotRecord ? [props.activeHotspotRecord.title] : undefined)
+                }
+                disabled={props.isSyncingDailyHotspots}
+              >
+                {props.isSyncingDailyHotspots ? "搜索中..." : "手动搜索"}
+              </button>
+            </div>
+          </div>
+
+          {props.activeHotspotRecord?.lastError ? (
+            <div className="hotspot-error-banner">
+              <strong>最近一次搜索失败</strong>
+              <p>{props.activeHotspotRecord.lastError}</p>
+            </div>
+          ) : null}
+        </article>
+
+        <article className="light-data-panel">
+          <div className="hotspot-list-head">
+            <h3>热点榜单</h3>
+            <div className="hotspot-list-tools">
+              <span className="archive-pill status-ready">共 {props.sortedHotspotItems.length} 条</span>
+              <label className="note-page-size-picker hotspot-page-size-picker">
+                <span>每页</span>
+                <select
+                  value={props.hotspotPageSize}
+                  onChange={(event) => props.setHotspotPageSize(Number(event.target.value))}
+                >
+                  {[10, 20].map((size) => (
+                    <option key={`hotspot-page-size-${size}`} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+                <span>条</span>
+              </label>
+            </div>
+          </div>
+          <div className="hotspot-ranking-list">
+            {props.sortedHotspotItems.length ? (
+              props.paginatedHotspotItems.map((item) => (
+                <article key={item.id} className="hotspot-ranking-card">
+                  <div className="hotspot-ranking-rank">#{item.rank}</div>
+                  <div className="hotspot-ranking-body">
+                    <strong>{item.title}</strong>
+                    <div className="hotspot-ranking-meta">
+                      <span>热度 {props.formatHotspotHeat(item.hot)}</span>
+                      <span>
+                        时间{" "}
+                        {props.formatDateTime(
+                          item.timestamp
+                            ? new Date(item.timestamp).toISOString()
+                            : props.activeHotspotRecord?.updateTime || props.activeHotspotRecord?.collectedAt,
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                  {item.url ? (
+                    <a href={item.url} target="_blank" rel="noreferrer" className="table-link-pill">
+                      查看源链接
+                    </a>
+                  ) : (
+                    <span className="archive-pill status-pending">无直达链接</span>
+                  )}
+                </article>
+              ))
+            ) : (
+              <div className="empty-state">
+                当前榜单还没有可展示的热点条目。若刚执行过搜索但仍为空，通常表示接口权限不足或返回结构为空。
+              </div>
+            )}
+          </div>
+          {props.sortedHotspotItems.length ? (
+            <div className="note-pagination-bar hotspot-pagination-bar">
+              <div className="note-pagination-summary">
+                <span>
+                  第 {props.hotspotPage} / {props.hotspotPageCount} 页
+                </span>
+                <span>当前显示 {props.paginatedHotspotItems.length} 条</span>
+              </div>
+              <div className="note-pagination-actions">
+                <button
+                  type="button"
+                  className="note-inline-button"
+                  onClick={() => props.setHotspotPage((current) => Math.max(1, current - 1))}
+                  disabled={props.hotspotPage === 1}
+                >
+                  上一页
+                </button>
+                {Array.from({ length: props.hotspotPageCount }, (_, index) => index + 1).map((page) => (
+                  <button
+                    key={`hotspot-page-${page}`}
+                    type="button"
+                    className={`note-page-button ${page === props.hotspotPage ? "is-active" : ""}`}
+                    onClick={() => props.setHotspotPage(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="note-inline-button"
+                  onClick={() => props.setHotspotPage((current) => Math.min(props.hotspotPageCount, current + 1))}
+                  disabled={props.hotspotPage === props.hotspotPageCount}
+                >
+                  下一页
+                </button>
+              </div>
+            </div>
+          ) : null}
+        </article>
+      </article>
+    );
+  }
+
+  return (
+    <div className="strategy-collection-stack">
+      {props.activePage === "feishuCollection" ? (
+        <article className="workspace-panel strategy-page-card feishu-binding-panel">
+          <div className="strategy-card-toolbar">
+            <div>
+              <strong>{props.pageTitle}</strong>
+              <p>{props.pageDescription}</p>
+            </div>
+            <div className="strategy-inline-actions">
+              <button type="button" className="secondary-button" onClick={() => void props.onRefreshData()} disabled={props.isHydrating}>
+                刷新数据
+              </button>
+              <a href={props.templateUrl} target="_blank" rel="noreferrer" className="secondary-button">
+                打开飞书模板
+              </a>
+            </div>
+          </div>
+          <CollectionPageStatus
+            dataSource={props.dataSource}
+            notice={props.notice}
+            errorMessage={props.errorMessage}
+            isHydrating={props.isHydrating}
+          />
+          <div className="strategy-chip-row">
+            <span className={`archive-pill ${feishuConfigReady ? "status-ready" : "status-pending"}`}>
+              {feishuConfigReady ? "应用已配置" : "待配置应用"}
+            </span>
+            <span className={`archive-pill ${props.feishuAuthStatus?.connected ? "status-ready" : "status-pending"}`}>
+              {props.feishuAuthStatus?.connected ? "飞书已连接" : "待连接飞书"}
+            </span>
+            <span className={`archive-pill ${feishuBindingReady ? "status-ready" : "status-pending"}`}>
+              {feishuBindingReady ? "副本已绑定" : "待绑定副本"}
+            </span>
+            <span className={`archive-pill ${props.canSyncFeishuWorkspace ? "status-ready" : "status-pending"}`}>
+              {props.canSyncFeishuWorkspace ? "可执行同步" : "待完成同步前置"}
+            </span>
+          </div>
+          <div className="feishu-compact-steps">
+            <span>01 配置应用</span>
+            <span>02 连接飞书</span>
+            <span>03 绑定副本</span>
+            <span>04 同步数据</span>
+          </div>
+          <div className="form-grid two-column">
+            <label className="field">
+              <span>App ID</span>
+              <input
+                value={props.feishuAppConfigForm.appId}
+                onChange={(event) =>
+                  props.setFeishuAppConfigForm((current) => ({ ...current, appId: event.target.value }))
+                }
+                placeholder="请输入当前用户自己的飞书 App ID"
+              />
+            </label>
+            <label className="field">
+              <span>App Secret</span>
+              <input
+                type="password"
+                value={props.feishuAppConfigForm.appSecret}
+                onChange={(event) =>
+                  props.setFeishuAppConfigForm((current) => ({ ...current, appSecret: event.target.value }))
+                }
+                placeholder={props.feishuAppConfig?.appSecretMasked || "请输入当前用户自己的飞书 App Secret"}
+              />
+            </label>
+            <label className="field field-full">
+              <span>授权回调地址</span>
+              <input
+                value={props.feishuAppConfigForm.redirectUri}
+                onChange={(event) =>
+                  props.setFeishuAppConfigForm((current) => ({ ...current, redirectUri: event.target.value }))
+                }
+                placeholder="例如 https://17ai.site/api/auth/feishu/oauth/callback"
+              />
+            </label>
+            <label className="field field-full">
+              <span>授权 Scope</span>
+              <input
+                value={props.feishuAppConfigForm.scope}
+                onChange={(event) =>
+                  props.setFeishuAppConfigForm((current) => ({ ...current, scope: event.target.value }))
+                }
+                placeholder="默认会自动填入读取 Base/Wiki 所需 scope"
+              />
+            </label>
+            <label className="field field-full">
+              <span>飞书多维表格链接</span>
+              <input
+                value={props.feishuBindingForm.wikiUrl}
+                onChange={(event) =>
+                  props.setFeishuBindingForm((current) => ({ ...current, wikiUrl: event.target.value }))
+                }
+                placeholder="粘贴飞书 wiki 或多维表格副本链接，例如 https://.../wiki/... 或 https://.../base/..."
+              />
+            </label>
+          </div>
+          <div className="feishu-binding-actions">
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => void props.onSaveFeishuAppConfig()}
+              disabled={props.isHydrating || props.isSavingFeishuAppConfig}
+            >
+              {props.isSavingFeishuAppConfig ? "保存中..." : "保存应用配置"}
+            </button>
+            <button type="button" className="secondary-button" onClick={() => void props.onStartFeishuAuth()}>
+              {props.feishuAuthStatus?.connected ? "更换飞书账号" : "连接飞书"}
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => void props.onSaveFeishuBinding()}
+              disabled={props.isHydrating || props.isSavingFeishuBinding}
+            >
+              {props.isSavingFeishuBinding ? "绑定中..." : "保存绑定"}
+            </button>
+          </div>
+        </article>
+      ) : null}
+
+      {props.activePage === "xiaohongshuCollection" ? (
+        <article className="workspace-panel strategy-page-card strategy-collection-page-card">
+          <div className="strategy-card-toolbar">
+            <div>
+              <strong>{props.pageTitle}</strong>
+              <p>直接提取品牌账号、竞品账号、品牌作品、对标作品与搜索笔记结果。</p>
+            </div>
+            <div className="strategy-inline-actions">
+              <button type="button" className="secondary-button" onClick={() => void props.onRefreshData()} disabled={props.isHydrating}>
+                刷新数据
+              </button>
+            </div>
+          </div>
+          <CollectionPageStatus
+            dataSource={props.dataSource}
+            notice={props.notice}
+            errorMessage={props.errorMessage}
+            isHydrating={props.isHydrating}
+          />
+          <div className="strategy-chip-row">
+            <span className="archive-pill status-ready">数据源：采集接口</span>
+            <span className={`archive-pill ${xiaohongshuSyncedCount ? "status-ready" : "status-pending"}`}>
+              已同步 {xiaohongshuSyncedCount} 条
+            </span>
+          </div>
+          <div className="strategy-chip-row">
+            {xiaohongshuCollectionCards.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                className={`filter-chip ${props.activeXhsCollectionCard === item.key ? "is-active" : ""}`}
+                onClick={() => props.onXhsCollectionCardChange(item.key)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {props.activeXhsCollectionCard === "brandAccount" ? (
+            <>
+              <XhsAccountBindingSubmitPanel
+                title="品牌账号信息"
+                description="按账号逐条维护采集入口，支持区分品牌号、员工号和达人号，并在行内直接提交更新。"
+                modalTitle="添加品牌账号"
+                modalDescription="先选择账号类型，再输入小红书主页链接、分享链接或 user_id。"
+                emptyDescription="右上角点击“添加账号”后，按账号类型逐条保存；保存后每个账号会单独展示并可直接提交采集。"
+                target="brand"
+                enableRoleSelection
+                entries={props.xhsSyncForm.brandAccountEntries}
+                syncedAccounts={props.sortedBrandAccounts}
+                isSubmitting={props.isHydrating || props.isSyncingXhsWorkspace}
+                onChangeEntries={(entries) => props.setXhsSyncForm((current) => ({ ...current, brandAccountEntries: entries }))}
+                onSubmitEntry={props.onSyncSingleXhsBrandAccount}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌账号信息</h3>
+                    <p>调用采集接口获取品牌账号画像。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedBrandAccounts.length ? "status-ready" : "status-pending"}`}>
+                    已同步 {props.sortedBrandAccounts.length} 条
+                  </span>
+                </div>
+                {props.sortedBrandAccounts.length ? (
+                  <XhsAccountTable
+                    items={props.sortedBrandAccounts}
+                    showAccountRole
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有品牌账号结果，先添加账号并点击对应行的提交按钮。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeXhsCollectionCard === "competitorAccount" ? (
+            <>
+              <XhsAccountBindingSubmitPanel
+                title="竞品账号信息"
+                description="按账号逐条绑定竞品采集入口，可同时维护多个竞品账号，并在行内直接提交覆盖更新。"
+                modalTitle="添加竞品账号"
+                modalDescription="输入小红书主页链接、分享链接或 user_id，保存后可逐条提交采集。"
+                emptyDescription="右上角点击“添加账号”后，逐条保存竞品账号；保存后每个账号会单独展示并可直接提交采集。"
+                target="competitor"
+                entries={props.xhsSyncForm.competitorAccountEntries}
+                syncedAccounts={props.sortedCompetitorAccounts}
+                isSubmitting={props.isHydrating || props.isSyncingXhsWorkspace}
+                onChangeEntries={(entries) => props.setXhsSyncForm((current) => ({ ...current, competitorAccountEntries: entries }))}
+                onSubmitEntry={props.onSyncSingleXhsCompetitorAccount}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>竞品账号信息</h3>
+                    <p>调用采集接口获取竞品账号画像。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedCompetitorAccounts.length ? "status-ready" : "status-pending"}`}>
+                    已同步 {props.sortedCompetitorAccounts.length} 条
+                  </span>
+                </div>
+                {props.sortedCompetitorAccounts.length ? (
+                  <XhsAccountTable
+                    items={props.sortedCompetitorAccounts}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有竞品账号结果，先添加账号并点击对应行的提交按钮。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeXhsCollectionCard === "brandWorks" ? (
+            <>
+              <article className="light-data-panel xhs-account-builder" style={{ marginBottom: 16 }}>
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌作品信息及数据</h3>
+                    <p>直接复用“品牌账号信息”里已绑定的品牌账号。左侧一键同步账号并拉取作品，右侧仅重提作品采集。</p>
+                  </div>
+                  <div className="strategy-inline-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void props.onSyncXhsWorkspace()}
+                      disabled={props.isHydrating || props.isSyncingXhsWorkspace || !props.xhsSyncForm.brandAccountEntries.length}
+                    >
+                      {props.isHydrating || props.isSyncingXhsWorkspace ? "同步中..." : "同步账号并拉作品"}
+                    </button>
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void props.onSyncXhsWorkspace()}
+                      disabled={props.isHydrating || props.isSyncingXhsWorkspace || !props.xhsSyncForm.brandAccountEntries.length}
+                    >
+                      {props.isHydrating || props.isSyncingXhsWorkspace ? "提交中..." : "仅提交作品"}
+                    </button>
+                  </div>
+                </div>
+                {props.xhsSyncForm.brandAccountEntries.length ? (
+                  <div className="xhs-account-entry-list">
+                    {props.xhsSyncForm.brandAccountEntries.map((entry) => (
+                      <div key={`brand-work-source-${entry.id}`} className="xhs-account-entry-row">
+                        <div className="xhs-account-entry-row__body">
+                          <div className="xhs-account-entry-row__meta">
+                            {entry.accountRole ? (
+                              <span className="xhs-account-role-badge">{getXhsAccountRoleLabel(entry.accountRole)}</span>
+                            ) : null}
+                            <span className="archive-pill status-ready">作品采集来源</span>
+                          </div>
+                          <strong>{entry.locator}</strong>
+                        </div>
+                        <div className="xhs-account-entry-row__actions">
+                          <button
+                            type="button"
+                            className="note-inline-button"
+                            onClick={() => props.setXhsSyncForm((current) => ({
+                              ...current,
+                              brandAccountEntries: current.brandAccountEntries.filter((item) => item.id !== entry.id),
+                            }))}
+                            disabled={props.isHydrating || props.isSyncingXhsWorkspace}
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="xhs-account-entry-empty">
+                    先在“品牌账号信息”里绑定至少一个品牌账号，品牌作品采集会自动复用这些账号。
+                  </div>
+                )}
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌作品信息及数据</h3>
+                    <p>调用采集接口，按列表形式展示品牌账号下的作品及基础数据。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedBrandNotes.length ? "status-ready" : "status-pending"}`}>
+                    已同步 {props.sortedBrandNotes.length} 条
+                  </span>
+                </div>
+                {props.sortedBrandNotes.length ? (
+                  <XhsNotesTable
+                    items={props.paginatedBrandNotes}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有品牌作品结果，请先点击左侧“同步账号并拉作品”。</div>
+                )}
+                {props.sortedBrandNotes.length ? (
+                  <div className="note-pagination-bar">
+                    <div className="note-pagination-summary">
+                      <span>共 {props.sortedBrandNotes.length} 条</span>
+                      <span>
+                        第 {props.brandNotesPage} / {props.brandNotesPageCount} 页
+                      </span>
+                    </div>
+                    <div className="note-pagination-actions">
+                      <button
+                        type="button"
+                        className="note-inline-button"
+                        onClick={() => props.setBrandNotesPage((current) => Math.max(1, current - 1))}
+                        disabled={props.brandNotesPage === 1}
+                      >
+                        上一页
+                      </button>
+                      {Array.from({ length: props.brandNotesPageCount }, (_, index) => index + 1).map((page) => (
+                        <button
+                          key={`brand-note-page-${page}`}
+                          type="button"
+                          className={`note-page-button ${page === props.brandNotesPage ? "is-active" : ""}`}
+                          onClick={() => props.setBrandNotesPage(page)}
+                        >
+                          {page}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        className="note-inline-button"
+                        onClick={() => props.setBrandNotesPage((current) => Math.min(props.brandNotesPageCount, current + 1))}
+                        disabled={props.brandNotesPage === props.brandNotesPageCount}
+                      >
+                        下一页
+                      </button>
+                      <label className="note-page-size-picker">
+                        <span>每页</span>
+                        <select
+                          value={props.brandNotesPageSize}
+                          onChange={(event) => props.setBrandNotesPageSize(Number(event.target.value))}
+                        >
+                          {[10, 20, 30, 50].map((size) => (
+                            <option key={`page-size-${size}`} value={size}>
+                              {size}
+                            </option>
+                          ))}
+                        </select>
+                        <span>个</span>
+                      </label>
+                    </div>
+                  </div>
+                ) : null}
+              </article>
+            </>
+          ) : null}
+          {props.activeXhsCollectionCard === "benchmarkWorks" ? (
+            <>
+              <DouyinSubmitPanel
+                title="对标作品信息及数据"
+                value={props.xhsSyncForm.benchmarkNoteLocators}
+                onChange={(value) => props.setXhsSyncForm((current) => ({ ...current, benchmarkNoteLocators: value }))}
+                placeholder="每行一个小红书作品链接、分享链接或 note_id"
+                isSubmitting={props.isHydrating || props.isSyncingXhsWorkspace}
+                onSubmit={props.onSyncXhsWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>对标作品信息及数据</h3>
+                    <p>调用采集接口获取单条作品的详情与互动数据。</p>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedXhsNoteIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddXhsNotesToMaterial}
+                    onDelete={handleBatchDeleteXhsNotes}
+                  />
+                </div>
+                {props.sortedBenchmarkNotes.length ? (
+                  <XhsBenchmarkNotesTable
+                    items={currentXhsVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    formatMetric={props.formatMetric}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedXhsNoteIds}
+                    allSelected={allXhsSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedXhsNoteIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedXhsNoteIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentXhsVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentXhsVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有对标作品结果，先提交作品链接或 note_id。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentXhsSelectableItems.length}
+                  currentCount={currentXhsVisibleItems.length}
+                  page={xhsPreviewPagination.page}
+                  setPage={xhsPreviewPagination.setPage}
+                  pageCount={xhsPreviewPagination.pageCount}
+                  pageSize={xhsPreviewPagination.pageSize}
+                  setPageSize={xhsPreviewPagination.setPageSize}
+                  pageKeyPrefix="xhs-benchmark-notes"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeXhsCollectionCard === "searchNotes" ? (
+            <>
+              <article className="light-data-panel" style={{ marginBottom: 16 }}>
+                <div className="collection-result-head">
+                  <div>
+                    <h3>搜索笔记</h3>
+                    <p>按关键词检索小红书笔记，左侧素材库按钮可直接同步到统一素材库。</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="primary-button"
+                    onClick={() => void props.onSyncXhsSearchNotes()}
+                    disabled={props.isHydrating || props.isSyncingXhsWorkspace}
+                  >
+                    {props.isHydrating || props.isSyncingXhsWorkspace ? "提交中..." : "提交"}
+                  </button>
+                </div>
+                <label className="field">
+                  <span>搜索关键词</span>
+                  <input
+                    value={props.xhsSyncForm.searchKeyword}
+                    onChange={(event) => props.setXhsSyncForm((current) => ({ ...current, searchKeyword: event.target.value }))}
+                    placeholder="请输入笔记关键词，例如 咖啡店探店、夏日穿搭、烘焙教程"
+                  />
+                </label>
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>搜索笔记结果</h3>
+                    <p>搜索结果与对标作品列表保持一致，可直接加入统一素材库。</p>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedXhsNoteIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddXhsNotesToMaterial}
+                    onDelete={handleBatchDeleteXhsNotes}
+                  />
+                </div>
+                {props.sortedSearchNotes.length ? (
+                  <XhsBenchmarkNotesTable
+                    items={currentXhsVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    formatMetric={props.formatMetric}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedXhsNoteIds}
+                    allSelected={allXhsSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedXhsNoteIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedXhsNoteIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentXhsVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentXhsVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有搜索笔记结果，先输入关键词并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentXhsSelectableItems.length}
+                  currentCount={currentXhsVisibleItems.length}
+                  page={xhsPreviewPagination.page}
+                  setPage={xhsPreviewPagination.setPage}
+                  pageCount={xhsPreviewPagination.pageCount}
+                  pageSize={xhsPreviewPagination.pageSize}
+                  setPageSize={xhsPreviewPagination.setPageSize}
+                  pageKeyPrefix="xhs-search-notes"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeXhsCollectionCard === "commentData" ? (
+            <>
+              <DouyinSubmitPanel
+                title="评论数据"
+                value={props.xhsSyncForm.commentSourceUrls}
+                onChange={(value) => props.setXhsSyncForm((current) => ({ ...current, commentSourceUrls: value }))}
+                placeholder="每行一个小红书笔记链接、分享链接或 note_id"
+                isSubmitting={props.isHydrating || props.isSyncingXhsWorkspace}
+                onSubmit={props.onSyncXhsCommentData}
+              />
+              <CommentTargetUserExtractPanel
+                title="从评论提取账号链接"
+                description="基于上面的笔记链接自动补拉评论，并按关键词筛选匹配评论用户；不填关键词时会提取全部评论用户。"
+                matchKeywords={props.xhsSyncForm.targetUserMatchKeywords}
+                onChangeMatchKeywords={(value) => props.setXhsSyncForm((current) => ({ ...current, targetUserMatchKeywords: value }))}
+                placeholder="每行一个关键词，例如：探店、加盟、装修、优惠"
+                isSubmitting={props.isHydrating || props.isSyncingXhsWorkspace}
+                onSubmit={props.onSyncXhsTargetUsers}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>评论数据</h3>
+                    <p>采集一级评论，并支持按一级评论展开采集二级评论。</p>
+                  </div>
+                  <div className="strategy-inline-actions">
+                    <span className={`archive-pill ${props.sortedXhsCommentData.length ? "status-ready" : "status-pending"}`}>
+                      已采集 {props.sortedXhsCommentData.length} 条
+                    </span>
+                    <span className={`archive-pill ${xhsCommentHasMoreCount ? "status-ready" : "status-pending"}`}>
+                      可继续翻页 {xhsCommentHasMoreCount} 个笔记
+                    </span>
+                    {xhsCommentRequestCount ? (
+                      <span className="archive-pill status-pending">当前游标 {xhsCommentRequestCount} 个笔记</span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void props.onLoadMoreXhsComments()}
+                      disabled={
+                        props.isHydrating
+                        || props.isSyncingXhsWorkspace
+                        || props.isLoadingMoreXhsComments
+                        || !xhsCommentHasMoreCount
+                      }
+                    >
+                      {props.isLoadingMoreXhsComments ? "加载中..." : "加载更多"}
+                    </button>
+                  </div>
+                </div>
+                {props.sortedXhsCommentData.length ? (
+                  <XhsCommentTable
+                    items={props.sortedXhsCommentData}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    expandedCommentIds={props.expandedXhsCommentIds}
+                    subCommentsByParent={props.xhsSubCommentsByParent}
+                    subCommentPaginationMap={props.xhsSubCommentPaginationMap}
+                    loadingCommentIds={props.loadingXhsSubCommentIds}
+                    loadingMoreCommentIds={props.loadingMoreXhsSubCommentIds}
+                    onToggleReplies={props.onToggleXhsCommentReplies}
+                    onLoadReplies={props.onLoadXhsCommentReplies}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有评论数据结果，请先输入小红书笔记链接并提交。</div>
+                )}
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>评论用户账号链接</h3>
+                    <p>基于评论数据提取匹配用户，并沉淀为可继续给 AI 智控中心 使用的目标用户结果。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedXhsTargetUsers.length ? "status-ready" : "status-pending"}`}>
+                    已提取 {props.sortedXhsTargetUsers.length} 条
+                  </span>
+                </div>
+                {props.sortedXhsTargetUsers.length ? (
+                  <XhsTargetUserTable
+                    items={props.sortedXhsTargetUsers}
+                    formatDateTime={props.formatDateTime}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有评论用户账号链接结果，请先执行评论用户提取。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+        </article>
+      ) : null}
+
+      {props.activePage === "douyinCollection" ? (
+        <article className="workspace-panel strategy-page-card strategy-collection-page-card">
+          <div className="strategy-card-toolbar">
+            <div>
+              <strong>{props.pageTitle}</strong>
+              <p>对标作品保留手动输入，新增 3 个垂类榜单和 1 个按城市采集的同城热点榜，结果按各自结构展示。</p>
+            </div>
+            <div className="strategy-inline-actions">
+              <button type="button" className="secondary-button" onClick={() => void props.onRefreshData()} disabled={props.isHydrating}>
+                刷新数据
+              </button>
+            </div>
+          </div>
+          <CollectionPageStatus
+            dataSource={props.dataSource}
+            notice={props.notice}
+            errorMessage={props.errorMessage}
+            isHydrating={props.isHydrating}
+          />
+          <div className="strategy-chip-row">
+            <span className="archive-pill status-ready">数据源：采集接口</span>
+            <span className="archive-pill status-ready">播放量：统计接口补丁</span>
+            <span className={`archive-pill ${douyinContentTags.length ? "status-ready" : "status-pending"}`}>
+              {douyinContentTags.length ? `垂类标签 ${douyinContentTags.length} 组` : "垂类标签待加载"}
+            </span>
+            <span className={`archive-pill ${douyinCityOptions.length ? "status-ready" : "status-pending"}`}>
+              {douyinCityOptions.length ? `城市列表 ${douyinCityOptions.length} 个` : "城市列表待加载"}
+            </span>
+            <span className={`archive-pill ${douyinSyncedCount ? "status-ready" : "status-pending"}`}>
+              已同步 {douyinSyncedCount} 条
+            </span>
+          </div>
+          <div className="strategy-chip-row">
+            {douyinCollectionCards.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                className={`filter-chip ${props.activeDouyinCollectionCard === item.key ? "is-active" : ""}`}
+                onClick={() => props.onDouyinCollectionCardChange(item.key)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {props.activeDouyinCollectionCard === "brandAccount" ? (
+            <>
+              <DouyinAccountBindingSubmitPanel
+                title="品牌账号信息"
+                description="按账号逐条维护抖音品牌号入口，支持区分品牌号、员工号和达人号，并逐行提交更新。"
+                modalTitle="添加品牌抖音账号"
+                modalDescription="先选择账号类型，再录入主页链接、分享链接、sec_uid 或抖音号，保存后进入账号绑定列表。"
+                emptyDescription="当前还没有添加品牌账号，请先点击右上角添加账号。"
+                target="brand"
+                enableRoleSelection
+                entries={props.douyinSyncForm.brandAccountEntries}
+                syncedAccounts={props.sortedDouyinBrandAccounts}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                deletingAccountId={props.deletingDouyinAccountId}
+                onChangeEntries={(entries) => props.setDouyinSyncForm((current) => ({ ...current, brandAccountEntries: entries }))}
+                onSubmitEntry={props.onSyncSingleDouyinBrandAccount}
+                onDeleteSyncedAccount={props.onDeleteDouyinBrandAccount}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌账号信息</h3>
+                  </div>
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinAccountTable
+                    items={douyinPreviewItems as DouyinCollectedAccountRecord[]}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到品牌账号信息，请先添加品牌抖音账号并提交。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "competitorAccount" ? (
+            <>
+              <DouyinAccountBindingSubmitPanel
+                title="竞品账号信息"
+                description="按账号逐条维护竞品抖音账号入口，支持绑定多个竞品账号，并按行提交更新。"
+                modalTitle="添加竞品抖音账号"
+                modalDescription="录入竞品账号主页链接、分享链接、sec_uid 或抖音号，保存后进入账号绑定列表。"
+                emptyDescription="当前还没有添加竞品账号，请先点击右上角添加账号。"
+                target="competitor"
+                entries={props.douyinSyncForm.competitorAccountEntries}
+                syncedAccounts={props.sortedDouyinCompetitorAccounts}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                deletingAccountId={props.deletingDouyinAccountId}
+                onChangeEntries={(entries) => props.setDouyinSyncForm((current) => ({ ...current, competitorAccountEntries: entries }))}
+                onSubmitEntry={props.onSyncSingleDouyinCompetitorAccount}
+                onDeleteSyncedAccount={props.onDeleteDouyinCompetitorAccount}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>竞品账号信息</h3>
+                  </div>
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinAccountTable
+                    items={douyinPreviewItems as DouyinCollectedAccountRecord[]}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到竞品账号信息，请先添加竞品抖音账号并提交。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "brandWorks" ? (
+            <>
+              <article className="light-data-panel xhs-account-builder" style={{ marginBottom: 16 }}>
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌作品信息及数据</h3>
+                    <p>直接复用“品牌账号信息”里已绑定的抖音品牌账号。左侧一键同步账号并拉取作品，右侧仅重提作品采集。</p>
+                  </div>
+                  <div className="strategy-inline-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void props.onSyncDouyinWorkspace()}
+                      disabled={props.isHydrating || props.isSyncingDouyinWorkspace || !props.douyinSyncForm.brandAccountEntries.length}
+                    >
+                      {props.isHydrating || props.isSyncingDouyinWorkspace ? "同步中..." : "同步账号并拉作品"}
+                    </button>
+                    <button
+                      type="button"
+                      className="primary-button"
+                      onClick={() => void props.onSyncDouyinWorkspace()}
+                      disabled={props.isHydrating || props.isSyncingDouyinWorkspace || !props.douyinSyncForm.brandAccountEntries.length}
+                    >
+                      {props.isHydrating || props.isSyncingDouyinWorkspace ? "提交中..." : "仅提交作品"}
+                    </button>
+                  </div>
+                </div>
+                {props.douyinSyncForm.brandAccountEntries.length ? (
+                  <div className="xhs-account-entry-list">
+                    {props.douyinSyncForm.brandAccountEntries.map((entry) => {
+                      const hasCollectedAccount = props.sortedDouyinBrandAccounts.some((item) => doesDouyinAccountMatchEntry(item, entry) && hasCollectedDouyinAccountProfile(item));
+                      const hasSyncedResult = props.sortedDouyinBrandWorks.some((item) => doesDouyinWorkMatchEntry(item, entry));
+                      return (
+                        <div key={`douyin-brand-work-source-${entry.id}`} className="xhs-account-entry-row">
+                          <div className="xhs-account-entry-row__body">
+                            <div className="xhs-account-entry-row__meta">
+                              {entry.accountRole ? (
+                                <span className="xhs-account-role-badge">{getXhsAccountRoleLabel(entry.accountRole)}</span>
+                              ) : null}
+                              <span className={`archive-pill ${hasSyncedResult ? "status-ready" : "status-pending"}`}>
+                                {hasSyncedResult ? "作品已入库" : hasCollectedAccount ? "待拉作品" : "待同步账号"}
+                              </span>
+                            </div>
+                            <strong>{entry.locator}</strong>
+                          </div>
+                          <div className="xhs-account-entry-row__actions">
+                            <button
+                              type="button"
+                              className="note-inline-button"
+                              onClick={() => props.setDouyinSyncForm((current) => ({
+                                ...current,
+                                brandAccountEntries: current.brandAccountEntries.filter((item) => item.id !== entry.id),
+                              }))}
+                              disabled={props.isHydrating || props.isSyncingDouyinWorkspace}
+                            >
+                              删除
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="xhs-account-entry-empty">
+                    当前还没有绑定品牌抖音账号，请先到“品牌账号信息”里添加账号。
+                  </div>
+                )}
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>品牌作品信息及数据</h3>
+                  </div>
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinBrandWorksTable
+                    items={currentDouyinVisibleItems}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    onPreviewMedia={props.onPreviewMedia}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到品牌作品信息，请先点击左侧“同步账号并拉作品”。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-brand-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "competitorWorks" ? (
+            <>
+              <article className="light-data-panel xhs-account-builder" style={{ marginBottom: 16 }}>
+                <div className="collection-result-head">
+                  <div>
+                    <h3>竞品作品信息及数据</h3>
+                    <p>直接复用“竞品账号信息”里已绑定的抖音竞品账号。左侧一键同步账号并拉取作品，行内按钮可重提单个账号。</p>
+                  </div>
+                  <div className="strategy-inline-actions">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void props.onSyncDouyinWorkspace()}
+                      disabled={props.isHydrating || props.isSyncingDouyinWorkspace || !props.douyinSyncForm.competitorAccountEntries.length}
+                    >
+                      {props.isHydrating || props.isSyncingDouyinWorkspace ? "同步中..." : "同步账号并拉作品"}
+                    </button>
+                  </div>
+                </div>
+                {props.douyinSyncForm.competitorAccountEntries.length ? (
+                  <div className="xhs-account-entry-list">
+                    {props.douyinSyncForm.competitorAccountEntries.map((entry) => {
+                      const matchedAccount = props.sortedDouyinCompetitorAccounts.find((item) => doesDouyinAccountMatchEntry(item, entry));
+                      const hasCollectedAccount = hasCollectedDouyinAccountProfile(matchedAccount);
+                      const hasSyncedResult = props.sortedDouyinCompetitorWorks.some((item) => doesDouyinWorkMatchEntry(item, entry));
+                      return (
+                        <div key={`douyin-competitor-work-source-${entry.id}`} className="xhs-account-entry-row">
+                          <div className="xhs-account-entry-row__body">
+                            <div className="xhs-account-entry-row__meta">
+                              <span className={`archive-pill ${hasSyncedResult ? "status-ready" : "status-pending"}`}>
+                                {hasSyncedResult ? "作品已入库" : hasCollectedAccount ? "待拉作品" : "待补采账号"}
+                              </span>
+                            </div>
+                            {matchedAccount?.accountName ? <strong>{matchedAccount.accountName}</strong> : null}
+                            <strong>{entry.locator}</strong>
+                          </div>
+                          <div className="xhs-account-entry-row__actions">
+                            <button
+                              type="button"
+                              className="primary-button"
+                              onClick={() => void props.onSyncSingleDouyinCompetitorWork(entry)}
+                              disabled={props.isHydrating || props.isSyncingDouyinWorkspace}
+                            >
+                              {props.isHydrating || props.isSyncingDouyinWorkspace ? "提交中..." : "提交"}
+                            </button>
+                            <button
+                              type="button"
+                              className="note-inline-button"
+                              onClick={() => props.setDouyinSyncForm((current) => ({
+                                ...current,
+                                competitorAccountEntries: current.competitorAccountEntries.filter((item) => item.id !== entry.id),
+                              }))}
+                              disabled={props.isHydrating || props.isSyncingDouyinWorkspace}
+                            >
+                              删除
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="xhs-account-entry-empty">
+                    当前还没有绑定竞品抖音账号，请先到“竞品账号信息”里添加账号。
+                  </div>
+                )}
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>竞品作品信息及数据</h3>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinBrandWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到竞品作品信息，请先点击左侧“同步账号并拉作品”。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-competitor-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "benchmarkWorks" ? (
+            <>
+              <DouyinSubmitPanel
+                title="对标作品链接"
+                value={props.douyinSyncForm.benchmarkAwemeIds}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, benchmarkAwemeIds: value }))}
+                placeholder="每行一个作品链接或 aweme_id"
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>对标作品信息及数据</h3>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinMaterialReadyWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                    showBillboardColumns={false}
+                    showWorkUrlColumn
+                    videoColumnLabel="视频预览"
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到对标作品信息，请先输入作品链接并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-benchmark-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "searchWorks" ? (
+            <>
+              <DouyinSearchSubmitPanel
+                title="搜索关键词"
+                value={props.douyinSyncForm.searchKeyword}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, searchKeyword: value }))}
+                sortType={props.douyinSyncForm.searchSortType}
+                publishTime={props.douyinSyncForm.searchPublishTime}
+                filterDuration={props.douyinSyncForm.searchFilterDuration}
+                contentType={props.douyinSyncForm.searchContentType}
+                onChangeFilters={(filters) =>
+                  props.setDouyinSyncForm((current) => ({
+                    ...current,
+                    searchSortType: filters.sortType,
+                    searchPublishTime: filters.publishTime,
+                    searchFilterDuration: filters.filterDuration,
+                    searchContentType: filters.contentType,
+                  }))}
+                placeholder="请输入抖音搜索关键词，例如：生日蛋糕、探店咖啡、烘焙教程"
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>搜索关键词结果</h3>
+                    <p>返回关键词下的视频结果，支持加入统一素材库。</p>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinMaterialReadyWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                    showBillboardColumns={false}
+                    showWorkUrlColumn
+                    videoColumnLabel="视频预览"
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有搜索结果，请先输入关键词并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-search-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "commentData" ? (
+            <>
+              <DouyinSubmitPanel
+                title="评论数据"
+                value={props.douyinSyncForm.commentSourceUrls}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, commentSourceUrls: value }))}
+                placeholder="每行一个抖音作品链接或 aweme_id"
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <CommentTargetUserExtractPanel
+                title="从评论提取账号链接"
+                description="基于上面的作品链接自动补拉评论，并按关键词筛选匹配评论用户；不填关键词时会提取全部评论用户。"
+                matchKeywords={props.douyinSyncForm.targetUserMatchKeywords}
+                onChangeMatchKeywords={(value) => props.setDouyinSyncForm((current) => ({ ...current, targetUserMatchKeywords: value }))}
+                placeholder="每行一个关键词，例如：加盟、价格、探店、课程"
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinTargetUsers}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>评论数据</h3>
+                    <p>按列表展示评论核心参数，并保证输出结果里带有评论用户的 sec_user_id。</p>
+                  </div>
+                  <div className="strategy-inline-actions">
+                    <span className={`archive-pill ${props.sortedDouyinCommentData.length ? "status-ready" : "status-pending"}`}>
+                      已采集 {props.sortedDouyinCommentData.length} 条
+                    </span>
+                    <span className={`archive-pill ${douyinCommentHasMoreCount ? "status-ready" : "status-pending"}`}>
+                      可继续翻页 {douyinCommentHasMoreCount} 个作品
+                    </span>
+                    {douyinCommentRequestCount ? (
+                      <span className="archive-pill status-pending">当前游标 {douyinCommentRequestCount} 个作品</span>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void props.onLoadMoreDouyinComments()}
+                      disabled={
+                        props.isHydrating
+                        || props.isSyncingDouyinWorkspace
+                        || props.isLoadingMoreDouyinComments
+                        || !douyinCommentHasMoreCount
+                      }
+                    >
+                      {props.isLoadingMoreDouyinComments ? "加载中..." : "加载更多"}
+                    </button>
+                  </div>
+                </div>
+                {props.sortedDouyinCommentData.length ? (
+                  <DouyinCommentTable
+                    items={props.sortedDouyinCommentData}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有评论数据结果，请先输入抖音作品链接并提交。</div>
+                )}
+              </article>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>评论用户账号链接</h3>
+                    <p>基于评论数据提取匹配用户，并沉淀为可继续给 AI 智控中心 使用的目标用户结果。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedDouyinTargetUsers.length ? "status-ready" : "status-pending"}`}>
+                    已提取 {props.sortedDouyinTargetUsers.length} 条
+                  </span>
+                </div>
+                {props.sortedDouyinTargetUsers.length ? (
+                  <DouyinTargetUserTable
+                    items={props.sortedDouyinTargetUsers}
+                    formatDateTime={props.formatDateTime}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有评论用户账号链接结果，请先执行评论用户提取。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "keywordRecommendations" ? (
+            <>
+              <DouyinKeywordRecommendationBuilder
+                entries={props.douyinSyncForm.keywordRecommendationEntries}
+                results={props.sortedDouyinKeywordRecommendations}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onChangeEntries={(entries) =>
+                  props.setDouyinSyncForm((current) => ({ ...current, keywordRecommendationEntries: entries }))}
+                onSubmitEntry={props.onSyncSingleDouyinKeywordRecommendation}
+              />
+              <DouyinKeywordRecommendationResults
+                items={props.sortedDouyinKeywordRecommendations}
+                deletingItemId={props.deletingDouyinKeywordRecommendationId}
+                onDelete={props.onRemoveDouyinKeywordRecommendation}
+              />
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "lowFanExplosiveWorks" ? (
+            <>
+              <DouyinCategorySubmitPanel
+                title="获取低粉爆款榜"
+                tags={douyinContentTags}
+                value={props.douyinSyncForm.lowFanExplosiveWorks}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, lowFanExplosiveWorks: value }))}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>低粉爆款榜</h3>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinMaterialReadyWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到低粉爆款榜结果，请先选择垂类分类并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-low-fan-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "highCompletionRateWorks" ? (
+            <>
+              <DouyinCategorySubmitPanel
+                title="获取高完播率榜"
+                tags={douyinContentTags}
+                value={props.douyinSyncForm.highCompletionRateWorks}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, highCompletionRateWorks: value }))}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>高完播率榜</h3>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinMaterialReadyWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到高完播率榜结果，请先选择垂类分类并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-high-completion-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "highLikeRateWorks" ? (
+            <>
+              <DouyinCategorySubmitPanel
+                title="获取高点赞率榜"
+                tags={douyinContentTags}
+                value={props.douyinSyncForm.highLikeRateWorks}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, highLikeRateWorks: value }))}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>高点赞率榜</h3>
+                  </div>
+                  <CollectionBatchActionButtons
+                    selectedCount={selectedDouyinWorkIds.length}
+                    isAdding={isBatchAddingToMaterial}
+                    isDeleting={isBatchDeletingItems}
+                    onAdd={handleBatchAddDouyinWorksToMaterial}
+                    onDelete={handleBatchDeleteDouyinWorks}
+                  />
+                </div>
+                {douyinPreviewItems.length ? (
+                  <DouyinMaterialReadyWorksTable
+                    items={currentDouyinVisibleItems}
+                    addingMaterialAssetId={props.addingMaterialAssetId}
+                    onAddToMaterialLibrary={props.onAddDouyinBenchmarkWorkToMaterial}
+                    extractingTranscriptAssetId={props.extractingDouyinTranscriptAssetId}
+                    onExtractTranscript={props.onExtractDouyinTranscript}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    onPreviewMedia={props.onPreviewMedia}
+                    selectedIds={selectedDouyinWorkIds}
+                    allSelected={allDouyinSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinWorkIds((current) => (checked ? [...current, id] : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinWorkIds((current) => checked
+                        ? Array.from(new Set([...current, ...currentDouyinVisibleItems.map((item) => item.id)]))
+                        : current.filter((id) => !currentDouyinVisibleItems.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到高点赞率榜结果，请先选择垂类分类并提交。</div>
+                )}
+                <CollectionPaginationBar
+                  totalCount={currentDouyinWorkItems.length}
+                  currentCount={currentDouyinVisibleItems.length}
+                  page={douyinPreviewPagination.page}
+                  setPage={douyinPreviewPagination.setPage}
+                  pageCount={douyinPreviewPagination.pageCount}
+                  pageSize={douyinPreviewPagination.pageSize}
+                  setPageSize={douyinPreviewPagination.setPageSize}
+                  pageKeyPrefix="douyin-high-like-works"
+                />
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "cityHotspots" ? (
+            <>
+              <DouyinCitySubmitPanel
+                title="获取同城热点榜"
+                cities={douyinCityOptions}
+                value={props.douyinSyncForm.cityHotspots}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, cityHotspots: value }))}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSyncDouyinWorkspace}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>同城热点榜</h3>
+                    <p>展示当前城市近一小时内的热点词、日期时间、热度与趋势资料。</p>
+                  </div>
+                </div>
+                {props.sortedDouyinCityHotspots.length ? (
+                  <DouyinCityHotspotTable
+                    items={props.sortedDouyinCityHotspots}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有采集到同城热点榜结果，请先选择城市并提交。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "creatorSearch" ? (
+            <>
+              <DouyinCreatorSearchSubmitPanel
+                value={props.douyinSyncForm.creatorSearch}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, creatorSearch: value }))}
+                options={props.creatorSearchFieldOptions}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onSearchDouyinCreators}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>达人搜索结果</h3>
+                    <p>先勾选搜索结果，再决定哪些进入达人深度抓取，哪些直接沉淀到达人结果池。</p>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                    <span className={`archive-pill ${selectedDouyinCreatorSearchIds.length ? "status-ready" : "status-pending"}`}>
+                      已勾选 {selectedDouyinCreatorSearchIds.length} 条
+                    </span>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void handleBatchCreateDouyinCreatorDeepFetchTasks()}
+                      disabled={!selectedDouyinCreatorSearchIds.length || props.isHydrating || props.isSyncingDouyinWorkspace}
+                    >
+                      加入深抓
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => void handleBatchAddDouyinCreatorsToResultPool()}
+                      disabled={!selectedDouyinCreatorSearchIds.length || props.isHydrating || props.isSyncingDouyinWorkspace}
+                    >
+                      加入结果池
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => props.onDouyinCollectionCardChange("creatorResultPool")}
+                    >
+                      查看结果池
+                    </button>
+                    <span className={`archive-pill ${props.sortedDouyinCreatorSearchResults.length ? "status-ready" : "status-pending"}`}>
+                      已抓取 {props.sortedDouyinCreatorSearchResults.length} 条
+                    </span>
+                  </div>
+                </div>
+                {props.sortedDouyinCreatorSearchResults.length ? (
+                  <DouyinCreatorSearchTable
+                    items={props.sortedDouyinCreatorSearchResults}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    formatMetric={props.formatMetric}
+                    selectedIds={selectedDouyinCreatorSearchIds}
+                    allSelected={allDouyinCreatorSearchSelected}
+                    onToggleSelect={(id, checked) =>
+                      setSelectedDouyinCreatorSearchIds((current) => (checked ? Array.from(new Set([...current, id])) : current.filter((item) => item !== id)))}
+                    onSelectAll={(checked) =>
+                      setSelectedDouyinCreatorSearchIds((current) => checked
+                        ? Array.from(new Set([...current, ...props.sortedDouyinCreatorSearchResults.map((item) => item.id)]))
+                        : current.filter((id) => !props.sortedDouyinCreatorSearchResults.some((item) => item.id === id)))}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有达人搜索结果，请先输入关键词并提交。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "creatorDeepFetch" ? (
+            <>
+              <DouyinCreatorDeepFetchSubmitPanel
+                value={props.douyinSyncForm.creatorDeepFetch}
+                onChange={(value) => props.setDouyinSyncForm((current) => ({ ...current, creatorDeepFetch: value }))}
+                isSubmitting={props.isHydrating || props.isSyncingDouyinWorkspace}
+                onSubmit={props.onCreateDouyinCreatorDeepFetchTasks}
+              />
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>达人深抓任务</h3>
+                    <p>任务提交后后台异步执行，成功后会自动写入达人结果池。</p>
+                  </div>
+                  <span className={`archive-pill ${
+                    props.sortedDouyinCreatorDeepFetchTasks.some((item) => ["PENDING", "QUEUED", "RUNNING"].includes(item.taskStatus))
+                      ? "status-in_progress"
+                      : props.sortedDouyinCreatorDeepFetchTasks.length
+                        ? "status-ready"
+                        : "status-pending"
+                  }`}>
+                    任务 {props.sortedDouyinCreatorDeepFetchTasks.length} 个
+                  </span>
+                </div>
+                {props.sortedDouyinCreatorDeepFetchTasks.length ? (
+                  <DouyinCreatorDeepFetchTaskTable
+                    items={props.sortedDouyinCreatorDeepFetchTasks}
+                    formatDateTime={props.formatDateTime}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有达人深抓任务，请先输入达人标识并创建任务。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+          {props.activeDouyinCollectionCard === "creatorResultPool" ? (
+            <>
+              <article className="light-data-panel">
+                <div className="collection-result-head">
+                  <div>
+                    <h3>达人结果池</h3>
+                    <p>这里展示深度抓取后沉淀下来的达人画像快照，供后续 AI 智控中心 自动分析复用。</p>
+                  </div>
+                  <span className={`archive-pill ${props.sortedDouyinCreatorProfiles.length ? "status-ready" : "status-pending"}`}>
+                    已沉淀 {props.sortedDouyinCreatorProfiles.length} 条
+                  </span>
+                </div>
+                {props.sortedDouyinCreatorProfiles.length ? (
+                  <DouyinCreatorProfileTable
+                    items={props.sortedDouyinCreatorProfiles}
+                    formatDateTime={props.formatDateTime}
+                    formatCount={props.formatCount}
+                    formatMetric={props.formatMetric}
+                  />
+                ) : (
+                  <div className="note-empty-state">当前还没有达人结果池数据，请先完成达人深度抓取。</div>
+                )}
+              </article>
+            </>
+          ) : null}
+        </article>
+      ) : null}
+      <CopyToastPortal />
+    </div>
+  );
+}

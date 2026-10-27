@@ -1,0 +1,21 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {commerceMetricHistory,commerceHistoryScenarios,assertHistoryBasedTargets}=require('../packages/shared/dist/commerce-history.js');
+const {assertAdvertisingOnlyBudget,commerceInitiativeGroup}=require('../packages/shared/dist/commerce-planning.js');
+const {commerceScorecardReview}=require('../packages/shared/dist/commerce-scorecard.js');
+const {assertCreativeCopy}=require('../integrations/commerce/executor/creative-quality.cjs');
+const metric=(id,key,target=null)=>({id,stage:'diagnosis',metricKey:key,label:id,unit:id==='aov'?'元':'单',definition:key,target,direction:'increase',rationale:'history',actionKeys:['a'],onMiss:'打开具体商品策略，查看前后图与真实报表'});
+const goal={...metric('goal','gmv','48000'),unit:'元'},order=metric('orders','orders','1252');
+const snap=(id,start,end,gmv,orders,extra={})=>({id,shopId:'shop',toolName:'source',currency:'CNY',sourceStatus:'provider_reported',capturedAt:id,period:{start,end,timezone:'Asia/Shanghai'},sections:[{key:'diagnosis',metrics:[{key:'gmv',value:gmv,definition:'gmv',unit:'元'},{key:'orders',value:orders,definition:'orders',unit:'单'}]}],...extra});
+const a=snap('a','2026-10-11','2026-10-17','26439.13','686'),b=snap('b','2026-10-18','2026-10-24','21550.1','566');
+const plan={shopId:'shop',revision:1,scorecard:{baselineSnapshotId:'b',start:'2026-10-27',end:'2026-11-09',approval:'proposed',goal,drivers:[order],checkpoints:[],cadence:'daily',dueLagDays:1}};
+test('historical scenarios use weighted amount/order, not invented uplift',()=>{const s=commerceHistoryScenarios(plan,[a,b]);assert.equal(s.length,3);assert.equal(s[0].gmv,'43100.20');assert.equal(s[1].gmv,'47989.23');assert.equal(s[1].orders,'1252');assert.equal(s[1].averageOrderValue,'38.33005591');assert.equal(s[2].gmv,'52878.26');});
+test('one history window gives one scenario',()=>assert.equal(commerceHistoryScenarios(plan,[b]).length,1));
+test('different source supplement cannot hide baseline; latest same-source invalidation wins',()=>{const bad={...b,id:'z',capturedAt:'z',sourceStatus:'unverified'};assert.equal(commerceMetricHistory(plan,[a,b,{...bad,toolName:'other'}],goal).length,2);assert.equal(commerceMetricHistory(plan,[a,b,bad],goal).length,1);});
+test('definitions and duration cannot mix',()=>{const z=snap('z','2026-10-01','2026-10-01','100','5');assert.equal(commerceMetricHistory(plan,[a,b,z],goal).length,2);const x=structuredClone(a);x.sections[0].metrics[0].definition='changed';assert.equal(commerceMetricHistory(plan,[x,b],goal).length,1);});
+test('AI cannot assign a number to a missing historical metric',()=>{const p=structuredClone(plan);p.scorecard.drivers.push(metric('unknown','none','2'));assert.throws(()=>assertHistoryBasedTargets(p,[a,b]),/合格历史/);});
+test('non-ad fees rejected in new generated plans',()=>{assert.throws(()=>assertAdvertisingOnlyBudget({initiatives:[{group:'conversion',variants:[{budget:'100'}]}]}));assert.doesNotThrow(()=>assertAdvertisingOnlyBudget({initiatives:[{group:'advertising',variants:[{budget:'100'}]},{group:'conversion',variants:[{budget:'0'}]}]}));});
+test('advertising is visible even in legacy profit group',()=>assert.equal(commerceInitiativeGroup({group:'profit',title:'广告计划优化'}),'advertising'));
+test('future/current/overdue windows are distinct',()=>{assert.equal(commerceScorecardReview(plan,[a,b],'2026-10-26').checks[0].rows[0].status,'not_started');assert.equal(commerceScorecardReview(plan,[a,b],'2026-10-27').checks[0].rows[0].status,'in_progress');assert.equal(commerceScorecardReview(plan,[a,b],'2026-11-12').checks[0].rows[0].status,'sync_overdue');});
+test('consumer copy excludes internal checks, not actual benefits',()=>{assert.throws(()=>assertCreativeCopy({sellingPoints:[{title:'组成信息清楚'}]}));assert.throws(()=>assertCreativeCopy({listing:{description:'待补当前包装'}}));assert.doesNotThrow(()=>assertCreativeCopy({sellingPoints:[{title:'润滑保湿，照顾干燥部位'}],listing:{description:'10g小支装，按需随行',identityLock:'待补当前包装'}}));});
+
+test("explicit content category is not stolen by a linked ad metric",()=>assert.equal(commerceInitiativeGroup({group:"conversion",title:"主图测试",metric:"广告点击率"}),"conversion"));

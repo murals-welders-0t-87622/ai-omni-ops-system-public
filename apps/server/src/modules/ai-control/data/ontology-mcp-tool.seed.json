@@ -1,0 +1,3899 @@
+{
+  "metadata": {
+    "updatedAt": "2026-10-21",
+    "source": "apps/server/src/modules/openclaw/openclaw.service.ts#OPENCLAW_MCP_TOOLS",
+    "toolCount": 220,
+    "readLikeCount": 92,
+    "writeLikeCount": 128,
+    "note": "由 OPENCLAW_MCP_TOOLS 真源生成的全量候选工具字典；不等于 active_seed 正式子集。"
+  },
+  "items": [
+    {
+      "id": "F31",
+      "kind": "ontology_function",
+      "label": "F31 查看当前网站可由 Skill 控制的",
+      "name": "get_website_function_catalog",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前网站可由 Skill 控制的功能目录，包括业务域、页面入口、风险级别和推荐使用的 MCP tools。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_website_function_catalog",
+      "primaryConsumers": [
+        "个人中心"
+      ],
+      "bindings": [
+        "get_website_function_catalog"
+      ]
+    },
+    {
+      "id": "F32",
+      "kind": "ontology_function",
+      "label": "F32 查看指定网站功能的详细控制说明",
+      "name": "get_website_function_detail",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看指定网站功能的详细控制说明，包括页面入口、必需信息、推荐追问和对应工具。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_website_function_detail",
+      "primaryConsumers": [
+        "个人中心"
+      ],
+      "bindings": [
+        "get_website_function_detail"
+      ]
+    },
+    {
+      "id": "F33",
+      "kind": "ontology_function",
+      "label": "F33 根据用户意图把需求路由到最可能的网站",
+      "name": "route_website_function_by_intent",
+      "refType": "openclaw_mcp_tool",
+      "description": "根据用户意图把需求路由到最可能的网站功能，并返回推荐 MCP tools、缺失信息和确认策略。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:route_website_function_by_intent",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "route_website_function_by_intent"
+      ]
+    },
+    {
+      "id": "F34",
+      "kind": "ontology_function",
+      "label": "F34 根据指定网站功能和当前已收集信息",
+      "name": "get_website_function_execution_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "根据指定网站功能和当前已收集信息，判断是否可执行、缺少什么输入、是否需要确认，以及推荐工具顺序。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_website_function_execution_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "个人中心"
+      ],
+      "bindings": [
+        "get_website_function_execution_plan"
+      ]
+    },
+    {
+      "id": "F35",
+      "kind": "ontology_function",
+      "label": "F35 获取当前登录账号的默认品牌、角色和权",
+      "name": "get_current_brand_context",
+      "refType": "openclaw_mcp_tool",
+      "description": "获取当前登录账号的默认品牌、角色和权限摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_current_brand_context",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_current_brand_context"
+      ]
+    },
+    {
+      "id": "F36",
+      "kind": "ontology_function",
+      "label": "F36 查看当前品牌可用于内容生成的产品清单",
+      "name": "get_brand_products",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌可用于内容生成的产品清单。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_products",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_products"
+      ]
+    },
+    {
+      "id": "F37",
+      "kind": "ontology_function",
+      "label": "F37 查看当前品牌的平台账号清单",
+      "name": "get_platform_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌的平台账号清单，可按平台筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_platform_accounts",
+      "primaryConsumers": [
+        "品牌档案",
+        "个人中心"
+      ],
+      "bindings": [
+        "get_platform_accounts"
+      ]
+    },
+    {
+      "id": "F38",
+      "kind": "ontology_function",
+      "label": "F38 查看当前品牌档案摘要",
+      "name": "get_brand_archive_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌档案摘要，包括品牌背景、产品、问卷、平台账号、竞品账号与行业资料进度。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_archive_summary",
+      "primaryConsumers": [
+        "品牌档案",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_archive_summary"
+      ]
+    },
+    {
+      "id": "F39",
+      "kind": "ontology_function",
+      "label": "F39 查看当前品牌建档问卷答案",
+      "name": "get_brand_archive_survey",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌建档问卷答案，可按数量截断返回。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_archive_survey",
+      "primaryConsumers": [
+        "品牌档案",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_archive_survey"
+      ]
+    },
+    {
+      "id": "F40",
+      "kind": "ontology_function",
+      "label": "F40 查看当前品牌的竞品账号清单",
+      "name": "get_brand_competitor_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌的竞品账号清单，可按平台筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_competitor_accounts",
+      "primaryConsumers": [
+        "品牌档案",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_competitor_accounts"
+      ]
+    },
+    {
+      "id": "F41",
+      "kind": "ontology_function",
+      "label": "F41 查看当前品牌已沉淀的行业资料或行业报",
+      "name": "get_brand_industry_feeds",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌已沉淀的行业资料或行业报告。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_industry_feeds",
+      "primaryConsumers": [
+        "品牌档案",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_industry_feeds"
+      ]
+    },
+    {
+      "id": "F42",
+      "kind": "ontology_function",
+      "label": "F42 查看当前品牌业务资料资产和知识绑定摘",
+      "name": "get_brand_business_assets",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌业务资料资产和知识绑定摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_business_assets",
+      "primaryConsumers": [
+        "品牌档案",
+        "统一素材管理",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_business_assets"
+      ]
+    },
+    {
+      "id": "F43",
+      "kind": "ontology_function",
+      "label": "F43 查看品牌资料库里小红书搜集数据工作区",
+      "name": "get_xiaohongshu_collection_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看品牌资料库里小红书搜集数据工作区，包括品牌账号、竞品账号、品牌作品、对标作品、搜索笔记和目标用户。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_collection_workspace",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_collection_workspace"
+      ]
+    },
+    {
+      "id": "A35",
+      "kind": "ontology_action",
+      "label": "A35 同步品牌资料库里小红书品牌账号数据",
+      "name": "sync_xiaohongshu_brand_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书品牌账号数据，可补充账号链接。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_brand_accounts",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_brand_accounts"
+      ]
+    },
+    {
+      "id": "A36",
+      "kind": "ontology_action",
+      "label": "A36 同步品牌资料库里小红书竞品账号数据",
+      "name": "sync_xiaohongshu_competitor_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书竞品账号数据，可补充账号链接。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_competitor_accounts",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_competitor_accounts"
+      ]
+    },
+    {
+      "id": "A37",
+      "kind": "ontology_action",
+      "label": "A37 同步品牌资料库里小红书品牌作品数据",
+      "name": "sync_xiaohongshu_brand_notes",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书品牌作品数据。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_brand_notes",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_brand_notes"
+      ]
+    },
+    {
+      "id": "A38",
+      "kind": "ontology_action",
+      "label": "A38 同步品牌资料库里小红书对标作品数据",
+      "name": "sync_xiaohongshu_benchmark_notes",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书对标作品数据，需要提供作品链接。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_benchmark_notes",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_benchmark_notes"
+      ]
+    },
+    {
+      "id": "A39",
+      "kind": "ontology_action",
+      "label": "A39 同步品牌资料库里小红书搜索笔记数据",
+      "name": "sync_xiaohongshu_search_notes",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书搜索笔记数据，需要提供关键词。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_search_notes",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_search_notes"
+      ]
+    },
+    {
+      "id": "A40",
+      "kind": "ontology_action",
+      "label": "A40 同步品牌资料库里小红书评论数据",
+      "name": "sync_xiaohongshu_comment_data",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里小红书评论数据，可传作品链接列表或分页请求。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_comment_data",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_comment_data"
+      ]
+    },
+    {
+      "id": "F44",
+      "kind": "ontology_function",
+      "label": "F44 读取指定小红书一级评论的二级评论",
+      "name": "get_xiaohongshu_comment_replies",
+      "refType": "openclaw_mcp_tool",
+      "description": "读取指定小红书一级评论的二级评论，可继续按 cursor 和 index 翻页。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_comment_replies",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_comment_replies"
+      ]
+    },
+    {
+      "id": "A41",
+      "kind": "ontology_action",
+      "label": "A41 从品牌资料库里小红书作品评论中提取目",
+      "name": "sync_xiaohongshu_target_users",
+      "refType": "openclaw_mcp_tool",
+      "description": "从品牌资料库里小红书作品评论中提取目标用户账号链接，可按关键词筛选，并可先补拉评论。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_target_users",
+      "primaryConsumers": [
+        "品牌增长",
+        "全网获客",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_target_users"
+      ]
+    },
+    {
+      "id": "A42",
+      "kind": "ontology_action",
+      "label": "A42 从品牌绑定的飞书副本同步小红书搜集数",
+      "name": "sync_xiaohongshu_feishu_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "从品牌绑定的飞书副本同步小红书搜集数据工作区。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_xiaohongshu_feishu_workspace",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_xiaohongshu_feishu_workspace"
+      ]
+    },
+    {
+      "id": "A43",
+      "kind": "ontology_action",
+      "label": "A43 把小红书对标作品或搜索笔记加入素材库",
+      "name": "add_xiaohongshu_note_to_material_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "把小红书对标作品或搜索笔记加入素材库。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:add_xiaohongshu_note_to_material_library",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "add_xiaohongshu_note_to_material_library"
+      ]
+    },
+    {
+      "id": "F45",
+      "kind": "ontology_function",
+      "label": "F45 查看当前品牌资料库中的抖音搜集数据工",
+      "name": "get_douyin_collection_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌资料库中的抖音搜集数据工作区摘要，包含达人搜索结果、达人结果池、主页链接和已抓到的联系方式摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_collection_workspace",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_collection_workspace"
+      ]
+    },
+    {
+      "id": "A44",
+      "kind": "ontology_action",
+      "label": "A44 同步品牌资料库里抖音品牌账号数据",
+      "name": "sync_douyin_brand_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音品牌账号数据，可传账号链接或账号条目。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_brand_accounts",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_brand_accounts"
+      ]
+    },
+    {
+      "id": "A45",
+      "kind": "ontology_action",
+      "label": "A45 同步品牌资料库里抖音竞品账号数据",
+      "name": "sync_douyin_competitor_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音竞品账号数据，可传账号链接或账号条目。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_competitor_accounts",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_competitor_accounts"
+      ]
+    },
+    {
+      "id": "A46",
+      "kind": "ontology_action",
+      "label": "A46 同步品牌资料库里抖音品牌作品数据",
+      "name": "sync_douyin_brand_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音品牌作品数据，可传品牌账号链接或账号条目。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_brand_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_brand_works"
+      ]
+    },
+    {
+      "id": "A47",
+      "kind": "ontology_action",
+      "label": "A47 同步品牌资料库里抖音竞品作品数据",
+      "name": "sync_douyin_competitor_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音竞品作品数据，可传竞品账号链接或账号条目。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_competitor_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_competitor_works"
+      ]
+    },
+    {
+      "id": "A48",
+      "kind": "ontology_action",
+      "label": "A48 同步品牌资料库里抖音对标作品数据",
+      "name": "sync_douyin_benchmark_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音对标作品数据，需要提供作品 aweme_id。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_benchmark_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_benchmark_works"
+      ]
+    },
+    {
+      "id": "A49",
+      "kind": "ontology_action",
+      "label": "A49 同步品牌资料库里抖音搜索结果数据",
+      "name": "sync_douyin_search_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音搜索结果数据，需要提供搜索关键词。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_search_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_search_works"
+      ]
+    },
+    {
+      "id": "A50",
+      "kind": "ontology_action",
+      "label": "A50 同步品牌资料库里抖音评论数据",
+      "name": "sync_douyin_comment_data",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音评论数据，需要提供作品链接列表或分页请求。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_comment_data",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_comment_data"
+      ]
+    },
+    {
+      "id": "A51",
+      "kind": "ontology_action",
+      "label": "A51 从品牌资料库里抖音作品评论中提取目标",
+      "name": "sync_douyin_target_users",
+      "refType": "openclaw_mcp_tool",
+      "description": "从品牌资料库里抖音作品评论中提取目标用户账号链接，可按关键词筛选，并可先补拉评论。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_target_users",
+      "primaryConsumers": [
+        "品牌增长",
+        "全网获客",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_target_users"
+      ]
+    },
+    {
+      "id": "F46",
+      "kind": "ontology_function",
+      "label": "F46 按关键词、行业和商业指标搜索抖音达人",
+      "name": "search_douyin_creators",
+      "refType": "openclaw_mcp_tool",
+      "description": "按关键词、行业和商业指标搜索抖音达人，并把结果沉淀到品牌资料库的达人搜索结果池。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:search_douyin_creators",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客",
+        "达人合作"
+      ],
+      "bindings": [
+        "search_douyin_creators"
+      ]
+    },
+    {
+      "id": "A52",
+      "kind": "ontology_action",
+      "label": "A52 按达人标识批量创建抖音达人深度抓取任",
+      "name": "create_douyin_creator_deep_fetch_tasks",
+      "refType": "openclaw_mcp_tool",
+      "description": "按达人标识批量创建抖音达人深度抓取任务，后台异步补拉画像、热词和主页作品摘要。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_douyin_creator_deep_fetch_tasks",
+      "primaryConsumers": [
+        "品牌增长",
+        "任务治理",
+        "内容获客",
+        "达人合作"
+      ],
+      "bindings": [
+        "create_douyin_creator_deep_fetch_tasks"
+      ]
+    },
+    {
+      "id": "A53",
+      "kind": "ontology_action",
+      "label": "A53 把达人搜索结果批量加入抖音达人结果池",
+      "name": "add_douyin_creators_to_result_pool",
+      "refType": "openclaw_mcp_tool",
+      "description": "把达人搜索结果批量加入抖音达人结果池。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:add_douyin_creators_to_result_pool",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客",
+        "达人合作"
+      ],
+      "bindings": [
+        "add_douyin_creators_to_result_pool"
+      ]
+    },
+    {
+      "id": "A54",
+      "kind": "ontology_action",
+      "label": "A54 删除品牌资料库里的抖音品牌账号绑定",
+      "name": "delete_douyin_brand_account",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除品牌资料库里的抖音品牌账号绑定。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_douyin_brand_account",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_douyin_brand_account"
+      ]
+    },
+    {
+      "id": "A55",
+      "kind": "ontology_action",
+      "label": "A55 删除品牌资料库里的抖音竞品账号绑定",
+      "name": "delete_douyin_competitor_account",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除品牌资料库里的抖音竞品账号绑定。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_douyin_competitor_account",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_douyin_competitor_account"
+      ]
+    },
+    {
+      "id": "A56",
+      "kind": "ontology_action",
+      "label": "A56 删除一条抖音关键词推荐结果",
+      "name": "delete_douyin_keyword_recommendation",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除一条抖音关键词推荐结果。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_douyin_keyword_recommendation",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_douyin_keyword_recommendation"
+      ]
+    },
+    {
+      "id": "A57",
+      "kind": "ontology_action",
+      "label": "A57 同步品牌资料库里抖音关键词推荐数据",
+      "name": "sync_douyin_keyword_recommendations",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音关键词推荐数据，需要提供搜索关键词。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_keyword_recommendations",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_keyword_recommendations"
+      ]
+    },
+    {
+      "id": "A58",
+      "kind": "ontology_action",
+      "label": "A58 同步品牌资料库里抖音低粉爆款榜数据",
+      "name": "sync_douyin_low_fan_explosive_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音低粉爆款榜数据，需要提供一级和二级内容标签 ID。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_low_fan_explosive_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_low_fan_explosive_works"
+      ]
+    },
+    {
+      "id": "A59",
+      "kind": "ontology_action",
+      "label": "A59 同步品牌资料库里抖音高完播率榜数据",
+      "name": "sync_douyin_high_completion_rate_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音高完播率榜数据，需要提供一级和二级内容标签 ID。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_high_completion_rate_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_high_completion_rate_works"
+      ]
+    },
+    {
+      "id": "A60",
+      "kind": "ontology_action",
+      "label": "A60 同步品牌资料库里抖音高点赞率榜数据",
+      "name": "sync_douyin_high_like_rate_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音高点赞率榜数据，需要提供一级和二级内容标签 ID。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_high_like_rate_works",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_high_like_rate_works"
+      ]
+    },
+    {
+      "id": "A61",
+      "kind": "ontology_action",
+      "label": "A61 同步品牌资料库里抖音同城热点榜数据",
+      "name": "sync_douyin_city_hotspots",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里抖音同城热点榜数据，需要提供城市代码 cityCode。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_douyin_city_hotspots",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_douyin_city_hotspots"
+      ]
+    },
+    {
+      "id": "F47",
+      "kind": "ontology_function",
+      "label": "F47 查看品牌增长里的每日热点工作区",
+      "name": "get_daily_hotspot_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看品牌增长里的每日热点工作区，可按日期读取已采集的平台热点榜。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_daily_hotspot_workspace",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_daily_hotspot_workspace"
+      ]
+    },
+    {
+      "id": "A62",
+      "kind": "ontology_action",
+      "label": "A62 同步每日热点",
+      "name": "sync_daily_hotspots",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步每日热点，可按平台标题定向刷新。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_daily_hotspots",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "sync_daily_hotspots"
+      ]
+    },
+    {
+      "id": "F48",
+      "kind": "ontology_function",
+      "label": "F48 查看当前品牌机会洞察工作区状态",
+      "name": "get_opportunity_insight_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌机会洞察工作区状态，包括 step1/2/3 产物和最近任务。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_opportunity_insight_workspace",
+      "primaryConsumers": [
+        "机会洞察"
+      ],
+      "bindings": [
+        "get_opportunity_insight_workspace"
+      ]
+    },
+    {
+      "id": "A63",
+      "kind": "ontology_action",
+      "label": "A63 发起机会洞察第 1 步",
+      "name": "generate_opportunity_insight_step_one",
+      "refType": "openclaw_mcp_tool",
+      "description": "发起机会洞察第 1 步，生成品牌账号分析与竞品账号分析。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_opportunity_insight_step_one",
+      "primaryConsumers": [
+        "机会洞察"
+      ],
+      "bindings": [
+        "generate_opportunity_insight_step_one"
+      ]
+    },
+    {
+      "id": "A64",
+      "kind": "ontology_action",
+      "label": "A64 发起机会洞察第 2 步",
+      "name": "generate_opportunity_insight_step_two",
+      "refType": "openclaw_mcp_tool",
+      "description": "发起机会洞察第 2 步，生成评论洞察分析。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_opportunity_insight_step_two",
+      "primaryConsumers": [
+        "机会洞察"
+      ],
+      "bindings": [
+        "generate_opportunity_insight_step_two"
+      ]
+    },
+    {
+      "id": "A65",
+      "kind": "ontology_action",
+      "label": "A65 发起机会洞察第 3 步",
+      "name": "generate_opportunity_insight_step_three",
+      "refType": "openclaw_mcp_tool",
+      "description": "发起机会洞察第 3 步，生成最终机会洞察总报告。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_opportunity_insight_step_three",
+      "primaryConsumers": [
+        "机会洞察"
+      ],
+      "bindings": [
+        "generate_opportunity_insight_step_three"
+      ]
+    },
+    {
+      "id": "F49",
+      "kind": "ontology_function",
+      "label": "F49 查看当前品牌下个人中心第三方接口配置",
+      "name": "list_my_third_party_platforms",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌下个人中心第三方接口配置摘要，包括 API Key 遮罩状态、动态状态，以及 AI 智控中心 是否可直接复用该品牌共享凭证；只返回遮罩，不回显明文。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_my_third_party_platforms",
+      "primaryConsumers": [
+        "个人中心",
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "list_my_third_party_platforms"
+      ]
+    },
+    {
+      "id": "F50",
+      "kind": "ontology_function",
+      "label": "F50 检查当前品牌某个第三方平台的共享凭证",
+      "name": "check_my_third_party_platform_runtime_access",
+      "refType": "openclaw_mcp_tool",
+      "description": "检查当前品牌某个第三方平台的共享凭证是否可被 AI 智控中心 直接复用。只返回平台、遮罩状态和可用性，不返回明文 API Key。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:check_my_third_party_platform_runtime_access",
+      "primaryConsumers": [
+        "个人中心",
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "check_my_third_party_platform_runtime_access"
+      ]
+    },
+    {
+      "id": "A66",
+      "kind": "ontology_action",
+      "label": "A66 更新当前品牌指定第三方平台的 API",
+      "name": "update_my_third_party_platform_secret",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新当前品牌指定第三方平台的 API Key，可用于 StepFun、Tikhub、蝉镜、RunningHub、火山 VOD 等平台。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_my_third_party_platform_secret",
+      "primaryConsumers": [
+        "个人中心"
+      ],
+      "bindings": [
+        "update_my_third_party_platform_secret"
+      ]
+    },
+    {
+      "id": "F51",
+      "kind": "ontology_function",
+      "label": "F51 查看当前账号最近订单摘要",
+      "name": "list_my_orders",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前账号最近订单摘要，可按状态筛选并限制返回数量。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_my_orders",
+      "primaryConsumers": [
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "list_my_orders"
+      ]
+    },
+    {
+      "id": "F52",
+      "kind": "ontology_function",
+      "label": "F52 查看个人中心素材管理页聚合的素材列表",
+      "name": "list_personal_material_assets",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看个人中心素材管理页聚合的素材列表，可按文本、图片、语音、视频筛选，覆盖网站上传和 AI 智控中心 入库素材。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_personal_material_assets",
+      "primaryConsumers": [
+        "个人中心",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "list_personal_material_assets"
+      ]
+    },
+    {
+      "id": "F53",
+      "kind": "ontology_function",
+      "label": "F53 查看 local-single-us",
+      "name": "get_local_material_storage_settings",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看 local-single-user 安装态下个人中心素材库的目录设置、四类子目录和命名规则。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_local_material_storage_settings",
+      "primaryConsumers": [
+        "个人中心",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "get_local_material_storage_settings"
+      ]
+    },
+    {
+      "id": "A67",
+      "kind": "ontology_action",
+      "label": "A67 更新 local-single-us",
+      "name": "update_local_material_storage_settings",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新 local-single-user 安装态下个人中心素材库存储目录。传入的是【素材库】外层的根目录，保存后会自动创建【素材库】及四类子目录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_local_material_storage_settings",
+      "primaryConsumers": [
+        "个人中心",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "update_local_material_storage_settings"
+      ]
+    },
+    {
+      "id": "F54",
+      "kind": "ontology_function",
+      "label": "F54 查看当前账号在个人中心的总览摘要",
+      "name": "get_personal_center_overview",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前账号在个人中心的总览摘要，包括品牌数、待处理邀请、任务和订单概况。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_personal_center_overview",
+      "primaryConsumers": [
+        "个人中心"
+      ],
+      "bindings": [
+        "get_personal_center_overview"
+      ]
+    },
+    {
+      "id": "F55",
+      "kind": "ontology_function",
+      "label": "F55 查看当前品牌的团队成员列表和当前账号",
+      "name": "list_brand_members",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌的团队成员列表和当前账号的成员管理权限。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_brand_members",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "list_brand_members"
+      ]
+    },
+    {
+      "id": "F56",
+      "kind": "ontology_function",
+      "label": "F56 查看当前品牌已创建的邀请码和邀请链接",
+      "name": "list_brand_invites",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌已创建的邀请码和邀请链接列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_brand_invites",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "list_brand_invites"
+      ]
+    },
+    {
+      "id": "A68",
+      "kind": "ontology_action",
+      "label": "A68 为当前品牌创建新的邀请链接",
+      "name": "create_brand_invite_link",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌创建新的邀请链接，可指定角色、备注和有效天数。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_brand_invite_link",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "create_brand_invite_link"
+      ]
+    },
+    {
+      "id": "A69",
+      "kind": "ontology_action",
+      "label": "A69 撤回当前品牌下指定的待处理邀请",
+      "name": "revoke_brand_invite",
+      "refType": "openclaw_mcp_tool",
+      "description": "撤回当前品牌下指定的待处理邀请。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:revoke_brand_invite",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "revoke_brand_invite"
+      ]
+    },
+    {
+      "id": "F57",
+      "kind": "ontology_function",
+      "label": "F57 查看当前品牌团队权限模板和当前账号的",
+      "name": "get_brand_permission_settings",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌团队权限模板和当前账号的权限范围。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_permission_settings",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_permission_settings"
+      ]
+    },
+    {
+      "id": "F58",
+      "kind": "ontology_function",
+      "label": "F58 查看当前账号待处理的品牌邀请列表",
+      "name": "list_my_brand_invites",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前账号待处理的品牌邀请列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_my_brand_invites",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "list_my_brand_invites"
+      ]
+    },
+    {
+      "id": "F59",
+      "kind": "ontology_function",
+      "label": "F59 查看当前账号的品牌高级·成员邀请中心",
+      "name": "list_my_brand_invite_notifications",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前账号的品牌高级·成员邀请（兼容）中心摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:list_my_brand_invite_notifications",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "list_my_brand_invite_notifications"
+      ]
+    },
+    {
+      "id": "A70",
+      "kind": "ontology_action",
+      "label": "A70 接受当前账号收到的品牌邀请",
+      "name": "accept_my_brand_invite",
+      "refType": "openclaw_mcp_tool",
+      "description": "接受当前账号收到的品牌邀请。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:accept_my_brand_invite",
+      "primaryConsumers": [
+        "个人中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "accept_my_brand_invite"
+      ]
+    },
+    {
+      "id": "F60",
+      "kind": "ontology_function",
+      "label": "F60 查看指定任务的详细状态、输入和输出摘",
+      "name": "get_task_detail",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看指定任务的详细状态、输入和输出摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_task_detail",
+      "primaryConsumers": [
+        "任务中心",
+        "AI 智控中心 专区",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_task_detail"
+      ]
+    },
+    {
+      "id": "A71",
+      "kind": "ontology_action",
+      "label": "A71 取消指定任务",
+      "name": "cancel_task",
+      "refType": "openclaw_mcp_tool",
+      "description": "取消指定任务，仅支持排队中或运行中的任务。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:cancel_task",
+      "primaryConsumers": [
+        "任务中心",
+        "任务治理"
+      ],
+      "bindings": [
+        "cancel_task"
+      ]
+    },
+    {
+      "id": "A72",
+      "kind": "ontology_action",
+      "label": "A72 重试指定任务",
+      "name": "retry_task",
+      "refType": "openclaw_mcp_tool",
+      "description": "重试指定任务，把任务重新放回排队状态。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:retry_task",
+      "primaryConsumers": [
+        "任务中心",
+        "任务治理"
+      ],
+      "bindings": [
+        "retry_task"
+      ]
+    },
+    {
+      "id": "F61",
+      "kind": "ontology_function",
+      "label": "F61 汇总当前品牌最近任务状态",
+      "name": "get_recent_tasks_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "汇总当前品牌最近任务状态，可按时间范围和任务类型筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_tasks_summary",
+      "primaryConsumers": [
+        "品牌增长",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_recent_tasks_summary"
+      ]
+    },
+    {
+      "id": "F62",
+      "kind": "ontology_function",
+      "label": "F62 汇总当前品牌最近失败任务及主要失败原",
+      "name": "get_failed_tasks_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "汇总当前品牌最近失败任务及主要失败原因。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_failed_tasks_summary",
+      "primaryConsumers": [
+        "品牌增长",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_failed_tasks_summary"
+      ]
+    },
+    {
+      "id": "F63",
+      "kind": "ontology_function",
+      "label": "F63 查看当前品牌最近新增的知识资料和处理",
+      "name": "get_recent_knowledge_files",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近新增的知识资料和处理状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_knowledge_files",
+      "primaryConsumers": [
+        "品牌资产"
+      ],
+      "bindings": [
+        "get_recent_knowledge_files"
+      ]
+    },
+    {
+      "id": "F64",
+      "kind": "ontology_function",
+      "label": "F64 查看当前品牌技能配置摘要",
+      "name": "get_skill_config_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌技能配置摘要，可按 skillKey 定位单个技能。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_skill_config_summary",
+      "primaryConsumers": [
+        "技能中心"
+      ],
+      "bindings": [
+        "get_skill_config_summary"
+      ]
+    },
+    {
+      "id": "F65",
+      "kind": "ontology_function",
+      "label": "F65 查看指定网站技能的有效配置、关联提示",
+      "name": "get_skill_config_detail",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看指定网站技能的有效配置、关联提示词以及品牌覆盖详情。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_skill_config_detail",
+      "primaryConsumers": [
+        "技能中心"
+      ],
+      "bindings": [
+        "get_skill_config_detail"
+      ]
+    },
+    {
+      "id": "A73",
+      "kind": "ontology_action",
+      "label": "A73 更新指定网站技能的品牌级配置与提示词",
+      "name": "update_skill_config",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新指定网站技能的品牌级配置与提示词覆盖，让后续网页生成直接使用新的有效设置。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_skill_config",
+      "primaryConsumers": [
+        "技能中心"
+      ],
+      "bindings": [
+        "update_skill_config"
+      ]
+    },
+    {
+      "id": "A74",
+      "kind": "ontology_action",
+      "label": "A74 把指定网站技能恢复到平台基线配置",
+      "name": "reset_skill_to_platform_baseline",
+      "refType": "openclaw_mcp_tool",
+      "description": "把指定网站技能恢复到平台基线配置，移除品牌级技能和提示词覆盖。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:reset_skill_to_platform_baseline",
+      "primaryConsumers": [
+        "技能中心",
+        "个人中心"
+      ],
+      "bindings": [
+        "reset_skill_to_platform_baseline"
+      ]
+    },
+    {
+      "id": "A75",
+      "kind": "ontology_action",
+      "label": "A75 为指定任务提交生成结果反馈",
+      "name": "submit_task_result_feedback",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定任务提交生成结果反馈，记录满意度、问题标签、备注和人工修改结果。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:submit_task_result_feedback",
+      "primaryConsumers": [
+        "任务中心",
+        "任务治理"
+      ],
+      "bindings": [
+        "submit_task_result_feedback"
+      ]
+    },
+    {
+      "id": "F66",
+      "kind": "ontology_function",
+      "label": "F66 查看当前品牌最近的生成结果反馈摘要",
+      "name": "get_feedback_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近的生成结果反馈摘要，可按技能或提示词筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_feedback_summary",
+      "primaryConsumers": [
+        "任务中心",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_feedback_summary"
+      ]
+    },
+    {
+      "id": "F67",
+      "kind": "ontology_function",
+      "label": "F67 查看当前品牌生成结果反馈的问题画像",
+      "name": "get_feedback_analysis",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌生成结果反馈的问题画像，识别高频问题标签和负向任务类型。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_feedback_analysis",
+      "primaryConsumers": [
+        "任务中心",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_feedback_analysis"
+      ]
+    },
+    {
+      "id": "F68",
+      "kind": "ontology_function",
+      "label": "F68 基于当前品牌已收集的反馈",
+      "name": "get_prompt_optimization_suggestions",
+      "refType": "openclaw_mcp_tool",
+      "description": "基于当前品牌已收集的反馈，输出针对技能或提示词的最小优化建议摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_prompt_optimization_suggestions",
+      "primaryConsumers": [
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "get_prompt_optimization_suggestions"
+      ]
+    },
+    {
+      "id": "F69",
+      "kind": "ontology_function",
+      "label": "F69 查看当前品牌最近生成的公众号文章草稿",
+      "name": "get_wechat_article_drafts",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近生成的公众号文章草稿和任务状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_article_drafts",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_article_drafts"
+      ]
+    },
+    {
+      "id": "F70",
+      "kind": "ontology_function",
+      "label": "F70 查看当前品牌已配置的公众号账号列表",
+      "name": "get_wechat_official_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌已配置的公众号账号列表，支持多公众号场景下为工作流和发布选择具体公众号。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_official_accounts",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_official_accounts"
+      ]
+    },
+    {
+      "id": "F71",
+      "kind": "ontology_function",
+      "label": "F71 查看当前品牌最近的公众号排版工作流会",
+      "name": "get_wechat_workflow_sessions",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近的公众号排版工作流会话，供确认发布对象。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_workflow_sessions",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_workflow_sessions"
+      ]
+    },
+    {
+      "id": "F72",
+      "kind": "ontology_function",
+      "label": "F72 查看当前品牌最近的公众号发布历史和结",
+      "name": "get_wechat_publish_history",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近的公众号发布历史和结果；每条记录都会回显所属公众号账号名。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_publish_history",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_publish_history"
+      ]
+    },
+    {
+      "id": "F73",
+      "kind": "ontology_function",
+      "label": "F73 查看当前品牌公众号工作流的默认作者、",
+      "name": "get_wechat_workflow_preferences",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌公众号工作流的默认作者、主题色和默认输入方式等偏好。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_workflow_preferences",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_workflow_preferences"
+      ]
+    },
+    {
+      "id": "F74",
+      "kind": "ontology_function",
+      "label": "F74 查看指定公众号工作流会话的完整详情",
+      "name": "get_wechat_workflow_session_detail",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看指定公众号工作流会话的完整详情，包括发布配置和检查项。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_workflow_session_detail",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_workflow_session_detail"
+      ]
+    },
+    {
+      "id": "F75",
+      "kind": "ontology_function",
+      "label": "F75 重新计算指定公众号工作流的发布确认状",
+      "name": "check_wechat_workflow_publish_readiness",
+      "refType": "openclaw_mcp_tool",
+      "description": "重新计算指定公众号工作流的发布确认状态，返回是否已具备正式发布条件。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:check_wechat_workflow_publish_readiness",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "check_wechat_workflow_publish_readiness"
+      ]
+    },
+    {
+      "id": "F76",
+      "kind": "ontology_function",
+      "label": "F76 查看指定公众号发布历史记录的详细结果",
+      "name": "get_wechat_publish_history_detail",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看指定公众号发布历史记录的详细结果和失败原因。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_publish_history_detail",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_publish_history_detail"
+      ]
+    },
+    {
+      "id": "A76",
+      "kind": "ontology_action",
+      "label": "A76 把指定公众号草稿正式发布到公众号账号",
+      "name": "publish_wechat_article",
+      "refType": "openclaw_mcp_tool",
+      "description": "把指定公众号草稿正式发布到公众号账号。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:publish_wechat_article",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "publish_wechat_article"
+      ]
+    },
+    {
+      "id": "A77",
+      "kind": "ontology_action",
+      "label": "A77 为指定小红书图文作品创建手机扫码接力",
+      "name": "create_xiaohongshu_mobile_draft_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定小红书图文作品创建手机扫码接力草稿会话，便于在手机端保存到小红书草稿箱。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_xiaohongshu_mobile_draft_session",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_xiaohongshu_mobile_draft_session"
+      ]
+    },
+    {
+      "id": "F77",
+      "kind": "ontology_function",
+      "label": "F77 查询指定小红书手机草稿接力会话的最新",
+      "name": "get_xiaohongshu_mobile_draft_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "查询指定小红书手机草稿接力会话的最新状态、入口和完成结果。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_mobile_draft_session",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_mobile_draft_session"
+      ]
+    },
+    {
+      "id": "A78",
+      "kind": "ontology_action",
+      "label": "A78 为指定小红书图文作品创建电脑端草稿会",
+      "name": "create_xiaohongshu_desktop_draft_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定小红书图文作品创建电脑端草稿会话，便于通过浏览器扩展自动填充保存草稿。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_xiaohongshu_desktop_draft_session",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_xiaohongshu_desktop_draft_session"
+      ]
+    },
+    {
+      "id": "F78",
+      "kind": "ontology_function",
+      "label": "F78 查询指定小红书电脑端草稿接力会话的最",
+      "name": "get_xiaohongshu_desktop_draft_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "查询指定小红书电脑端草稿接力会话的最新状态、入口和完成结果。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_desktop_draft_session",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_desktop_draft_session"
+      ]
+    },
+    {
+      "id": "A79",
+      "kind": "ontology_action",
+      "label": "A79 为指定抖音视频作品创建手机接力发布会",
+      "name": "create_douyin_mobile_publish_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定抖音视频作品创建手机接力发布会话，便于在手机端继续完成发布。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_douyin_mobile_publish_session",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_douyin_mobile_publish_session"
+      ]
+    },
+    {
+      "id": "F79",
+      "kind": "ontology_function",
+      "label": "F79 查询指定抖音手机发布接力会话的最新状",
+      "name": "get_douyin_mobile_publish_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "查询指定抖音手机发布接力会话的最新状态、入口和完成结果。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_mobile_publish_session",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_mobile_publish_session"
+      ]
+    },
+    {
+      "id": "A80",
+      "kind": "ontology_action",
+      "label": "A80 为指定抖音视频作品创建电脑端发布会话",
+      "name": "create_douyin_desktop_publish_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定抖音视频作品创建电脑端发布会话，便于通过浏览器扩展自动填充发布信息。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_douyin_desktop_publish_session",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_douyin_desktop_publish_session"
+      ]
+    },
+    {
+      "id": "F80",
+      "kind": "ontology_function",
+      "label": "F80 查询指定抖音电脑端发布接力会话的最新",
+      "name": "get_douyin_desktop_publish_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "查询指定抖音电脑端发布接力会话的最新状态、入口和完成结果。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_desktop_publish_session",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_desktop_publish_session"
+      ]
+    },
+    {
+      "id": "A81",
+      "kind": "ontology_action",
+      "label": "A81 把指定公众号工作流正式发布到公众号账",
+      "name": "publish_wechat_workflow",
+      "refType": "openclaw_mcp_tool",
+      "description": "把指定公众号工作流正式发布到公众号账号。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:publish_wechat_workflow",
+      "primaryConsumers": [
+        "公众号",
+        "内容获客"
+      ],
+      "bindings": [
+        "publish_wechat_workflow"
+      ]
+    },
+    {
+      "id": "A82",
+      "kind": "ontology_action",
+      "label": "A82 重试一次失败或待处理的公众号发布历史",
+      "name": "retry_wechat_publish_history",
+      "refType": "openclaw_mcp_tool",
+      "description": "重试一次失败或待处理的公众号发布历史记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:retry_wechat_publish_history",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "retry_wechat_publish_history"
+      ]
+    },
+    {
+      "id": "F81",
+      "kind": "ontology_function",
+      "label": "F81 查看设计工作台可用模型选项与图片生成",
+      "name": "get_design_workspace_options",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看设计工作台可用模型选项与图片生成配置，并读取可直接传给 create_design_work.modelSelection 的 selectionKey。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_design_workspace_options",
+      "primaryConsumers": [
+        "设计工作台"
+      ],
+      "bindings": [
+        "get_design_workspace_options"
+      ]
+    },
+    {
+      "id": "F82",
+      "kind": "ontology_function",
+      "label": "F82 查看当前品牌最近的设计工作台生成记录",
+      "name": "get_recent_design_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近的设计工作台生成记录和状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_design_works",
+      "primaryConsumers": [
+        "设计工作台"
+      ],
+      "bindings": [
+        "get_recent_design_works"
+      ]
+    },
+    {
+      "id": "A83",
+      "kind": "ontology_action",
+      "label": "A83 在网站设计工作台中直接创建一个设计任",
+      "name": "create_design_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "在网站设计工作台中直接创建一个设计任务。当前图片模块默认走 AI 智控中心 自由生图模式：不会自动套社媒配图模板、不会默认植入品牌资料、也不会强制生成中文排版文案。提供参考图时默认会将其作为图像输入提交给生图模型；只有用户明确要求完全忽略参考图、仅按文字生成时，才传 referenceImageMode=prompt_only。图片设计可通过 imageSize 指定尺寸（格式 宽x高，如 1200x628）；如需指定生图模型，应先调用 get_design_workspace_options，再把返回的 selectionKey 传入 modelSelection。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_design_work",
+      "primaryConsumers": [
+        "设计工作台"
+      ],
+      "bindings": [
+        "create_design_work"
+      ]
+    },
+    {
+      "id": "F83",
+      "kind": "ontology_function",
+      "label": "F83 获取当前品牌最新品牌增长报告摘要",
+      "name": "get_latest_brand_growth_report_summary",
+      "refType": "openclaw_mcp_tool",
+      "description": "获取当前品牌最新品牌增长报告摘要。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_latest_brand_growth_report_summary",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_latest_brand_growth_report_summary"
+      ]
+    },
+    {
+      "id": "A84",
+      "kind": "ontology_action",
+      "label": "A84 提交 WorkBuddy 品牌增长报告到品牌增长报告板块",
+      "name": "create_brand_growth_report",
+      "refType": "openclaw_mcp_tool",
+      "description": "提交 WorkBuddy 已生成的品牌增长报告到当前品牌【品牌增长报告】板块。中台只负责接收、保存和展示，不生成报告正文。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_brand_growth_report",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "create_brand_growth_report"
+      ]
+    },
+    {
+      "id": "A85",
+      "kind": "ontology_action",
+      "label": "A85 触发当前品牌的半年营销规划生成任务",
+      "name": "create_half_year_marketing_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发当前品牌的半年营销规划生成任务。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_half_year_marketing_plan",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "create_half_year_marketing_plan"
+      ]
+    },
+    {
+      "id": "F84",
+      "kind": "ontology_function",
+      "label": "F84 查看当前品牌的品牌增长可视化报告工作",
+      "name": "get_brand_growth_visual_report_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌的品牌增长可视化报告工作区状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_growth_visual_report_workspace",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_growth_visual_report_workspace"
+      ]
+    },
+    {
+      "id": "A86",
+      "kind": "ontology_action",
+      "label": "A86 触发当前品牌的品牌增长可视化报告生成",
+      "name": "generate_brand_growth_visual_report",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发当前品牌的品牌增长可视化报告生成任务。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_brand_growth_visual_report",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "generate_brand_growth_visual_report"
+      ]
+    },
+    {
+      "id": "F85",
+      "kind": "ontology_function",
+      "label": "F85 查看当前品牌营销日历工作区状态",
+      "name": "get_brand_growth_marketing_calendar_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌营销日历工作区状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_growth_marketing_calendar_workspace",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_growth_marketing_calendar_workspace"
+      ]
+    },
+    {
+      "id": "A87",
+      "kind": "ontology_action",
+      "label": "A87 触发当前品牌营销日历生成任务",
+      "name": "generate_brand_growth_marketing_calendar",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发当前品牌营销日历生成任务。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_brand_growth_marketing_calendar",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "generate_brand_growth_marketing_calendar"
+      ]
+    },
+    {
+      "id": "A88",
+      "kind": "ontology_action",
+      "label": "A88 更新当前品牌指定 reportId ",
+      "name": "update_brand_growth_marketing_calendar",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新当前品牌指定 reportId 的营销日历内容。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_brand_growth_marketing_calendar",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "update_brand_growth_marketing_calendar"
+      ]
+    },
+    {
+      "id": "F86",
+      "kind": "ontology_function",
+      "label": "F86 查看当前品牌选题库工作区状态",
+      "name": "get_brand_growth_topic_library_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌选题库工作区状态，可按日期查看热点选题候选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_growth_topic_library_workspace",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_brand_growth_topic_library_workspace"
+      ]
+    },
+    {
+      "id": "A89",
+      "kind": "ontology_action",
+      "label": "A89 触发当前品牌选题库热点选题生成",
+      "name": "generate_brand_growth_topic_candidates",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发当前品牌选题库热点选题生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:generate_brand_growth_topic_candidates",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "generate_brand_growth_topic_candidates"
+      ]
+    },
+    {
+      "id": "A90",
+      "kind": "ontology_action",
+      "label": "A90 更新当前品牌选题库内容",
+      "name": "update_brand_growth_topic_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新当前品牌选题库内容。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_brand_growth_topic_library",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "update_brand_growth_topic_library"
+      ]
+    },
+    {
+      "id": "A91",
+      "kind": "ontology_action",
+      "label": "A91 向当前品牌选题库新增一条结构化选题",
+      "name": "create_brand_growth_topic_library_item",
+      "refType": "openclaw_mcp_tool",
+      "description": "向当前品牌选题库新增一条结构化选题，默认按 AI 智控中心 来源入库。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_brand_growth_topic_library_item",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "create_brand_growth_topic_library_item"
+      ]
+    },
+    {
+      "id": "A92",
+      "kind": "ontology_action",
+      "label": "A92 更新当前品牌选题库中指定 ID 的一",
+      "name": "update_brand_growth_topic_library_item",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新当前品牌选题库中指定 ID 的一条选题。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_brand_growth_topic_library_item",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "update_brand_growth_topic_library_item"
+      ]
+    },
+    {
+      "id": "A93",
+      "kind": "ontology_action",
+      "label": "A93 删除当前品牌选题库中指定 ID 的一",
+      "name": "delete_brand_growth_topic_library_item",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除当前品牌选题库中指定 ID 的一条选题。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_brand_growth_topic_library_item",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "delete_brand_growth_topic_library_item"
+      ]
+    },
+    {
+      "id": "F87",
+      "kind": "ontology_function",
+      "label": "F87 查看当前品牌品牌增长报告下的素材库结",
+      "name": "get_brand_growth_material_library_items",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌品牌增长报告下的素材库结果。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_growth_material_library_items",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "get_brand_growth_material_library_items"
+      ]
+    },
+    {
+      "id": "A94",
+      "kind": "ontology_action",
+      "label": "A94 为当前品牌创建业务知识库",
+      "name": "create_knowledge_base",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌创建业务知识库。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_knowledge_base",
+      "primaryConsumers": [
+        "品牌资产"
+      ],
+      "bindings": [
+        "create_knowledge_base"
+      ]
+    },
+    {
+      "id": "A95",
+      "kind": "ontology_action",
+      "label": "A95 向指定知识库上传资料",
+      "name": "upload_knowledge_base_files",
+      "refType": "openclaw_mcp_tool",
+      "description": "向指定知识库上传资料，支持按知识库 ID 或名称定位。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:upload_knowledge_base_files",
+      "primaryConsumers": [
+        "品牌资产"
+      ],
+      "bindings": [
+        "upload_knowledge_base_files"
+      ]
+    },
+    {
+      "id": "F88",
+      "kind": "ontology_function",
+      "label": "F88 查看抖音原创文案可用的选题库、营销日",
+      "name": "get_douyin_original_copy_options",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看抖音原创文案可用的选题库、营销日历和文案类型选项。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_original_copy_options",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_original_copy_options"
+      ]
+    },
+    {
+      "id": "F89",
+      "kind": "ontology_function",
+      "label": "F89 查看当前品牌最近生成的抖音原创文案结",
+      "name": "get_recent_douyin_original_copies",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近生成的抖音原创文案结果和状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_douyin_original_copies",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_recent_douyin_original_copies"
+      ]
+    },
+    {
+      "id": "A96",
+      "kind": "ontology_action",
+      "label": "A96 基于选题库或营销日历触发抖音原创文案",
+      "name": "create_douyin_original_copy",
+      "refType": "openclaw_mcp_tool",
+      "description": "基于选题库或营销日历触发抖音原创文案生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_douyin_original_copy",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_douyin_original_copy"
+      ]
+    },
+    {
+      "id": "F90",
+      "kind": "ontology_function",
+      "label": "F90 查看抖音二创文案可用的素材库、产品和",
+      "name": "get_douyin_remix_copy_options",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看抖音二创文案可用的素材库、产品和营销策划选项。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_remix_copy_options",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_remix_copy_options"
+      ]
+    },
+    {
+      "id": "F91",
+      "kind": "ontology_function",
+      "label": "F91 查看当前品牌最近生成的抖音二创文案结",
+      "name": "get_recent_douyin_remix_copies",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近生成的抖音二创文案结果和状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_douyin_remix_copies",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_recent_douyin_remix_copies"
+      ]
+    },
+    {
+      "id": "A97",
+      "kind": "ontology_action",
+      "label": "A97 基于素材库视频触发抖音二创文案生成",
+      "name": "create_douyin_remix_copy",
+      "refType": "openclaw_mcp_tool",
+      "description": "基于素材库视频触发抖音二创文案生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_douyin_remix_copy",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_douyin_remix_copy"
+      ]
+    },
+    {
+      "id": "F92",
+      "kind": "ontology_function",
+      "label": "F92 查看当前品牌素材库里可用于小红书二创",
+      "name": "get_xiaohongshu_material_library_items",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌素材库里可用于小红书二创的对标作品。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_material_library_items",
+      "primaryConsumers": [
+        "小红书",
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    {
+      "id": "F93",
+      "kind": "ontology_function",
+      "label": "F93 查看当前品牌最近一期小红书营销日历选",
+      "name": "get_xiaohongshu_marketing_calendar_options",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近一期小红书营销日历选题，可直接拿到 calendarItemId 供后续创作使用。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_marketing_calendar_options",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_marketing_calendar_options"
+      ]
+    },
+    {
+      "id": "F94",
+      "kind": "ontology_function",
+      "label": "F94 查看小红书原创笔记参考模板分类和模板",
+      "name": "get_xiaohongshu_original_reference_templates",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看小红书原创笔记参考模板分类和模板项，可按分类筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_xiaohongshu_original_reference_templates",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_xiaohongshu_original_reference_templates"
+      ]
+    },
+    {
+      "id": "F95",
+      "kind": "ontology_function",
+      "label": "F95 查看当前品牌最近生成的小红书原创笔记",
+      "name": "get_recent_xiaohongshu_original_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌最近生成的小红书原创笔记结果和状态。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_recent_xiaohongshu_original_works",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_recent_xiaohongshu_original_works"
+      ]
+    },
+    {
+      "id": "F96",
+      "kind": "ontology_function",
+      "label": "F96 查看当前品牌指定板块下的每周复盘列表",
+      "name": "get_ai_control_center_lobster_diaries",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的每周复盘列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_lobster_diaries",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "get_ai_control_center_lobster_diaries"
+      ]
+    },
+    {
+      "id": "A98",
+      "kind": "ontology_action",
+      "label": "A98 为当前品牌指定板块创建一篇每周复盘",
+      "name": "create_ai_control_center_lobster_diary",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块创建一篇每周复盘。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_lobster_diary",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "create_ai_control_center_lobster_diary"
+      ]
+    },
+    {
+      "id": "A99",
+      "kind": "ontology_action",
+      "label": "A99 更新指定板块下的一篇每周复盘",
+      "name": "update_ai_control_center_lobster_diary",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新指定板块下的一篇每周复盘。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_ai_control_center_lobster_diary",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "update_ai_control_center_lobster_diary"
+      ]
+    },
+    {
+      "id": "A100",
+      "kind": "ontology_action",
+      "label": "A100 删除指定板块下的一篇每周复盘",
+      "name": "delete_ai_control_center_lobster_diary",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一篇每周复盘。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_lobster_diary",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "delete_ai_control_center_lobster_diary"
+      ]
+    },
+    {
+      "id": "F97",
+      "kind": "ontology_function",
+      "label": "F97 查看当前品牌指定板块下的营销策划方案",
+      "name": "get_ai_control_center_marketing_plans",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的营销策划方案列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_marketing_plans",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "get_ai_control_center_marketing_plans"
+      ]
+    },
+    {
+      "id": "A101",
+      "kind": "ontology_action",
+      "label": "A101 为当前品牌指定板块上传一条 HTML",
+      "name": "create_ai_control_center_marketing_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块上传一条 HTML 营销策划方案。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_marketing_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "create_ai_control_center_marketing_plan"
+      ]
+    },
+    {
+      "id": "A102",
+      "kind": "ontology_action",
+      "label": "A102 删除指定板块下的一条营销策划方案",
+      "name": "delete_ai_control_center_marketing_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一条营销策划方案。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_marketing_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "delete_ai_control_center_marketing_plan"
+      ]
+    },
+    {
+      "id": "F98",
+      "kind": "ontology_function",
+      "label": "F98 查看当前品牌指定板块下的爆款拆解列表",
+      "name": "get_ai_control_center_explosive_analyses",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的爆款拆解列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_explosive_analyses",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "品牌增长"
+      ],
+      "bindings": [
+        "get_ai_control_center_explosive_analyses"
+      ]
+    },
+    {
+      "id": "A103",
+      "kind": "ontology_action",
+      "label": "A103 为当前品牌指定板块创建一条爆款拆解记",
+      "name": "create_ai_control_center_explosive_analysis",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块创建一条爆款拆解记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_explosive_analysis",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "品牌增长"
+      ],
+      "bindings": [
+        "create_ai_control_center_explosive_analysis"
+      ]
+    },
+    {
+      "id": "A104",
+      "kind": "ontology_action",
+      "label": "A104 删除指定板块下的一条爆款拆解",
+      "name": "delete_ai_control_center_explosive_analysis",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一条爆款拆解。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_explosive_analysis",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "品牌增长"
+      ],
+      "bindings": [
+        "delete_ai_control_center_explosive_analysis"
+      ]
+    },
+    {
+      "id": "F99",
+      "kind": "ontology_function",
+      "label": "F99 查看当前品牌在 brand_grow",
+      "name": "get_ai_control_center_strategy_optimizations",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌在 brand_growth、xiaohongshu、douyin、wechat 板块下的策略优化记录列表；不用于 GEO 关键词挖掘等工作流内容。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_strategy_optimizations",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "get_ai_control_center_strategy_optimizations"
+      ]
+    },
+    {
+      "id": "A105",
+      "kind": "ontology_action",
+      "label": "A105 为当前品牌在 brand_growt",
+      "name": "create_ai_control_center_strategy_optimization",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌在 brand_growth、xiaohongshu、douyin、wechat 板块创建一条策略优化记录；GEO 关键词挖掘等内容请改用 create_ai_control_center_geo_content。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_strategy_optimization",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "create_ai_control_center_strategy_optimization"
+      ]
+    },
+    {
+      "id": "A106",
+      "kind": "ontology_action",
+      "label": "A106 更新当前品牌在 brand_grow",
+      "name": "update_ai_control_center_strategy_optimization",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新当前品牌在 brand_growth、xiaohongshu、douyin、wechat 板块下的一条策略优化记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_ai_control_center_strategy_optimization",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "update_ai_control_center_strategy_optimization"
+      ]
+    },
+    {
+      "id": "A107",
+      "kind": "ontology_action",
+      "label": "A107 删除当前品牌在 brand_grow",
+      "name": "delete_ai_control_center_strategy_optimization",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除当前品牌在 brand_growth、xiaohongshu、douyin、wechat 板块下的一条策略优化记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_strategy_optimization",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "delete_ai_control_center_strategy_optimization"
+      ]
+    },
+    {
+      "id": "F100",
+      "kind": "ontology_function",
+      "label": "F100 查看当前品牌指定板块下的每日计划列表",
+      "name": "get_ai_control_center_daily_plans",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的每日计划列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_daily_plans",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "get_ai_control_center_daily_plans"
+      ]
+    },
+    {
+      "id": "A108",
+      "kind": "ontology_action",
+      "label": "A108 为当前品牌指定板块创建一篇每日计划",
+      "name": "create_ai_control_center_daily_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块创建一篇每日 HTML 计划，可同时保留文本摘要。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_daily_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "create_ai_control_center_daily_plan"
+      ]
+    },
+    {
+      "id": "A109",
+      "kind": "ontology_action",
+      "label": "A109 删除指定板块下的一篇每日计划",
+      "name": "delete_ai_control_center_daily_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一篇每日计划。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_daily_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "delete_ai_control_center_daily_plan"
+      ]
+    },
+    {
+      "id": "A110",
+      "kind": "ontology_action",
+      "label": "A110 调用火山音乐后付费接口创建音乐任务",
+      "name": "create_volcengine_music_task",
+      "refType": "openclaw_mcp_tool",
+      "description": "调用火山音乐后付费接口创建音乐任务，可生成带人声歌曲或纯音乐 BGM。创建后请再调用 get_volcengine_music_task 轮询结果；如果要沉淀到 AI 智控中心 创作素材，建议在查询成功后再保存。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_volcengine_music_task",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "任务治理"
+      ],
+      "bindings": [
+        "create_volcengine_music_task"
+      ]
+    },
+    {
+      "id": "F101",
+      "kind": "ontology_function",
+      "label": "F101 查询火山音乐任务结果",
+      "name": "get_volcengine_music_task",
+      "refType": "openclaw_mcp_tool",
+      "description": "查询火山音乐任务结果。成功后可选择直接把音频链接沉淀到 AI 智控中心 创作素材，适合保存为 audio 或 bgm 素材。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_volcengine_music_task",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "任务治理"
+      ],
+      "bindings": [
+        "get_volcengine_music_task"
+      ]
+    },
+    {
+      "id": "F102",
+      "kind": "ontology_function",
+      "label": "F102 按素材类型、素材来源和关键词搜索当前",
+      "name": "search_ai_control_center_asset_archive",
+      "refType": "openclaw_mcp_tool",
+      "description": "按素材类型、素材来源和关键词搜索当前品牌统一素材档案，聚合创作素材、视频作品、媒体资产、品牌资料和任务产物。WorkBuddy Agent 遇到找素材、选参考素材、素材复用、给任务配素材时应先调用本工具；本工具只读，不写任务记录。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:search_ai_control_center_asset_archive",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive"
+      ]
+    },
+    {
+      "id": "F103",
+      "kind": "ontology_function",
+      "label": "F103 只读获取当前品牌已发布的 Ontol",
+      "name": "get_ai_control_center_published_ontology_contract",
+      "refType": "openclaw_mcp_tool",
+      "description": "只读获取当前品牌已发布的 Ontology 正式路由契约。WorkBuddy Agent 执行业务任务前应调用本工具读取 published_contract；本工具不会返回 draft 或 publish-preview，不写专家真源，不调用 AI，不触发业务执行。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_published_ontology_contract",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "get_ai_control_center_published_ontology_contract"
+      ]
+    },
+    {
+      "id": "F104",
+      "kind": "ontology_function",
+      "label": "F104 只读获取当前品牌已发布 Ontolo",
+      "name": "get_ai_control_center_ontology_execution_plan",
+      "refType": "openclaw_mcp_tool",
+      "description": "只读获取当前品牌已发布 Ontology 契约派生出的执行前路由计划。WorkBuddy Agent 应在真实执行前调用本工具确认节点顺序、确认闸、证据规则和禁止动作；本工具不创建任务、不调用 AI、不触发业务执行、不写专家真源。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_ontology_execution_plan",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "get_ai_control_center_ontology_execution_plan"
+      ]
+    },
+    {
+      "id": "F105",
+      "kind": "ontology_function",
+      "label": "F105 只读获取已发布 Ontology 契",
+      "name": "get_ai_control_center_ontology_expert_source_diff_preview",
+      "refType": "openclaw_mcp_tool",
+      "description": "只读获取已发布 Ontology 契约同步到专家源 Markdown 前的候选 Diff 预览。用于真实写回前审阅会改哪些专家/Skill 文件、候选 SHA 和阻断闸；本工具不写盘、不创建快照、不提交、不触发 WorkBuddy 执行。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_ontology_expert_source_diff_preview",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "get_ai_control_center_ontology_expert_source_diff_preview"
+      ]
+    },
+    {
+      "id": "A111",
+      "kind": "ontology_action",
+      "label": "A111 提交 Ontology publis",
+      "name": "request_ai_control_center_ontology_expert_source_writeback",
+      "refType": "openclaw_mcp_tool",
+      "description": "提交 Ontology published_contract 同步到专家源 Markdown 的写回确认闸请求。工具会重新从正式契约生成候选稿并校验 Diff SHA、候选 SHA、写前快照、可写挂载和用户授权；当前总闸只返回阻断证据，不直接写 WorkBuddy 真源。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:request_ai_control_center_ontology_expert_source_writeback",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "request_ai_control_center_ontology_expert_source_writeback"
+      ]
+    },
+    {
+      "id": "A112",
+      "kind": "ontology_action",
+      "label": "A112 把已读取的 Ontology 执行前",
+      "name": "record_ai_control_center_ontology_execution_plan_evidence",
+      "refType": "openclaw_mcp_tool",
+      "description": "把已读取的 Ontology 执行前路由计划记录到任务治理账本，作为 WorkBuddy 开工前的确认/留证。该工具只写执行前证据，不创建任务、不调用 AI、不触发业务执行、不写专家真源。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:record_ai_control_center_ontology_execution_plan_evidence",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "record_ai_control_center_ontology_execution_plan_evidence"
+      ]
+    },
+    {
+      "id": "A113",
+      "kind": "ontology_action",
+      "label": "A113 记录 WorkBuddy 已按 On",
+      "name": "record_ai_control_center_ontology_node_execution_evidence",
+      "refType": "openclaw_mcp_tool",
+      "description": "记录 WorkBuddy 已按 Ontology 正式路线图推进到某个节点的受控执行证据。该工具默认会按 published_contract 与节点类型自动判断 confirmation gate；若节点需要确认闸且未确认，只能记录 blocked。该工具只写任务治理证据，不自动调用 AI、不自动调用工具、不写专家真源。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:record_ai_control_center_ontology_node_execution_evidence",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "Ontology"
+      ],
+      "bindings": [
+        "record_ai_control_center_ontology_node_execution_evidence"
+      ]
+    },
+    {
+      "id": "A114",
+      "kind": "ontology_action",
+      "label": "A114 记录 WorkBuddy Agent",
+      "name": "record_ai_control_center_material_reuse_evidence",
+      "refType": "openclaw_mcp_tool",
+      "description": "记录 WorkBuddy Agent 已在某个任务/阶段/动作中复用了哪些统一素材档案。通常在 search_ai_control_center_asset_archive 选中素材后调用；该工具只写任务治理证据，不创建素材、不生成内容、不发布。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:record_ai_control_center_material_reuse_evidence",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "record_ai_control_center_material_reuse_evidence"
+      ]
+    },
+    {
+      "id": "F106",
+      "kind": "ontology_function",
+      "label": "F106 查看当前品牌指定板块下的创作素材列表",
+      "name": "get_ai_control_center_creative_materials",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的创作素材列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_creative_materials",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "get_ai_control_center_creative_materials"
+      ]
+    },
+    {
+      "id": "A115",
+      "kind": "ontology_action",
+      "label": "A115 为当前品牌指定板块保存一条创作素材",
+      "name": "create_ai_control_center_creative_material",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块保存一条创作素材，可保存文本、图片、视频、语音或 BGM 等结果。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_creative_material",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "create_ai_control_center_creative_material"
+      ]
+    },
+    {
+      "id": "A116",
+      "kind": "ontology_action",
+      "label": "A116 删除指定板块下的一条创作素材",
+      "name": "delete_ai_control_center_creative_material",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一条创作素材。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_creative_material",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "delete_ai_control_center_creative_material"
+      ]
+    },
+    {
+      "id": "F107",
+      "kind": "ontology_function",
+      "label": "F107 查看当前品牌指定板块下的视频作品列表",
+      "name": "get_ai_control_center_video_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的视频作品列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_video_works",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "get_ai_control_center_video_works"
+      ]
+    },
+    {
+      "id": "A117",
+      "kind": "ontology_action",
+      "label": "A117 为当前品牌指定板块保存一条最终视频作",
+      "name": "create_ai_control_center_video_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块保存一条最终视频作品，可附带标题、描述、脚本、封面和视频地址。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_video_work",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "create_ai_control_center_video_work"
+      ]
+    },
+    {
+      "id": "A118",
+      "kind": "ontology_action",
+      "label": "A118 删除指定板块下的一条视频作品",
+      "name": "delete_ai_control_center_video_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一条视频作品。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_video_work",
+      "primaryConsumers": [
+        "AI 智控中心 专区"
+      ],
+      "bindings": [
+        "delete_ai_control_center_video_work"
+      ]
+    },
+    {
+      "id": "A119",
+      "kind": "ontology_action",
+      "label": "A119 为指定 AI 智控中心 视频作品创建",
+      "name": "create_ai_control_center_video_work_douyin_desktop_publish_session",
+      "refType": "openclaw_mcp_tool",
+      "description": "为指定 AI 智控中心 视频作品创建抖音电脑端发布会话，便于通过浏览器扩展自动填充发布信息。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_video_work_douyin_desktop_publish_session",
+      "primaryConsumers": [
+        "AI 智控中心 专区",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_ai_control_center_video_work_douyin_desktop_publish_session"
+      ]
+    },
+    {
+      "id": "F108",
+      "kind": "ontology_function",
+      "label": "F108 查看当前品牌指定板块下的 GEO 可",
+      "name": "get_ai_control_center_geo_visibility_reports",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌指定板块下的 GEO 可见度诊断报告列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_geo_visibility_reports",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "get_ai_control_center_geo_visibility_reports"
+      ]
+    },
+    {
+      "id": "A120",
+      "kind": "ontology_action",
+      "label": "A120 为当前品牌指定板块保存一份 GEO ",
+      "name": "create_ai_control_center_geo_visibility_report",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌指定板块保存一份 GEO 可见度诊断 HTML 报告。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_geo_visibility_report",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "create_ai_control_center_geo_visibility_report"
+      ]
+    },
+    {
+      "id": "A121",
+      "kind": "ontology_action",
+      "label": "A121 删除指定板块下的一份 GEO 可见度",
+      "name": "delete_ai_control_center_geo_visibility_report",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一份 GEO 可见度诊断报告。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_geo_visibility_report",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "delete_ai_control_center_geo_visibility_report"
+      ]
+    },
+    {
+      "id": "F109",
+      "kind": "ontology_function",
+      "label": "F109 查看当前品牌 GEO 工作台中除可见",
+      "name": "get_ai_control_center_geo_contents",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌 GEO 工作台中除可见度诊断外的其它工作流内容列表，可按内容类型筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_geo_contents",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "get_ai_control_center_geo_contents"
+      ]
+    },
+    {
+      "id": "A122",
+      "kind": "ontology_action",
+      "label": "A122 为当前品牌 GEO 工作台保存关键词",
+      "name": "create_ai_control_center_geo_content",
+      "refType": "openclaw_mcp_tool",
+      "description": "为当前品牌 GEO 工作台保存关键词挖掘、网站诊断、知识库搭建、GEO优化方案、自媒体内容、第三方媒体或品牌网站等结果，支持 HTML 与非 HTML 附件存储地址。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_geo_content",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "create_ai_control_center_geo_content"
+      ]
+    },
+    {
+      "id": "A123",
+      "kind": "ontology_action",
+      "label": "A123 删除指定板块下的一条 GEO 工作流",
+      "name": "delete_ai_control_center_geo_content",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除指定板块下的一条 GEO 工作流内容。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_geo_content",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "delete_ai_control_center_geo_content"
+      ]
+    },
+    {
+      "id": "F110",
+      "kind": "ontology_function",
+      "label": "F110 查看 GEO 第三方媒体投放已缓存的",
+      "name": "get_ai_control_center_third_party_media_delivery_resources",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看 GEO 第三方媒体投放已缓存的软文街媒体库，支持按 20 条分页读取，并可按媒体名称、平台、分类、地区搜索；若站内一直没有新媒体，先确认个人中心里当前品牌保存的软文街登录账号和登录密码仍然有效。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_third_party_media_delivery_resources",
+      "primaryConsumers": [
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "get_ai_control_center_third_party_media_delivery_resources"
+      ]
+    },
+    {
+      "id": "A124",
+      "kind": "ontology_action",
+      "label": "A124 继续同步软文街下一页媒体到 GEO ",
+      "name": "sync_ai_control_center_third_party_media_delivery_resources",
+      "refType": "openclaw_mcp_tool",
+      "description": "继续同步软文街下一页媒体到 GEO 第三方媒体投放缓存库，不覆盖历史缓存；同步后仍按站内 20 条分页和搜索结果返回。若同步报软文街鉴权失败，先检查个人中心里当前品牌保存的软文街登录账号和登录密码是否还是最新可用值。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_ai_control_center_third_party_media_delivery_resources",
+      "primaryConsumers": [
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "sync_ai_control_center_third_party_media_delivery_resources"
+      ]
+    },
+    {
+      "id": "F111",
+      "kind": "ontology_function",
+      "label": "F111 查看全网获客工作台中的评论获客列表",
+      "name": "get_ai_control_center_comment_leads",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看全网获客工作台中的评论获客列表，可按来源平台筛选。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_comment_leads",
+      "primaryConsumers": [
+        "全网获客"
+      ],
+      "bindings": [
+        "get_ai_control_center_comment_leads"
+      ]
+    },
+    {
+      "id": "A125",
+      "kind": "ontology_action",
+      "label": "A125 把品牌增长策略里小红书和抖音评论用户",
+      "name": "create_ai_control_center_comment_leads",
+      "refType": "openclaw_mcp_tool",
+      "description": "把品牌增长策略里小红书和抖音评论用户提取结果收口为评论获客列表，可选择平台、作品链接、关键词，并支持先补拉评论。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_comment_leads",
+      "primaryConsumers": [
+        "全网获客"
+      ],
+      "bindings": [
+        "create_ai_control_center_comment_leads"
+      ]
+    },
+    {
+      "id": "A126",
+      "kind": "ontology_action",
+      "label": "A126 删除全网获客工作台中的一条评论获客记",
+      "name": "delete_ai_control_center_comment_lead",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除全网获客工作台中的一条评论获客记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_comment_lead",
+      "primaryConsumers": [
+        "全网获客"
+      ],
+      "bindings": [
+        "delete_ai_control_center_comment_lead"
+      ]
+    },
+    {
+      "id": "F112",
+      "kind": "ontology_function",
+      "label": "F112 查看全网获客工作台中的平台获客列表",
+      "name": "get_ai_control_center_platform_leads",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看全网获客工作台中的平台获客列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_platform_leads",
+      "primaryConsumers": [
+        "全网获客",
+        "个人中心"
+      ],
+      "bindings": [
+        "get_ai_control_center_platform_leads"
+      ]
+    },
+    {
+      "id": "A127",
+      "kind": "ontology_action",
+      "label": "A127 把平台名单直接写入全网获客工作台的平",
+      "name": "create_ai_control_center_platform_leads",
+      "refType": "openclaw_mcp_tool",
+      "description": "把平台名单直接写入全网获客工作台的平台获客列表。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_platform_leads",
+      "primaryConsumers": [
+        "全网获客",
+        "个人中心"
+      ],
+      "bindings": [
+        "create_ai_control_center_platform_leads"
+      ]
+    },
+    {
+      "id": "A128",
+      "kind": "ontology_action",
+      "label": "A128 删除全网获客工作台中的一条平台获客记",
+      "name": "delete_ai_control_center_platform_lead",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除全网获客工作台中的一条平台获客记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_platform_lead",
+      "primaryConsumers": [
+        "全网获客",
+        "个人中心"
+      ],
+      "bindings": [
+        "delete_ai_control_center_platform_lead"
+      ]
+    },
+    {
+      "id": "F113",
+      "kind": "ontology_function",
+      "label": "F113 查看投流获客工作台中的腾讯投流获客列",
+      "name": "get_ai_control_center_tencent_ad_leads",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看投流获客工作台中的腾讯投流获客列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_tencent_ad_leads",
+      "primaryConsumers": [
+        "投流获客"
+      ],
+      "bindings": [
+        "get_ai_control_center_tencent_ad_leads"
+      ]
+    },
+    {
+      "id": "A129",
+      "kind": "ontology_action",
+      "label": "A129 把腾讯投流获客内容写入投流获客工作台",
+      "name": "create_ai_control_center_tencent_ad_lead",
+      "refType": "openclaw_mcp_tool",
+      "description": "把腾讯投流获客内容写入投流获客工作台。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_tencent_ad_lead",
+      "primaryConsumers": [
+        "投流获客"
+      ],
+      "bindings": [
+        "create_ai_control_center_tencent_ad_lead"
+      ]
+    },
+    {
+      "id": "A130",
+      "kind": "ontology_action",
+      "label": "A130 删除投流获客工作台中的一条腾讯投流获",
+      "name": "delete_ai_control_center_tencent_ad_lead",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除投流获客工作台中的一条腾讯投流获客记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_tencent_ad_lead",
+      "primaryConsumers": [
+        "投流获客"
+      ],
+      "bindings": [
+        "delete_ai_control_center_tencent_ad_lead"
+      ]
+    },
+    {
+      "id": "F114",
+      "kind": "ontology_function",
+      "label": "F114 查看达人合作工作台中的达人匹配列表",
+      "name": "get_ai_control_center_creator_match_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看达人合作工作台中的达人匹配列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_creator_match_workspace",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "get_ai_control_center_creator_match_workspace"
+      ]
+    },
+    {
+      "id": "A131",
+      "kind": "ontology_action",
+      "label": "A131 把达人结果池中的达人写入达人匹配列表",
+      "name": "create_ai_control_center_creator_matches",
+      "refType": "openclaw_mcp_tool",
+      "description": "把达人结果池中的达人写入达人匹配列表，并补充推荐理由。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_creator_matches",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "create_ai_control_center_creator_matches"
+      ]
+    },
+    {
+      "id": "A132",
+      "kind": "ontology_action",
+      "label": "A132 批量删除达人匹配列表中的记录",
+      "name": "delete_ai_control_center_creator_matches",
+      "refType": "openclaw_mcp_tool",
+      "description": "批量删除达人匹配列表中的记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_creator_matches",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "delete_ai_control_center_creator_matches"
+      ]
+    },
+    {
+      "id": "A133",
+      "kind": "ontology_action",
+      "label": "A133 把达人匹配列表中的达人加入达人跟踪",
+      "name": "move_ai_control_center_creator_matches_to_tracking",
+      "refType": "openclaw_mcp_tool",
+      "description": "把达人匹配列表中的达人加入达人跟踪。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:move_ai_control_center_creator_matches_to_tracking",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "move_ai_control_center_creator_matches_to_tracking"
+      ]
+    },
+    {
+      "id": "F115",
+      "kind": "ontology_function",
+      "label": "F115 查看达人合作工作台中的达人跟踪列表",
+      "name": "get_ai_control_center_creator_tracking_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看达人合作工作台中的达人跟踪列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_creator_tracking_workspace",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "get_ai_control_center_creator_tracking_workspace"
+      ]
+    },
+    {
+      "id": "A134",
+      "kind": "ontology_action",
+      "label": "A134 直接把达人结果池中的达人建档到达人跟",
+      "name": "create_ai_control_center_creator_tracking_records",
+      "refType": "openclaw_mcp_tool",
+      "description": "直接把达人结果池中的达人建档到达人跟踪列表。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_creator_tracking_records",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "create_ai_control_center_creator_tracking_records"
+      ]
+    },
+    {
+      "id": "A135",
+      "kind": "ontology_action",
+      "label": "A135 删除达人跟踪中的一位达人及其合作作品",
+      "name": "delete_ai_control_center_creator_tracking_record",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除达人跟踪中的一位达人及其合作作品记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_creator_tracking_record",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "delete_ai_control_center_creator_tracking_record"
+      ]
+    },
+    {
+      "id": "F116",
+      "kind": "ontology_function",
+      "label": "F116 查看某位达人跟踪记录下的合作作品列表",
+      "name": "get_ai_control_center_creator_tracking_works",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看某位达人跟踪记录下的合作作品列表。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_ai_control_center_creator_tracking_works",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "get_ai_control_center_creator_tracking_works"
+      ]
+    },
+    {
+      "id": "A136",
+      "kind": "ontology_action",
+      "label": "A136 给某位达人新增合作作品",
+      "name": "create_ai_control_center_creator_tracking_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "给某位达人新增合作作品，并抓取首轮抖音作品数据与自动更新周期。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_ai_control_center_creator_tracking_work",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "create_ai_control_center_creator_tracking_work"
+      ]
+    },
+    {
+      "id": "A137",
+      "kind": "ontology_action",
+      "label": "A137 更新合作作品的结果评估、再次选择、自",
+      "name": "update_ai_control_center_creator_tracking_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新合作作品的结果评估、再次选择、自动更新周期，或立即刷新作品数据。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_ai_control_center_creator_tracking_work",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "update_ai_control_center_creator_tracking_work"
+      ]
+    },
+    {
+      "id": "A138",
+      "kind": "ontology_action",
+      "label": "A138 删除某位达人下的一条合作作品记录",
+      "name": "delete_ai_control_center_creator_tracking_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除某位达人下的一条合作作品记录。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_ai_control_center_creator_tracking_work",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "delete_ai_control_center_creator_tracking_work"
+      ]
+    },
+    {
+      "id": "A139",
+      "kind": "ontology_action",
+      "label": "A139 基于素材库中的对标作品触发小红书二创",
+      "name": "create_xiaohongshu_rewrite_note",
+      "refType": "openclaw_mcp_tool",
+      "description": "基于素材库中的对标作品触发小红书二创图文生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_xiaohongshu_rewrite_note",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_xiaohongshu_rewrite_note"
+      ]
+    },
+    {
+      "id": "A140",
+      "kind": "ontology_action",
+      "label": "A140 触发小红书原创图文生成",
+      "name": "create_xiaohongshu_original_note",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发小红书原创图文生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_xiaohongshu_original_note",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "create_xiaohongshu_original_note"
+      ]
+    },
+    {
+      "id": "A141",
+      "kind": "ontology_action",
+      "label": "A141 触发公众号文章草稿生成",
+      "name": "create_wechat_article",
+      "refType": "openclaw_mcp_tool",
+      "description": "触发公众号文章草稿生成。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:create_wechat_article",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "create_wechat_article"
+      ]
+    },
+    {
+      "id": "A142",
+      "kind": "ontology_action",
+      "label": "A142 统一管理公众号工作流",
+      "name": "manage_wechat_workflow",
+      "refType": "openclaw_mcp_tool",
+      "description": "统一管理公众号工作流，支持偏好、工作流创建、Step 2-4 直写与生成、发布确认、正式发布和删除；当前可在 create_workflow / update_input 的 payload.accountId 中显式绑定目标公众号账号，后续发布确认与正式发布都会按该账号读取 AppID、AppSecret 和 IP 白名单。其中 set_article 未显式传 inputType 时会按正文内容自动识别 plain-text/markdown/html，set_images 除了直接传图片 URL 外，也支持在 coverImage / bodyImages 里传 fileUrl、materialId，或通过 upload.fileName / contentType / dataBase64 直传图片文件，set_html 代表外部已给出完整 HTML 草稿，generate_html 代表系统基于正文 canonical、图片资产与风格规则重新渲染，并产出可直接发布到公众号正文的 HTML 片段。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:manage_wechat_workflow",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "manage_wechat_workflow"
+      ]
+    },
+    {
+      "id": "A143",
+      "kind": "ontology_action",
+      "label": "A143 统一管理品牌资料库",
+      "name": "manage_brand_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "统一管理品牌资料库，支持品牌背景、IP资料库、产品、问卷、账号、行业资料、业务资产、知识库和飞书绑定；其中 action=upsert_survey 可写入公域经营、私域经营、资源约束和目标信息。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:manage_brand_library",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "A144",
+      "kind": "ontology_action",
+      "label": "A144 统一管理品牌增长报告链路",
+      "name": "manage_growth_reports",
+      "refType": "openclaw_mcp_tool",
+      "description": "统一管理品牌增长报告链路，支持增长报告、可视化增长报告、半年营销规划、小红书/抖音营销策划、热点选题和营销日历。内容获客某书/某音/某号/公众号的营销日历也复用这组能力。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:manage_growth_reports",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "A145",
+      "kind": "ontology_action",
+      "label": "A145 统一管理小红书视频笔记",
+      "name": "manage_xiaohongshu_video",
+      "refType": "openclaw_mcp_tool",
+      "description": "统一管理小红书视频笔记，支持列表、模型选项、生成、故事板重生、继续生成、找回结果、编辑和删除。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:manage_xiaohongshu_video",
+      "primaryConsumers": [
+        "小红书",
+        "内容获客"
+      ],
+      "bindings": [
+        "manage_xiaohongshu_video"
+      ]
+    },
+    {
+      "id": "A146",
+      "kind": "ontology_action",
+      "label": "A146 统一管理抖音视频生产",
+      "name": "manage_douyin_video_production",
+      "refType": "openclaw_mcp_tool",
+      "description": "统一管理抖音视频生产，覆盖普通视频、直接生视频、混剪短视频、数字人、口型驱动、RunningHub 和广告预审。调用数字人试听前，应先列出公共语音库或自定义音色拿到 voiceId；调用 RunningHub generate 前，应先用 get_app_detail 读取应用 nodeInfoList 模板。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:manage_douyin_video_production",
+      "primaryConsumers": [
+        "抖音",
+        "内容获客"
+      ],
+      "bindings": [
+        "manage_douyin_video_production"
+      ]
+    },
+    {
+      "id": "F117",
+      "kind": "ontology_function",
+      "label": "F117 查看当前品牌统一素材库",
+      "name": "get_unified_material_library_items",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌统一素材库，聚合小红书、抖音和公众号素材，可用于跨平台二创。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_unified_material_library_items",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "get_unified_material_library_items"
+      ]
+    },
+    {
+      "id": "A147",
+      "kind": "ontology_action",
+      "label": "A147 把抖音对标作品、搜索作品或榜单作品加",
+      "name": "add_douyin_work_to_material_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "把抖音对标作品、搜索作品或榜单作品加入统一素材库。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:add_douyin_work_to_material_library",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "add_douyin_work_to_material_library"
+      ]
+    },
+    {
+      "id": "A148",
+      "kind": "ontology_action",
+      "label": "A148 把公众号对标文章或微信搜一搜文章加入",
+      "name": "add_wechat_article_to_material_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "把公众号对标文章或微信搜一搜文章加入统一素材库。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:add_wechat_article_to_material_library",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "add_wechat_article_to_material_library"
+      ]
+    },
+    {
+      "id": "A149",
+      "kind": "ontology_action",
+      "label": "A149 把小红书对标作品或搜索笔记从统一素材",
+      "name": "remove_xiaohongshu_note_from_material_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "把小红书对标作品或搜索笔记从统一素材库中移除。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:remove_xiaohongshu_note_from_material_library",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "remove_xiaohongshu_note_from_material_library"
+      ]
+    },
+    {
+      "id": "A150",
+      "kind": "ontology_action",
+      "label": "A150 把抖音作品从统一素材库中移除",
+      "name": "remove_douyin_work_from_material_library",
+      "refType": "openclaw_mcp_tool",
+      "description": "把抖音作品从统一素材库中移除。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:remove_douyin_work_from_material_library",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "remove_douyin_work_from_material_library"
+      ]
+    },
+    {
+      "id": "F118",
+      "kind": "ontology_function",
+      "label": "F118 查看品牌资料库里公众号采集数据工作区",
+      "name": "get_wechat_collection_workspace",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看品牌资料库里公众号采集数据工作区，包括品牌公众号文章、对标文章和微信搜一搜。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_wechat_collection_workspace",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_wechat_collection_workspace"
+      ]
+    },
+    {
+      "id": "A151",
+      "kind": "ontology_action",
+      "label": "A151 绑定或同步品牌资料库里的公众号账号",
+      "name": "sync_wechat_brand_accounts",
+      "refType": "openclaw_mcp_tool",
+      "description": "绑定或同步品牌资料库里的公众号账号，需要提供 ghUsername。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_wechat_brand_accounts",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_wechat_brand_accounts"
+      ]
+    },
+    {
+      "id": "A152",
+      "kind": "ontology_action",
+      "label": "A152 删除品牌资料库里的公众号账号绑定",
+      "name": "delete_wechat_brand_account",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除品牌资料库里的公众号账号绑定。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_wechat_brand_account",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_wechat_brand_account"
+      ]
+    },
+    {
+      "id": "A153",
+      "kind": "ontology_action",
+      "label": "A153 抓取指定品牌公众号的历史文章列表",
+      "name": "fetch_wechat_brand_articles",
+      "refType": "openclaw_mcp_tool",
+      "description": "抓取指定品牌公众号的历史文章列表，对应页面里的“提交”动作。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:fetch_wechat_brand_articles",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "fetch_wechat_brand_articles"
+      ]
+    },
+    {
+      "id": "F119",
+      "kind": "ontology_function",
+      "label": "F119 读取一篇品牌公众号文章的正文内容",
+      "name": "read_wechat_article_content",
+      "refType": "openclaw_mcp_tool",
+      "description": "读取一篇品牌公众号文章的正文内容。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:read_wechat_article_content",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "read_wechat_article_content"
+      ]
+    },
+    {
+      "id": "A154",
+      "kind": "ontology_action",
+      "label": "A154 同步品牌资料库里公众号对标文章数据",
+      "name": "sync_wechat_benchmark_articles",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里公众号对标文章数据，需要提供文章链接。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_wechat_benchmark_articles",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_wechat_benchmark_articles"
+      ]
+    },
+    {
+      "id": "A155",
+      "kind": "ontology_action",
+      "label": "A155 更新一篇公众号对标文章的阅读量、点赞",
+      "name": "update_wechat_benchmark_article_stats",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新一篇公众号对标文章的阅读量、点赞数、分享数、收藏数、评论数、喜欢数。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_wechat_benchmark_article_stats",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "update_wechat_benchmark_article_stats"
+      ]
+    },
+    {
+      "id": "A156",
+      "kind": "ontology_action",
+      "label": "A156 同步品牌资料库里微信搜一搜数据",
+      "name": "sync_wechat_search_articles",
+      "refType": "openclaw_mcp_tool",
+      "description": "同步品牌资料库里微信搜一搜数据，需要提供搜索关键词。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:sync_wechat_search_articles",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "sync_wechat_search_articles"
+      ]
+    },
+    {
+      "id": "F120",
+      "kind": "ontology_function",
+      "label": "F120 读取一条微信搜一搜结果的正文内容",
+      "name": "read_wechat_search_item_content",
+      "refType": "openclaw_mcp_tool",
+      "description": "读取一条微信搜一搜结果的正文内容。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:read_wechat_search_item_content",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "read_wechat_search_item_content"
+      ]
+    },
+    {
+      "id": "A157",
+      "kind": "ontology_action",
+      "label": "A157 更新一条微信搜一搜结果的阅读量、点赞",
+      "name": "update_wechat_search_item_stats",
+      "refType": "openclaw_mcp_tool",
+      "description": "更新一条微信搜一搜结果的阅读量、点赞数、分享数、收藏数、评论数、喜欢数。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_wechat_search_item_stats",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "update_wechat_search_item_stats"
+      ]
+    },
+    {
+      "id": "A158",
+      "kind": "ontology_action",
+      "label": "A158 兼容旧用法：根据公众号文章链接更新对",
+      "name": "update_wechat_article_stats",
+      "refType": "openclaw_mcp_tool",
+      "description": "兼容旧用法：根据公众号文章链接更新对标文章数据。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:update_wechat_article_stats",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "update_wechat_article_stats"
+      ]
+    },
+    {
+      "id": "A159",
+      "kind": "ontology_action",
+      "label": "A159 删除小红书采集的对标作品或搜索笔记",
+      "name": "delete_xhs_collected_note",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除小红书采集的对标作品或搜索笔记。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_xhs_collected_note",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_xhs_collected_note"
+      ]
+    },
+    {
+      "id": "A160",
+      "kind": "ontology_action",
+      "label": "A160 删除抖音采集的竞品作品、对标作品、搜",
+      "name": "delete_douyin_collected_work",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除抖音采集的竞品作品、对标作品、搜索作品或榜单作品。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_douyin_collected_work",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_douyin_collected_work"
+      ]
+    },
+    {
+      "id": "A161",
+      "kind": "ontology_action",
+      "label": "A161 为抖音采集作品提取视频文案",
+      "name": "extract_douyin_work_transcript",
+      "refType": "openclaw_mcp_tool",
+      "description": "为抖音采集作品提取视频文案；当前默认走本地 ASR 链路：Paraformer 主识别，Whisper 兜底。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:extract_douyin_work_transcript",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "extract_douyin_work_transcript"
+      ]
+    },
+    {
+      "id": "A162",
+      "kind": "ontology_action",
+      "label": "A162 删除公众号采集的品牌文章、对标文章或",
+      "name": "delete_wechat_collected_article",
+      "refType": "openclaw_mcp_tool",
+      "description": "删除公众号采集的品牌文章、对标文章或微信搜一搜文章。",
+      "elementType": "Action",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:delete_wechat_collected_article",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "delete_wechat_collected_article"
+      ]
+    },
+    {
+      "id": "F121",
+      "kind": "ontology_function",
+      "label": "F121 查看当前品牌素材库里可用于抖音二创的",
+      "name": "get_douyin_material_library_items",
+      "refType": "openclaw_mcp_tool",
+      "description": "查看当前品牌素材库里可用于抖音二创的素材作品。",
+      "elementType": "Function",
+      "status": "candidate",
+      "source": "OPENCLAW_MCP_TOOLS:get_douyin_material_library_items",
+      "primaryConsumers": [
+        "品牌增长",
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "get_douyin_material_library_items"
+      ]
+    },
+    {
+      "id": "F129",
+      "kind": "ontology_function",
+      "label": "F129 读取品牌执行配置",
+      "name": "get_brand_execution_profile",
+      "refType": "openclaw_mcp_tool",
+      "description": "读取当前授权品牌已发布配置及凭据就绪状态，不返回Key、不运行Agent。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "OPENCLAW_MCP_TOOLS:get_brand_execution_profile",
+      "primaryConsumers": [
+        "品牌智控中心"
+      ],
+      "bindings": [
+        "get_brand_execution_profile"
+      ]
+    }
+  ]
+}

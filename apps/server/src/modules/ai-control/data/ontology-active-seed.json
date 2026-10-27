@@ -1,0 +1,1753 @@
+{
+  "metadata": {
+    "updatedAt": "2026-10-22",
+    "sourceDoc": "项目总控/系统框架重构/2026-10-04-S3-02ZD-Ontology五元素字典v0.1.md",
+    "boundary": "仅定义 v0.1 初始正式项 active_seed，不替代 atlas 全量候选集合。"
+  },
+  "activeIds": {
+    "Object": [
+      "O01",
+      "O02",
+      "O03",
+      "O04",
+      "O05",
+      "O07",
+      "O08",
+      "O09",
+      "O10",
+      "O12",
+      "O14",
+      "O15",
+      "O16",
+      "O18",
+      "O19",
+      "O20",
+      "O21",
+      "O22",
+      "O23",
+      "O24",
+      "O27",
+      "O29",
+      "O31",
+      "O33",
+      "O34",
+      "O35",
+      "O36",
+      "O37",
+      "O40",
+      "O41",
+      "O42",
+      "O43",
+      "O44",
+      "O45",
+      "O79",
+      "O80",
+      "O81",
+      "O82",
+      "O83",
+      "O84",
+      "O85",
+      "O86",
+      "O87",
+      "O88",
+      "O89",
+      "O90",
+      "O91",
+      "O92",
+      "O93"
+    ],
+    "Link": [
+      "L01",
+      "L02",
+      "L03",
+      "L04",
+      "L05",
+      "L06",
+      "L07",
+      "L08",
+      "L09",
+      "L10",
+      "L14",
+      "L16",
+      "L18",
+      "L19",
+      "L20",
+      "L23",
+      "L24",
+      "L25",
+      "L27",
+      "L45",
+      "L46",
+      "L47",
+      "L48",
+      "L49",
+      "L50",
+      "L51",
+      "L52",
+      "L53",
+      "L54",
+      "L55",
+      "L56",
+      "L57"
+    ],
+    "Function": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F10",
+      "F11",
+      "F13",
+      "F16",
+      "F18",
+      "F19",
+      "F20",
+      "F21",
+      "F25",
+      "F26",
+      "F27",
+      "F28",
+      "F29",
+      "F30",
+      "F122",
+      "F123",
+      "F124",
+      "F125",
+      "F126",
+      "F127",
+      "F128",
+      "F129",
+      "F130",
+      "F131",
+      "F132",
+      "F133",
+      "F134",
+      "F135",
+      "F136"
+    ],
+    "Action": [
+      "A01",
+      "A02",
+      "A03",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08",
+      "A09",
+      "A11",
+      "A12",
+      "A13",
+      "A14",
+      "A15",
+      "A18",
+      "A21",
+      "A22",
+      "A23",
+      "A24",
+      "A26",
+      "A27",
+      "A28",
+      "A29",
+      "A30",
+      "A31",
+      "A32",
+      "A34",
+      "A163",
+      "A164",
+      "A165",
+      "A166",
+      "A167",
+      "A168",
+      "A169",
+      "A170",
+      "A171",
+      "A172",
+      "A173",
+      "A174",
+      "A175",
+      "A176",
+      "A177",
+      "A178",
+      "A179",
+      "A180",
+      "A181",
+      "A182"
+    ],
+    "Interface": [
+      "I01",
+      "I02",
+      "I03",
+      "I04",
+      "I05",
+      "I06",
+      "I07",
+      "I08",
+      "I09",
+      "I10",
+      "I11",
+      "I12",
+      "I25",
+      "I26",
+      "I27",
+      "I28",
+      "I29",
+      "I30",
+      "I31",
+      "I32",
+      "I33",
+      "I34",
+      "I35",
+      "I36",
+      "I37",
+      "I38"
+    ]
+  },
+  "extraItems": [
+    {
+      "id": "F28",
+      "kind": "ontology_function",
+      "label": "F28 搜索可复用素材",
+      "name": "搜索可复用素材",
+      "refType": "ontology_dictionary_seed",
+      "description": "按类型（含音频）/产品/SKU/采集原作ID/片段/可用及推荐状态联查，先过滤后分页；只读不入库。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "search_ai_control_center_asset_archive",
+      "primaryConsumers": [
+        "素材管理",
+        "创作专家",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive"
+      ]
+    },
+    {
+      "id": "F29",
+      "kind": "ontology_function",
+      "label": "F29 读取正式 Ontology 契约",
+      "name": "读取正式 Ontology 契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "WorkBuddy 开工前读取 latest published_contract。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "get_ai_control_center_published_ontology_contract",
+      "primaryConsumers": [
+        "Ontology",
+        "WorkBuddy 路由",
+        "专家启动规则"
+      ],
+      "bindings": [
+        "get_ai_control_center_published_ontology_contract"
+      ]
+    },
+    {
+      "id": "F30",
+      "kind": "ontology_function",
+      "label": "F30 生成执行前路线图",
+      "name": "生成执行前路线图",
+      "refType": "ontology_dictionary_seed",
+      "description": "从发布契约派生节点、确认闸和证据规则。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "get_ai_control_center_ontology_execution_plan",
+      "primaryConsumers": [
+        "Ontology",
+        "任务治理",
+        "专家启动规则"
+      ],
+      "bindings": [
+        "get_ai_control_center_ontology_execution_plan"
+      ]
+    },
+    {
+      "id": "A29",
+      "kind": "ontology_action",
+      "label": "A29 发布 Ontology 正式契约",
+      "name": "发布 Ontology 正式契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "将草稿发布为不可变 published_contract。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "POST /api/ai-control/ontology/flows/:flowId/publish",
+      "primaryConsumers": [
+        "Ontology 编排中心"
+      ],
+      "bindings": [
+        "POST /api/ai-control/ontology/flows/:flowId/publish"
+      ]
+    },
+    {
+      "id": "A30",
+      "kind": "ontology_action",
+      "label": "A30 记录执行前计划证据",
+      "name": "记录执行前计划证据",
+      "refType": "ontology_dictionary_seed",
+      "description": "WorkBuddy 开工前写入路线图证据。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "record_ai_control_center_ontology_execution_plan_evidence",
+      "primaryConsumers": [
+        "Ontology",
+        "WorkBuddy 专家启动规则",
+        "任务治理"
+      ],
+      "bindings": [
+        "record_ai_control_center_ontology_execution_plan_evidence"
+      ]
+    },
+    {
+      "id": "A31",
+      "kind": "ontology_action",
+      "label": "A31 记录节点推进证据",
+      "name": "记录节点推进证据",
+      "refType": "ontology_dictionary_seed",
+      "description": "记录节点 started/succeeded/failed/blocked。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "record_ai_control_center_ontology_node_execution_evidence",
+      "primaryConsumers": [
+        "Ontology",
+        "WorkBuddy 专家启动规则",
+        "任务治理"
+      ],
+      "bindings": [
+        "record_ai_control_center_ontology_node_execution_evidence"
+      ]
+    },
+    {
+      "id": "A32",
+      "kind": "ontology_action",
+      "label": "A32 申请专家源写回确认闸",
+      "name": "申请专家源写回确认闸",
+      "refType": "ontology_dictionary_seed",
+      "description": "生成专家源候选 Diff 和阻断证据。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "request_ai_control_center_ontology_expert_source_writeback",
+      "primaryConsumers": [
+        "Ontology",
+        "专家源治理"
+      ],
+      "bindings": [
+        "request_ai_control_center_ontology_expert_source_writeback"
+      ]
+    },
+    {
+      "id": "A34",
+      "kind": "ontology_action",
+      "label": "A34 记录素材复用证据",
+      "name": "记录素材复用证据",
+      "refType": "ontology_dictionary_seed",
+      "description": "将素材引用绑定到任务/阶段/动作。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "record_ai_control_center_material_reuse_evidence",
+      "primaryConsumers": [
+        "素材管理",
+        "任务治理",
+        "创作专家"
+      ],
+      "bindings": [
+        "record_ai_control_center_material_reuse_evidence"
+      ]
+    },
+    {
+      "id": "I11",
+      "kind": "ontology_interface",
+      "label": "I11 OntologyRoutable 可路由流程对象",
+      "name": "OntologyRoutable 可路由流程对象",
+      "refType": "ontology_dictionary_seed",
+      "description": "可由 WorkBuddy 读取发布契约和执行前计划。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "published_contract / execution_plan",
+      "primaryConsumers": [
+        "Ontology",
+        "WorkBuddy 路由",
+        "专家启动规则"
+      ],
+      "bindings": [
+        "published_contract",
+        "execution_plan"
+      ]
+    },
+    {
+      "id": "I12",
+      "kind": "ontology_interface",
+      "label": "I12 EvidenceWritable 可留证动作",
+      "name": "EvidenceWritable 可留证动作",
+      "refType": "ontology_dictionary_seed",
+      "description": "任何写入证据的动作必须绑定 taskId/stageRunId/actionName。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "workflow-core evidence contracts",
+      "primaryConsumers": [
+        "任务治理",
+        "素材管理",
+        "Ontology"
+      ],
+      "bindings": [
+        "taskId",
+        "stageRunId",
+        "actionName"
+      ]
+    },
+    {
+      "id": "O79",
+      "kind": "ontology_object",
+      "label": "O79 作品拆解委托",
+      "name": "作品拆解委托",
+      "refType": "ontology_dictionary_seed",
+      "description": "按品牌与源平台固定采集作品快照、形式与目标，接单/恢复保持委托ID。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisRequest"
+      ]
+    },
+    {
+      "id": "O80",
+      "kind": "ontology_object",
+      "label": "O80 作品拆解不可变修订",
+      "name": "作品拆解不可变修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "文字/图片/视频结构化标注、报告、来源及方法版本；重拆新增generation。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisResult"
+      ]
+    },
+    {
+      "id": "O81",
+      "kind": "ontology_object",
+      "label": "O81 三形式内容标签字典",
+      "name": "三形式内容标签字典",
+      "refType": "ontology_dictionary_seed",
+      "description": "text/image/video各32维独立字典、证据单位和输出schema。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "get_work_analysis_taxonomy"
+      ]
+    },
+    {
+      "id": "L45",
+      "kind": "ontology_link",
+      "label": "L45 拆解依据采集作品快照",
+      "name": "拆解依据采集作品快照",
+      "refType": "ontology_dictionary_seed",
+      "description": "委托→授权品牌采集作品O07→固定快照hash；不以素材登记为前提。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisRequest.sourceId",
+        "snapshotJson"
+      ]
+    },
+    {
+      "id": "L46",
+      "kind": "ontology_link",
+      "label": "L46 拆解修订使用专业方法",
+      "name": "拆解修订使用专业方法",
+      "refType": "ontology_dictionary_seed",
+      "description": "不可变结果→字典/专家包/Skill版本及专家上报证据。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisResult.methodVersionsJson",
+        "profilesJson"
+      ]
+    },
+    {
+      "id": "L47",
+      "kind": "ontology_link",
+      "label": "L47 拆解委托拥有历史修订",
+      "name": "拆解委托拥有历史修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "一个稳定委托对应多代不可变结果与审阅事件。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisRequest.results",
+        "generation",
+        "eventsJson"
+      ]
+    },
+    {
+      "id": "F122",
+      "kind": "ontology_function",
+      "label": "F122 读取待研究采集作品",
+      "name": "读取待研究采集作品",
+      "refType": "ontology_dictionary_seed",
+      "description": "完整过滤授权采集作品后分页；不触发采集/缓存/转写协调。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "list_collected_works_for_analysis",
+        "get_collected_work_analysis_context"
+      ]
+    },
+    {
+      "id": "F123",
+      "kind": "ontology_function",
+      "label": "F123 读取三形式标签方法契约",
+      "name": "读取三形式标签方法契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "返回独立字典与段落/区域/时段证据规则，专业分析由WorkBuddy执行。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "get_work_analysis_taxonomy"
+      ]
+    },
+    {
+      "id": "F124",
+      "kind": "ontology_function",
+      "label": "F124 读取作品拆解与历史修订",
+      "name": "读取作品拆解与历史修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "平台隔离、内容标签检索、来源/方法版本及历史结果读取；常规列表与计数排除已取消项。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "list_work_analysis_requests",
+        "list_work_analysis_results",
+        "get_work_analysis_result"
+      ]
+    },
+    {
+      "id": "A163",
+      "kind": "ontology_action",
+      "label": "A163 确认作品拆解委托",
+      "name": "确认作品拆解委托",
+      "refType": "ontology_dictionary_seed",
+      "description": "用户逐件授权或授权范围内自动挑选后固定来源并幂等登记；待接单不等于客户端已启动。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "create_work_analysis_request"
+      ]
+    },
+    {
+      "id": "A164",
+      "kind": "ontology_action",
+      "label": "A164 接单和恢复作品拆解",
+      "name": "接单和恢复作品拆解",
+      "refType": "ontology_dictionary_seed",
+      "description": "受revision与身份控制的接单、需补资料、失败、取消和重拆；取消项列表移除，禁止恢复和提交，保留审计。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "update_work_analysis_request"
+      ]
+    },
+    {
+      "id": "A165",
+      "kind": "ontology_action",
+      "label": "A165 提交作品拆解不可变结果",
+      "name": "提交作品拆解不可变结果",
+      "refType": "ontology_dictionary_seed",
+      "description": "原子校验来源平台、版本、证据和接单身份，幂等保存并完成当前代。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "submit_work_analysis_result"
+      ]
+    },
+    {
+      "id": "A166",
+      "kind": "ontology_action",
+      "label": "A166 审阅作品拆解修订",
+      "name": "审阅作品拆解修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "用户审阅绑定当前完成修订，追加事件而不覆盖正文。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "review_work_analysis_result"
+      ]
+    },
+    {
+      "id": "I25",
+      "kind": "ontology_interface",
+      "label": "I25 TextWorkAnalysis文字拆解契约",
+      "name": "TextWorkAnalysis文字拆解契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "全文/段落/字符区间与引文，文字32维逐项声明，需正文阅读范围。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "text-work-analysis-1.0.0"
+      ]
+    },
+    {
+      "id": "I26",
+      "kind": "ontology_interface",
+      "label": "I26 ImageWorkAnalysis图片拆解契约",
+      "name": "ImageWorkAnalysis图片拆解契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "原图/页序/归一化区域，图片32维；OCR不可替代图像观察。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "image-work-analysis-1.0.0"
+      ]
+    },
+    {
+      "id": "I27",
+      "kind": "ontology_interface",
+      "label": "I27 VideoWorkAnalysis视频拆解契约",
+      "name": "VideoWorkAnalysis视频拆解契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "画面/声音/对齐、时段/证据帧/音轨，视频32维。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "video-work-analysis-1.0.0"
+      ]
+    },
+    {
+      "id": "I28",
+      "kind": "ontology_interface",
+      "label": "I28 WorkAnalysisSubmission拆解交接契约",
+      "name": "WorkAnalysisSubmission拆解交接契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "授权品牌/平台、固定快照、接单身份、expectedRevision、重试键、方法声明、不可变报告。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "work-analysis.service.ts / work-analysis.contract.ts",
+      "primaryConsumers": [
+        "内容获客三平台",
+        "作品深度拆解专家团"
+      ],
+      "bindings": [
+        "WorkAnalysisRequest",
+        "WorkAnalysisResult",
+        "submit_work_analysis_result"
+      ]
+    },
+    {
+      "id": "O82",
+      "kind": "ontology_object",
+      "label": "O82 经营指标与证据快照",
+      "name": "经营指标与证据快照",
+      "refType": "ontology_dictionary_seed",
+      "description": "同源真实统计/来源上报，覆盖与未知分离",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "O83",
+      "kind": "ontology_object",
+      "label": "O83 持续增长计划及版本",
+      "name": "持续增长计划及版本",
+      "refType": "ontology_dictionary_seed",
+      "description": "稳定计划、固定基线目标、不可变修订",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "O84",
+      "kind": "ontology_object",
+      "label": "O84 数据检查与专家调整建议",
+      "name": "数据检查与专家调整建议",
+      "refType": "ontology_dictionary_seed",
+      "description": "实际检查、专家租约、提案与用户决定",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L48",
+      "kind": "ontology_link",
+      "label": "L48 指标证据支撑增长计划",
+      "name": "指标证据支撑增长计划",
+      "refType": "ontology_dictionary_seed",
+      "description": "计划引用固定指标来源及口径",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L49",
+      "kind": "ontology_link",
+      "label": "L49 计划检查关联调整与修订",
+      "name": "计划检查关联调整与修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "检查→真实专家建议→用户决定→新版本",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F125",
+      "kind": "ontology_function",
+      "label": "F125 聚合六业务经营驾驶舱",
+      "name": "聚合六业务经营驾驶舱",
+      "refType": "ontology_dictionary_seed",
+      "description": "全量统计与6种时间，权限逐指标过滤",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "get_growth_cockpit"
+      ]
+    },
+    {
+      "id": "F126",
+      "kind": "ontology_function",
+      "label": "F126 检查增长计划指标",
+      "name": "检查增长计划指标",
+      "refType": "ontology_dictionary_seed",
+      "description": "独立观察窗、样本/覆盖/过期、队列去重",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "check_growth_plan"
+      ]
+    },
+    {
+      "id": "A167",
+      "kind": "ontology_action",
+      "label": "A167 登记与交付结构化增长计划",
+      "name": "登记与交付结构化增长计划",
+      "refType": "ontology_dictionary_seed",
+      "description": "真实专家接单与完整报告，不由平台代写",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "create_growth_plan_request",
+        "submit_growth_plan"
+      ]
+    },
+    {
+      "id": "A168",
+      "kind": "ontology_action",
+      "label": "A168 生效暂停结束计划",
+      "name": "生效暂停结束计划",
+      "refType": "ontology_dictionary_seed",
+      "description": "用户授权下只读跟踪，独立于发布/支出",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "update_growth_plan"
+      ]
+    },
+    {
+      "id": "A169",
+      "kind": "ontology_action",
+      "label": "A169 记录与采纳调整建议",
+      "name": "记录与采纳调整建议",
+      "refType": "ontology_dictionary_seed",
+      "description": "旧版不覆盖，原目标基线预算不擅改",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "submit_growth_plan_proposal",
+        "review_growth_plan_proposal"
+      ]
+    },
+    {
+      "id": "A170",
+      "kind": "ontology_action",
+      "label": "A170 上报逐日经营事实",
+      "name": "上报逐日经营事实",
+      "refType": "ontology_dictionary_seed",
+      "description": "来源上报与修正追加，不冒称独立验真",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "record_growth_metric_fact"
+      ]
+    },
+    {
+      "id": "I29",
+      "kind": "ontology_interface",
+      "label": "I29 驾驶舱指标与证据交接",
+      "name": "驾驶舱指标与证据交接",
+      "refType": "ontology_dictionary_seed",
+      "description": "值/分母/样本/覆盖/来源/口径",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "I30",
+      "kind": "ontology_interface",
+      "label": "I30 增长计划与专业调整交接",
+      "name": "增长计划与专业调整交接",
+      "refType": "ontology_dictionary_seed",
+      "description": "稳定计划/版本/指标/措施/租约/报告",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "growth-cockpit.service.ts / growth-cockpit.contract.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "O85",
+      "kind": "ontology_object",
+      "label": "O85 WorkBuddy受控执行会话",
+      "name": "WorkBuddy受控执行会话",
+      "refType": "ontology_dictionary_seed",
+      "description": "与业务计划分开的本机启动/会话/实际工具观察和提交回执",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "tools/workbuddy-growth-executor / growth-cockpit.service.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L50",
+      "kind": "ontology_link",
+      "label": "L50 增长计划关联受控执行",
+      "name": "增长计划关联受控执行",
+      "refType": "ontology_dictionary_seed",
+      "description": "稳定planId/checkId到本机job/session/实际提交回执",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "tools/workbuddy-growth-executor / growth-cockpit.service.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F127",
+      "kind": "ontology_function",
+      "label": "F127 读取增长执行器在线状态",
+      "name": "读取增长执行器在线状态",
+      "refType": "ontology_dictionary_seed",
+      "description": "90秒内已鉴权心跳，启动与专业结果分别验收",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "tools/workbuddy-growth-executor / growth-cockpit.service.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "get_growth_executor_state"
+      ]
+    },
+    {
+      "id": "A171",
+      "kind": "ontology_action",
+      "label": "A171 上报本机增长执行状态",
+      "name": "上报本机增长执行状态",
+      "refType": "ontology_dictionary_seed",
+      "description": "仅当前授权品牌心跳，不创建业务结果",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "tools/workbuddy-growth-executor / growth-cockpit.service.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": [
+        "report_growth_executor_state"
+      ]
+    },
+    {
+      "id": "I31",
+      "kind": "ontology_interface",
+      "label": "I31 本机增长专家执行交接",
+      "name": "本机增长专家执行交接",
+      "refType": "ontology_dictionary_seed",
+      "description": "固定品牌/计划、真实成员、工具守卫、提交回执和恢复边界",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "tools/workbuddy-growth-executor / growth-cockpit.service.ts",
+      "primaryConsumers": [
+        "全局概览",
+        "品牌全域增长专家团"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "O86",
+      "kind": "ontology_object",
+      "label": "O86 品牌客户端连接",
+      "name": "品牌客户端连接",
+      "refType": "ontology_dictionary_seed",
+      "description": "稳定连接ID、品牌、创建者及各令牌修订；旧连接兼容保留",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L51",
+      "kind": "ontology_link",
+      "label": "L51 连接归属与工具授权",
+      "name": "连接归属与工具授权",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌→连接→凭据版本→明确工具授权；不跨品牌隐式复用",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F128",
+      "kind": "ontology_function",
+      "label": "F128 解析品牌连接授权",
+      "name": "解析品牌连接授权",
+      "refType": "ontology_dictionary_seed",
+      "description": "每请求验证有效凭据、账号可用、品牌成员和工具清单；拒绝参数品牌冲突",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context"
+      ]
+    },
+    {
+      "id": "A172",
+      "kind": "ontology_action",
+      "label": "A172 创建品牌独立连接",
+      "name": "创建品牌独立连接",
+      "refType": "ontology_dictionary_seed",
+      "description": "新增不撤销同品牌其他连接；默认只读，不自动启动客户端",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "A173",
+      "kind": "ontology_action",
+      "label": "A173 轮换单连接凭据",
+      "name": "轮换单连接凭据",
+      "refType": "ontology_dictionary_seed",
+      "description": "原凭据立即无效，稳定连接ID保留，其他连接与品牌不变",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "A174",
+      "kind": "ontology_action",
+      "label": "A174 撤销单连接",
+      "name": "撤销单连接",
+      "refType": "ontology_dictionary_seed",
+      "description": "只撤销指定连接全部有效凭据，已撤销不可恢复",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "I32",
+      "kind": "ontology_interface",
+      "label": "I32 品牌连接HTTP与MCP授权",
+      "name": "品牌连接HTTP与MCP授权",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌后台HTTP管理；现有MCP上下文返回本连接工具清单；管理写入不向Agent开放",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "openclaw-installation.service.ts / brand-connection.contract.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context"
+      ]
+    },
+    {
+      "id": "O87",
+      "kind": "ontology_object",
+      "label": "O87 品牌执行配置",
+      "name": "品牌执行配置",
+      "refType": "ontology_dictionary_seed",
+      "description": "每品牌独立草稿、修订与当前生效版本",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "O88",
+      "kind": "ontology_object",
+      "label": "O88 执行配置不可变版本",
+      "name": "执行配置不可变版本",
+      "refType": "ontology_dictionary_seed",
+      "description": "冻结模型引用、品牌技能/提示词快照、知识引用与内容hash",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L52",
+      "kind": "ontology_link",
+      "label": "L52 品牌配置与方法组合",
+      "name": "品牌配置与方法组合",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌→配置→版本→本品牌凭据引用和知识/技能快照",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F129",
+      "kind": "ontology_function",
+      "label": "F129 读取品牌执行配置",
+      "name": "读取品牌执行配置",
+      "refType": "ontology_dictionary_seed",
+      "description": "get_brand_execution_profile：固定当前鉴权品牌，不返回Key、不启动Agent",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_brand_execution_profile"
+      ]
+    },
+    {
+      "id": "F130",
+      "kind": "ontology_function",
+      "label": "F130 编译版本化执行配置",
+      "name": "编译版本化执行配置",
+      "refType": "ontology_dictionary_seed",
+      "description": "验证引用归属并冻结方法组合，不覆盖公共模板",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F131",
+      "kind": "ontology_function",
+      "label": "F131 品牌凭据加密解析",
+      "name": "品牌凭据加密解析",
+      "refType": "ontology_dictionary_seed",
+      "description": "AES-GCM附加认证绑定品牌及平台，缺配/损坏不回落他牌",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "A175",
+      "kind": "ontology_action",
+      "label": "A175 保存品牌执行草稿",
+      "name": "保存品牌执行草稿",
+      "refType": "ontology_dictionary_seed",
+      "description": "预期revision与按品牌事务锁，拒绝并发覆盖",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "A176",
+      "kind": "ontology_action",
+      "label": "A176 发布品牌执行版本",
+      "name": "发布品牌执行版本",
+      "refType": "ontology_dictionary_seed",
+      "description": "新增不可变版本，仅切换本品牌配置指针，不授权支出或发布",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "A177",
+      "kind": "ontology_action",
+      "label": "A177 回退品牌配置",
+      "name": "回退品牌配置",
+      "refType": "ontology_dictionary_seed",
+      "description": "复制本品牌历史快照形成新版本，旧历史保持不变",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "I33",
+      "kind": "ontology_interface",
+      "label": "I33 品牌模型与执行配置契约",
+      "name": "品牌模型与执行配置契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "HTTP管理本品牌BYOK/草稿/发布/回退，MCP只读已发布组合",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "brand-execution-profile.service.ts / brand-credential-cipher.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_brand_execution_profile"
+      ]
+    },
+    {
+      "id": "O89",
+      "kind": "ontology_object",
+      "label": "O89 连接授权修订",
+      "name": "连接授权修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "AIControlCenterConnectionGrantRevision：前后工具/版本/身份/原因，不含凭据",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "brand-operations.policy.ts / openclaw-installation.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L53",
+      "kind": "ontology_link",
+      "label": "L53 品牌连接与授权修订",
+      "name": "品牌连接与授权修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "固定品牌/连接/令牌关联，授权追加，令牌不变；旧连接不批量扩权",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "brand-operations.policy.ts / openclaw-installation.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F132",
+      "kind": "ontology_function",
+      "label": "F132 品牌运营工具投影与子动作校验",
+      "name": "品牌运营工具投影与子动作校验",
+      "refType": "ontology_dictionary_seed",
+      "description": "冻结203工具，列表调用同策略；复合子动作仍限品牌权限",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "brand-operations.policy.ts / openclaw-installation.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "A178",
+      "kind": "ontology_action",
+      "label": "A178 升级单连接品牌运营授权",
+      "name": "升级单连接品牌运营授权",
+      "refType": "ontology_dictionary_seed",
+      "description": "PATCH connections/:id/authorization；需管理权限、有效执行身份、预期ID/hash和确认，事务追加历史",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "brand-operations.policy.ts / openclaw-installation.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "I34",
+      "kind": "ontology_interface",
+      "label": "I34 品牌运营连接授权契约",
+      "name": "品牌运营连接授权契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "HTTP授权非MCP工具；tools/list和call一致，不含付费/发布/人工批准及平台配置",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "brand-operations.policy.ts / openclaw-installation.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "O90",
+      "kind": "ontology_object",
+      "label": "品牌制作能力范围",
+      "name": "品牌制作能力范围",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌运营连接默认包含图片、语音、RunningHub；无独立临时授权界面。保留353历史兼容及品牌隔离，供应商鉴权失败不要求重置MCP。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "connection-production-grant.ts / openclaw-installation.service.ts / chanjing-open-api.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "L54",
+      "kind": "ontology_link",
+      "label": "品牌运营连接与制作能力",
+      "name": "品牌运营连接与制作能力",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌运营连接默认包含图片、语音、RunningHub；无独立临时授权界面。保留353历史兼容及品牌隔离，供应商鉴权失败不要求重置MCP。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "connection-production-grant.ts / openclaw-installation.service.ts / chanjing-open-api.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "F133",
+      "kind": "ontology_function",
+      "label": "制作能力投影与调用校验",
+      "name": "制作能力投影与调用校验",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌运营连接默认包含图片、语音、RunningHub；无独立临时授权界面。保留353历史兼容及品牌隔离，供应商鉴权失败不要求重置MCP。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "connection-production-grant.ts / openclaw-installation.service.ts / chanjing-open-api.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context",
+        "manage_douyin_video_production",
+        "create_design_work"
+      ]
+    },
+    {
+      "id": "A179",
+      "kind": "ontology_action",
+      "label": "直接使用本品牌制作能力",
+      "name": "直接使用本品牌制作能力",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌运营连接默认包含图片、语音、RunningHub；无独立临时授权界面。保留353历史兼容及品牌隔离，供应商鉴权失败不要求重置MCP。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "connection-production-grant.ts / openclaw-installation.service.ts / chanjing-open-api.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": []
+    },
+    {
+      "id": "I35",
+      "kind": "ontology_interface",
+      "label": "品牌制作与供应商鉴权契约",
+      "name": "品牌制作与供应商鉴权契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌运营连接默认包含图片、语音、RunningHub；无独立临时授权界面。保留353历史兼容及品牌隔离，供应商鉴权失败不要求重置MCP。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "connection-production-grant.ts / openclaw-installation.service.ts / chanjing-open-api.service.ts",
+      "primaryConsumers": [
+        "品牌智控中心",
+        "已授权品牌客户端"
+      ],
+      "bindings": [
+        "get_current_brand_context",
+        "manage_douyin_video_production",
+        "create_design_work"
+      ]
+    },
+    {
+      "id": "O91",
+      "kind": "ontology_object",
+      "label": "素材索引修订",
+      "name": "素材索引修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "MaterialArchiveRevision，按品牌/证据引用追加不可变修订。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "material-index.contract.ts / ai-control-asset-archive.service.ts",
+      "primaryConsumers": [
+        "素材管理",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "L55",
+      "kind": "ontology_link",
+      "label": "产品与片段复用关系",
+      "name": "产品与片段复用关系",
+      "refType": "ontology_dictionary_seed",
+      "description": "产品、SKU、片段、来源/脚本/成片、替代版本和已用证据；仅明确关联，未知不推断。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "material-index.contract.ts / ai-control-asset-archive.service.ts",
+      "primaryConsumers": [
+        "素材管理",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "F134",
+      "kind": "ontology_function",
+      "label": "联查采集原作与可复用素材",
+      "name": "联查采集原作与可复用素材",
+      "refType": "ontology_dictionary_seed",
+      "description": "采集原片ID、产品/片段/音频/状态检索；先过滤再分页，候选标签与确认标签分开。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "material-index.contract.ts / ai-control-asset-archive.service.ts",
+      "primaryConsumers": [
+        "素材管理",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "A180",
+      "kind": "ontology_action",
+      "label": "单条入库与素材索引维护",
+      "name": "单条入库与素材索引维护",
+      "refType": "ontology_dictionary_seed",
+      "description": "manage_brand_library：import_collected_material/update_material_index/probe_material_file；不批量入库、不调用生成或发布。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "material-index.contract.ts / ai-control-asset-archive.service.ts",
+      "primaryConsumers": [
+        "素材管理",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "I36",
+      "kind": "ontology_interface",
+      "label": "素材发现与人工核验契约",
+      "name": "素材发现与人工核验契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "material-index/1.0.0；文件解码证据与水印/字幕/声音/同SKU/商用范围独立，未知保持未知。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "material-index.contract.ts / ai-control-asset-archive.service.ts",
+      "primaryConsumers": [
+        "素材管理",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "search_ai_control_center_asset_archive",
+        "manage_brand_library"
+      ]
+    },
+    {
+      "id": "O92",
+      "kind": "ontology_object",
+      "label": "独立日历内容与修订",
+      "name": "独立日历内容与修订",
+      "refType": "ontology_dictionary_seed",
+      "description": "营销日历版本内稳定contentId；日期保留旧ID与正文；MarketingCalendarRevision追加快照，不把排期当制作任务。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "marketing-calendar.ts / marketing-calendar.service.ts",
+      "primaryConsumers": [
+        "营销日历",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "L56",
+      "kind": "ontology_link",
+      "label": "日历内容制作关系",
+      "name": "日历内容制作关系",
+      "refType": "ontology_dictionary_seed",
+      "description": "内容关联商品/SKU/原片片段/声音/真实任务/成片/指标快照与来源版本；仅明确引用，不推断同SKU或发布。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "marketing-calendar.ts / marketing-calendar.service.ts",
+      "primaryConsumers": [
+        "营销日历",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "F135",
+      "kind": "ontology_function",
+      "label": "日历资料就绪与可比复盘",
+      "name": "日历资料就绪与可比复盘",
+      "refType": "ontology_dictionary_seed",
+      "description": "按SKU、可用素材、片段、商用证据和声音要求计算缺口；自然流/投放、窗口与来源分别比较，同作品同窗口快照不重复累计。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "marketing-calendar.ts / marketing-calendar.service.ts",
+      "primaryConsumers": [
+        "营销日历",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "A181",
+      "kind": "ontology_action",
+      "label": "日历单条保存与定向恢复",
+      "name": "日历单条保存与定向恢复",
+      "refType": "ontology_dictionary_seed",
+      "description": "manage_growth_reports的calendar_create_version/save_content/save_day/revisions/restore_revision/review/get_day；CAS、品牌锁与幂等键；保存不调用制作或发布。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "marketing-calendar.ts / marketing-calendar.service.ts",
+      "primaryConsumers": [
+        "营销日历",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "I37",
+      "kind": "ontology_interface",
+      "label": "结构化营销日历契约",
+      "name": "结构化营销日历契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "marketing-calendar/1.0.0；共享严格schema、默认值及限额；品牌共用日历按平台视图，稳定ID/内容hash/修订；旧正文不自动拆分。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "marketing-calendar.ts / marketing-calendar.service.ts",
+      "primaryConsumers": [
+        "营销日历",
+        "WorkBuddy Agent"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "O93",
+      "kind": "ontology_object",
+      "label": "巨量账户及报表快照",
+      "name": "巨量账户及报表快照",
+      "refType": "ontology_dictionary_seed",
+      "description": "BusinessAsset品牌域OCEAN_AD_*保存映射、分页、不可变提交、诊断与计划修订。",
+      "elementType": "Object",
+      "status": "active_seed",
+      "source": "ocean-ads.ts / ocean-ads.service.ts",
+      "primaryConsumers": [
+        "巨量广告",
+        "品牌运营客户端"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "L57",
+      "kind": "ontology_link",
+      "label": "品牌投流证据关联",
+      "name": "品牌投流证据关联",
+      "refType": "ontology_dictionary_seed",
+      "description": "品牌账户映射、报表快照→诊断→优化计划→本品牌商品和素材明确关联。",
+      "elementType": "Link",
+      "status": "active_seed",
+      "source": "ocean-ads.ts / ocean-ads.service.ts",
+      "primaryConsumers": [
+        "巨量广告",
+        "品牌运营客户端"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "F136",
+      "kind": "ontology_function",
+      "label": "巨量口径及批次校验",
+      "name": "巨量口径及批次校验",
+      "refType": "ontology_dictionary_seed",
+      "description": "缺页/重复页/业务族/目标事件/归因/日期/Decimal校验；仅无附加维度账户日报可累计。",
+      "elementType": "Function",
+      "status": "active_seed",
+      "source": "ocean-ads.ts / ocean-ads.service.ts",
+      "primaryConsumers": [
+        "巨量广告",
+        "品牌运营客户端"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "A182",
+      "kind": "ontology_action",
+      "label": "巨量归档与计划维护",
+      "name": "巨量归档与计划维护",
+      "refType": "ontology_dictionary_seed",
+      "description": "manage_growth_reports的ocean_*动作；幂等键、品牌锁、CAS；不调用广告写接口。",
+      "elementType": "Action",
+      "status": "active_seed",
+      "source": "ocean-ads.ts / ocean-ads.service.ts",
+      "primaryConsumers": [
+        "巨量广告",
+        "品牌运营客户端"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    },
+    {
+      "id": "I38",
+      "kind": "ontology_interface",
+      "label": "巨量归档契约",
+      "name": "巨量归档契约",
+      "refType": "ontology_dictionary_seed",
+      "description": "ocean-ads/1.0.0；查询与分片提交、回读hash、诊断与计划修订；网页与MCP同源。",
+      "elementType": "Interface",
+      "status": "active_seed",
+      "source": "ocean-ads.ts / ocean-ads.service.ts",
+      "primaryConsumers": [
+        "巨量广告",
+        "品牌运营客户端"
+      ],
+      "bindings": [
+        "manage_growth_reports"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3993 @@
+{
+  "metadata": {
+    "date": "2026-10-11",
+    "packages": 9,
+    "registeredExperts": 44,
+    "localSkills": 45,
+    "elementCounts": {
+      "O": 50,
+      "L": 30,
+      "F": 30,
+      "A": 31,
+      "I": 12
+    },
+    "sourceCommit": "2032c1352190079a7cbea9540ab980d8f719e63b",
+    "limitations": "静态资料及源码对照；非部署/连接/业务端到端验收"
+  },
+  "elements": {
+    "O01": {
+      "id": "O01",
+      "type": "O",
+      "name": "品牌",
+      "meaning": "所有运营工作的归属单位，也是读写隔离边界。",
+      "shape": "id、brandName、industry、brandDescription、enterpriseIntro",
+      "location": "Brand；get_current_brand_context / get_brand_archive_summary",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "O02": {
+      "id": "O02",
+      "type": "O",
+      "name": "产品／服务",
+      "meaning": "需要被理解、讲解和推广的具体商品或服务。",
+      "shape": "id、brandId、productName、price、targetAudience、painPoint、usageScenario、differentiators、imageUrlsJson",
+      "location": "Product；get_brand_products / manage_brand_library",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "O03": {
+      "id": "O03",
+      "type": "O",
+      "name": "IP资料",
+      "meaning": "品牌人物、形象、声音及人设资料；不是每一个形容词都建一个对象。",
+      "shape": "现有：Brand.ipProfileJson；建议稳定 ipId、资料版本、授权说明、图像／声音引用",
+      "location": "Brand.ipProfileJson；manage_brand_library action=get_ip_library/update_ip_library",
+      "status": "原代码有落点",
+      "extra": "原代码是品牌 JSON 属性；独立 IP 对象身份是建议，不是已有 IP 表。"
+    },
+    "O04": {
+      "id": "O04",
+      "type": "O",
+      "name": "品牌问卷与事实资料",
+      "meaning": "企业背景、业务数据、资质、案例等有来源的事实。",
+      "shape": "BrandSurvey：surveyType、surveyJson；BusinessAsset：category、fileUrl、metadataJson",
+      "location": "BrandSurvey / BusinessAsset；get_brand_archive_survey / get_brand_business_assets",
+      "status": "原代码有落点",
+      "extra": "资料提取结果需要保留原始文件出处；主观推测不能变成产品事实。"
+    },
+    "O05": {
+      "id": "O05",
+      "type": "O",
+      "name": "运营账号／竞品账号",
+      "meaning": "内容发布或采集对应的平台账号。",
+      "shape": "id、brandId、platform；平台账号标识与账号角色",
+      "location": "PlatformAccount / CompetitorAccount / WechatOfficialAccount",
+      "status": "原代码有落点",
+      "extra": "这几个物理类型建议共享账号规范，但自有账号授权与公开竞品采集权限必须分开。"
+    },
+    "O06": {
+      "id": "O06",
+      "type": "O",
+      "name": "行业情报与参考证据",
+      "meaning": "行业报告、新闻、竞品参考、可追溯网页内容。",
+      "shape": "来源 URL／文件、采集时间、摘要、适用品牌；细项字段依实际来源",
+      "location": "IndustryReport / BusinessAsset；get_brand_industry_feeds",
+      "status": "原代码有落点",
+      "extra": "一份行业报告可为多个选题提供证据，不能只把 URL 粘进最后一段。"
+    },
+    "O07": {
+      "id": "O07",
+      "type": "O",
+      "name": "采集作品与用户信号",
+      "meaning": "品牌作品、竞品作品、对标作品、搜索结果、评论、目标用户。",
+      "shape": "建议来源平台 + 原生ID作身份；作品URL、作者、评论原文、指标、采集时间",
+      "location": "get_douyin_collection_workspace / get_xiaohongshu_collection_workspace / get_wechat_collection_workspace",
+      "status": "原代码有落点",
+      "extra": "来自采集工作区返回集合；不宣称每一种集合都有独立 Prisma 表。评论、作品、用户需要保持不同身份。"
+    },
+    "O08": {
+      "id": "O08",
+      "type": "O",
+      "name": "增长报告／营销策略",
+      "meaning": "品牌定位、阶段目标、渠道策略及内容组合方案。",
+      "shape": "OpenClawMarketingPlan：id、brandId、workspaceScope、title、htmlContent；其他报告走增长报告域",
+      "location": "OpenClawMarketingPlan / BusinessAsset；manage_growth_reports / get_openclaw_marketing_plans",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "O09": {
+      "id": "O09",
+      "type": "O",
+      "name": "营销日历／排期项",
+      "meaning": "哪天为哪个业务目的做什么内容。",
+      "shape": "建议 calendarItemId、date、platform、topicRef、purpose、status；原工具支持 item/items 提交",
+      "location": "manage_growth_reports；get_brand_growth_marketing_calendar_workspace",
+      "status": "原代码有落点",
+      "extra": "日历对象不是定时任务。存在排期不代表客户端已建立自动执行。"
+    },
+    "O10": {
+      "id": "O10",
+      "type": "O",
+      "name": "选题项",
+      "meaning": "可确认、可修改、可被下游创作引用的选题。",
+      "shape": "原参数为开放 item：标题、内容、平台、形式、目的、专家/技能；建议 topicId、revision、approvalRef",
+      "location": "get_brand_growth_topic_library_workspace / create_brand_growth_topic_library_item",
+      "status": "原代码有落点",
+      "extra": "原包装方法实际转发至抖音热点候选/选题库动作；不能仅凭“brand_growth”名称认定跨渠道已经完全统一。"
+    },
+    "O11": {
+      "id": "O11",
+      "type": "O",
+      "name": "每日计划／选题报告",
+      "meaning": "按日期交付的执行简报或候选选题报告。",
+      "shape": "id、brandId、workspaceScope、planDate、title、content",
+      "location": "OpenClawDailyPlan；create_ai_control_center_daily_plan",
+      "status": "原代码有落点",
+      "extra": "小红书选题报告归每日计划；与结构化选题库互有关联但不是同一物理对象。"
+    },
+    "O12": {
+      "id": "O12",
+      "type": "O",
+      "name": "创作包",
+      "meaning": "从选题转换为文案、广告简报、剧情脚本、讲解结构或创意概念的交接产物。",
+      "shape": "建议 kind、topicRef、body、sourceRefs、primarySkill、assetRefs、constraints、revision",
+      "location": "本地文件；可归档 OpenClawCreativeMaterial",
+      "status": "文档约定",
+      "extra": "创作包内容由专家决定；中台约束身份、来源和交接字段。"
+    },
+    "O13": {
+      "id": "O13",
+      "type": "O",
+      "name": "视频配置包",
+      "meaning": "DESIGN.md、STORYBOARD.md、demo.html 三件套组成的一次制作方案版本。",
+      "shape": "建议 artifactId、revision、文件清单/哈希、creativePackageRef、reviewDecision",
+      "location": "本地工作目录；建议统一登记为一组交付物",
+      "status": "文档约定",
+      "extra": "三件套是产物规范；本体不必规定每个镜头的转场和色彩。辅助技能可只交局部镜头／规划，不冒充完整成片。"
+    },
+    "O14": {
+      "id": "O14",
+      "type": "O",
+      "name": "素材／设计作品",
+      "meaning": "产品图、封面、配图、音频、视频片段等可复用资源。",
+      "shape": "MediaAsset：id、taskId、sourceUrl、storageKey、mimeType、width、height、durationSec；创作素材含textContent/fileUrl",
+      "location": "MediaAsset / OpenClawCreativeMaterial；统一素材库、设计工作台",
+      "status": "原代码有落点",
+      "extra": "同一图片在文件系统、站内素材和第三方有不同ID，要保留映射。"
+    },
+    "O15": {
+      "id": "O15",
+      "type": "O",
+      "name": "模型／供应商作业",
+      "meaning": "一次生图、语音、口型或视频接口的异步执行。",
+      "shape": "Task：id、taskType、taskStatus、inputJson、outputJson、errorMessage；外部jobId需关联",
+      "location": "Task；create_design_work / manage_douyin_video_production / get_task_detail",
+      "status": "原代码有落点",
+      "extra": "这是技术作业，不自动等于“一次完整抖音业务任务”。提交成功不等于产物成功。"
+    },
+    "O16": {
+      "id": "O16",
+      "type": "O",
+      "name": "视频成品",
+      "meaning": "已制作完成且可以归档和复用的视频作品。",
+      "shape": "id、brandId、workspaceScope、scriptContent、videoUrl、coverImageUrl",
+      "location": "OpenClawVideoWork；create_ai_control_center_video_work",
+      "status": "原代码有落点",
+      "extra": "作品归档不代表已经发布到抖音，也不代表已有播放数据。"
+    },
+    "O17": {
+      "id": "O17",
+      "type": "O",
+      "name": "小红书原创／二创笔记",
+      "meaning": "标题、正文、图片及来源关系构成的内容作品。",
+      "shape": "原创接口含noteTitle/noteContent/topic/productId；二创含sourceMaterialId；输出结构依真实任务返回",
+      "location": "create_xiaohongshu_original_note / create_xiaohongshu_rewrite_note；Task/素材域",
+      "status": "原代码有落点",
+      "extra": "单独小红书笔记 Prisma 表未在这份80模型快照中找到，不应编造表名。"
+    },
+    "O18": {
+      "id": "O18",
+      "type": "O",
+      "name": "公众号文章草稿",
+      "meaning": "准备送入公众号工作流或草稿箱的内容。",
+      "shape": "id、taskId、brandId、title、content、htmlContent、publishStatus、imageTasksJson",
+      "location": "WechatArticleDraft；create_wechat_article / manage_wechat_workflow",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "O19": {
+      "id": "O19",
+      "type": "O",
+      "name": "公众号工作流会话",
+      "meaning": "把文章、排版、配图、账号和提交进度绑定在一起。",
+      "shape": "id、brandId、accountId、status、currentStep、htmlContent、imageBundleJson、linkedDraftId",
+      "location": "WechatWorkflowSession；manage_wechat_workflow",
+      "status": "原代码有落点",
+      "extra": "文章修改必须与本次会话绑定，不能把另一次生成的封面/旧mediaId混进来。"
+    },
+    "O20": {
+      "id": "O20",
+      "type": "O",
+      "name": "发布记录／平台回执",
+      "meaning": "记录往哪个账号提交了什么、结果是什么。",
+      "shape": "原中台：WechatPublishHistory；外部：平台/账号/记录ID/状态/失败原因；建议payloadHash",
+      "location": "WechatPublishHistory；蚁小二 yxer 发布记录",
+      "status": "原代码有落点",
+      "extra": "仅公众号有明确专表证据；蚁小二多平台回执归档和统一对象是建议。草稿、发布提交、已公开是不同状态。"
+    },
+    "O21": {
+      "id": "O21",
+      "type": "O",
+      "name": "效果观察／数据快照",
+      "meaning": "某作品在某时间窗口的阅读、播放、互动或转化观测。",
+      "shape": "建议 observedAt、window、source、metrics、denominator、missingReason",
+      "location": "采集工作区；达人合作作品指标；外部广告报表",
+      "status": "文档约定",
+      "extra": "不能把缺失记成0，也不能把不同观察窗口拼成同一效果。CTR/转化率需要明确分母。"
+    },
+    "O22": {
+      "id": "O22",
+      "type": "O",
+      "name": "复盘报告",
+      "meaning": "解释一段时间内业务效果，并给出下周期动作。",
+      "shape": "OpenClawLobsterDiary：日期/范围/标题/内容；另有广告报告、GEO报告落点",
+      "location": "OpenClawLobsterDiary / OpenClawTencentAdLead / OpenClawGeoVisibilityReport",
+      "status": "原代码有落点",
+      "extra": "一个逻辑报告族，可由不同实体类型实现；周报写每日复盘是文档明确的过渡归档办法。"
+    },
+    "O23": {
+      "id": "O23",
+      "type": "O",
+      "name": "策略优化记录／增长记忆",
+      "meaning": "把反复验证有效的结论沉淀为以后能读取的经验。",
+      "shape": "现有优化记录；建议 evidenceRefs、验证周期、适用条件、失效标记、替代关系",
+      "location": "OpenClawStrategyOptimization；create_ai_control_center_strategy_optimization；增长记忆可为本地文件",
+      "status": "原代码有落点",
+      "extra": "短期猜测、待验证动作、长期规律要分开；压缩记忆不应抹掉原始证据。"
+    },
+    "O24": {
+      "id": "O24",
+      "type": "O",
+      "name": "GEO可见度诊断",
+      "meaning": "品牌在指定AI平台、查询和时间下的被提及／推荐情况。",
+      "shape": "原表存title/description/htmlContent；建议 querySet、answerEvidence、sampleSize、metrics",
+      "location": "OpenClawGeoVisibilityReport；create_ai_control_center_geo_visibility_report",
+      "status": "原代码有落点",
+      "extra": "AOR/RR/SOV/IAR 名称见专家文档，统计口径需版本化，不当成跨平台通用官方标准。"
+    },
+    "O25": {
+      "id": "O25",
+      "type": "O",
+      "name": "GEO关键词／追问项",
+      "meaning": "品牌词、行业词、意图词、长尾词及追问对策。",
+      "shape": "建议 keywordId、layer、intent、priority、estimateSource、followUp、responsePlan",
+      "location": "本地xlsx/html；OpenClawGeoContent可承接文档",
+      "status": "文档约定",
+      "extra": "缺少独立关键词表证据。估算搜索量必须标注估算，不能因要求“填全”而编造。"
+    },
+    "O26": {
+      "id": "O26",
+      "type": "O",
+      "name": "网站及网站诊断",
+      "meaning": "官网页面和结构化标记的可访问性、完整度与可读性检查。",
+      "shape": "建议 websiteUrl、pageRefs、checks、scoreBasis、observedAt；无网站记录条件跳过",
+      "location": "外部官网；本地诊断docx/html，可归档业务资产/GEO内容",
+      "status": "文档约定",
+      "extra": "网站检查与修改网站是两个动作；现有专家主要输出建议，不应描述成已自动改站。"
+    },
+    "O27": {
+      "id": "O27",
+      "type": "O",
+      "name": "知识库／知识文件／知识条目",
+      "meaning": "品牌事实与FAQ被整理为可检索资料。",
+      "shape": "KnowledgeBase、KnowledgeBaseFile；分块/嵌入/绑定/检索配置与运行记录",
+      "location": "KnowledgeBase / KnowledgeBaseFile / KnowledgeChunk / KnowledgeEmbedding / KnowledgeBinding / KnowledgeRetrievalConfig / KnowledgeBaseSyncRun / KnowledgeInvocationRun",
+      "status": "原代码有落点",
+      "extra": "十个知识板块是内容分类。IMA是外部系统，建立中台知识库不等于外部AI搜索已经收录。"
+    },
+    "O28": {
+      "id": "O28",
+      "type": "O",
+      "name": "GEO优化方案",
+      "meaning": "把诊断、关键词、网站和知识库变成排期与改善计划。",
+      "shape": "目标基线、六步执行计划、三条内容线排期、监测方案、迭代周期",
+      "location": "本地docx/html；可归档OpenClawGeoContent",
+      "status": "文档约定",
+      "extra": "方案成立不代表计划已执行或效果已达标。"
+    },
+    "O29": {
+      "id": "O29",
+      "type": "O",
+      "name": "GEO内容",
+      "meaning": "自媒体文章、第三方媒体稿件、官网产品页／案例页／FAQ。",
+      "shape": "id、brandId、contentType、title、htmlContent、attachmentFileUrl",
+      "location": "OpenClawGeoContent；create_ai_control_center_geo_content",
+      "status": "原代码有落点",
+      "extra": "类型之间共享事实来源、关键词和排期，但分别有不同发布渠道。"
+    },
+    "O30": {
+      "id": "O30",
+      "type": "O",
+      "name": "第三方媒体资源／刊发订单",
+      "meaning": "选择媒体与提交刊发、查询交付结果。",
+      "shape": "资源目录在OpenClawThirdPartyMediaResource；同步状态另表；订单接口返回需单独关联",
+      "location": "OpenClawThirdPartyMediaResource / OpenClawThirdPartyMediaSyncState；第三方媒体delivery服务",
+      "status": "原代码有落点",
+      "extra": "专家“写第三方稿件”并不自动等于“购买媒体刊发”。通用yxer分发也不等于媒体采购。"
+    },
+    "O31": {
+      "id": "O31",
+      "type": "O",
+      "name": "评论／个人候选线索",
+      "meaning": "由公开评论或账号信号提取的潜在用户。",
+      "shape": "id、brandId、sourcePlatform、sourceUrl、sourceCommentId、userProfileUrl、userComment、selectedReason",
+      "location": "OpenClawCommentLead；create_ai_control_center_comment_leads",
+      "status": "原代码有落点",
+      "extra": "入候选池、筛选为意向、获授权联系、转化为客户要分状态；原表未提供完整销售漏斗字段。"
+    },
+    "O32": {
+      "id": "O32",
+      "type": "O",
+      "name": "企业／本地商家线索",
+      "meaning": "能够供B端销售或异业合作进一步核验的企业名单。",
+      "shape": "现有 name、businessScope、selectedReason、contactInfo、address、selectedAt；建议补creditCode/status/source",
+      "location": "OpenClawPlatformLead；create_ai_control_center_platform_leads",
+      "status": "原代码有落点",
+      "extra": "企业信用代码和经营状态在专家输出里有，但原写入接口和表没有对应独立字段。"
+    },
+    "O33": {
+      "id": "O33",
+      "type": "O",
+      "name": "达人候选档案",
+      "meaning": "公开账号、受众、作品和深抓数据构成的候选达人资料。",
+      "shape": "creatorId、sourceProfileId、账号/内容指标、采集时间、来源；以工作区真实字段为准",
+      "location": "抖音采集工作区 creatorSearchResults / creatorProfiles / creatorDeepFetchTasks",
+      "status": "原代码有落点",
+      "extra": "不是每次搜索结果都应该自动成为合作达人。深抓是异步采集作业。"
+    },
+    "O34": {
+      "id": "O34",
+      "type": "O",
+      "name": "达人匹配推荐",
+      "meaning": "某品牌为什么适合某个达人，是一个有理由的推荐关系。",
+      "shape": "id、brandId、creatorId、sourceProfileId、recommendedReason、snapshotJson",
+      "location": "OpenClawCreatorCooperationMatch；create_ai_control_center_creator_matches",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "O35": {
+      "id": "O35",
+      "type": "O",
+      "name": "达人合作跟踪档案",
+      "meaning": "确认进入持续跟踪的达人及其合作范围。",
+      "shape": "id、brandId、creatorId、sourceProfileId、snapshotJson",
+      "location": "OpenClawCreatorCooperationTracking；create_ai_control_center_creator_tracking_records",
+      "status": "原代码有落点",
+      "extra": "文档中的isInTrackingList不是原匹配表的独立布尔字段；可通过跟踪记录存在性派生。"
+    },
+    "O36": {
+      "id": "O36",
+      "type": "O",
+      "name": "达人合作作品",
+      "meaning": "归属某跟踪档案的一条合作视频及其效果。",
+      "shape": "trackingId、awemeId、douyinWorkUrl、playCount等、resultEvaluation、nextAction、refreshIntervalDays、nextRefreshAt",
+      "location": "OpenClawCreatorCooperationWork；create/update_ai_control_center_creator_tracking_work",
+      "status": "原代码有落点",
+      "extra": "观看/互动不等于实际成交；没有销售归因数据时不能写合作ROI。"
+    },
+    "O37": {
+      "id": "O37",
+      "type": "O",
+      "name": "广告创意方案／投放复盘",
+      "meaning": "图文、短视频、长文创意矩阵与测试/复盘文档。",
+      "shape": "OpenClawTencentAdLead：title、content等；建议kind区分方案/复盘",
+      "location": "OpenClawTencentAdLead；create_ai_control_center_tencent_ad_lead",
+      "status": "原代码有落点",
+      "extra": "这个表名含Lead，但专家用它保存方案/报告；不能因此解释成广告获客客户表。"
+    },
+    "O38": {
+      "id": "O38",
+      "type": "O",
+      "name": "广告账户／广告组／定向／转化资产",
+      "meaning": "腾讯广告平台上真正承载投放的实体。",
+      "shape": "外部 account_id、广告组/创意ID、预算、出价、定向、版位、转化资产、状态",
+      "location": "tencentads-management / tencentads-delivery-standard-create 外部技能",
+      "status": "外部系统",
+      "extra": "原中台快照未见对应完整实体表；建议只保存外部实体引用与必要快照，凭证不进入对象正文。"
+    },
+    "O39": {
+      "id": "O39",
+      "type": "O",
+      "name": "广告效果报表／操作记录",
+      "meaning": "广告平台提供的花费、曝光、点击、转化和配置变更。",
+      "shape": "account_id、时间窗、维度、expense/impression/click/conversions、操作记录",
+      "location": "腾讯广告 query-report/query-operation-logs 等脚本",
+      "status": "外部系统",
+      "extra": "外部查询能力由专家文档引用，本轮未验证本机技能安装、账号权限或平台运行状态。"
+    },
+    "O40": {
+      "id": "O40",
+      "type": "O",
+      "name": "设计简报／视觉规范",
+      "meaning": "海报、品牌VI、摄影、社交内容或UI设计所需的需求和设计约定。",
+      "shape": "用途、尺寸、品牌约束、文案、参考图、设计理念；VI可含设计令牌与组件规范",
+      "location": "design-creator / design-toolkit；本地交付，关联设计工作台",
+      "status": "文档约定",
+      "extra": "设计令牌可作为规范文件版本，不必把每一个颜色都强制建为业务对象。"
+    },
+    "O41": {
+      "id": "O41",
+      "type": "O",
+      "name": "业务任务／阶段执行",
+      "meaning": "一次有明确目标、终点和交付要求的委托，以及其阶段进度。",
+      "shape": "建议taskId/goal/scopeEnd/routeVersion；阶段stageKey/ownerExpertId/dependencies/status",
+      "location": "原Task主要是生成任务；隔离lab已见WfTask / WfStageRun",
+      "status": "改造分支已有结构",
+      "extra": "不要把一次MCP调用、一次重试、一个阶段和完整业务任务混为同一粒度。"
+    },
+    "O42": {
+      "id": "O42",
+      "type": "O",
+      "name": "交付物版本／验收记录",
+      "meaning": "某一版本输出的身份、来源、校验与允许进入下游的决定。",
+      "shape": "artifactId、revision、sha256、sourceRefs；gateResult/approval与本次版本绑定",
+      "location": "原文档文件确认；隔离lab WfArtifact / WfApproval / WfGateResult",
+      "status": "改造分支已有结构",
+      "extra": "80%只能用于约定的软质量分；跨品牌权限、事实真实性、外发授权不能用平均分抵消。"
+    },
+    "O43": {
+      "id": "O43",
+      "type": "O",
+      "name": "专家／技能／发布版本",
+      "meaning": "可追踪哪套能力定义、哪一版方法执行了任务。",
+      "shape": "现有manifest/agent/skill文件；SkillPackage/SkillPackageVersion等；建议client映射与版本锁定",
+      "location": "SkillPackage / SkillPackageVersion / SkillConfig / PromptTemplate / BrandSkillProfile / BrandPromptOverride；lab WfVersionRelease / WfVersionUsage",
+      "status": "原代码有落点",
+      "extra": "中台技能包与WorkBuddy本地专家包不是同一存储。需显式绑定，不能因名字相同认为已经同步。"
+    },
+    "O44": {
+      "id": "O44",
+      "type": "O",
+      "name": "运行能力描述",
+      "meaning": "可用模型、应用模板、参数选项和连接器可用性。",
+      "shape": "selectionKey、appKey、nodeInfoList、参数schema/版本、可用性；不包括密钥值",
+      "location": "get_design_workspace_options / RunningHub get_app_detail；第三方平台配置域",
+      "status": "原代码有落点",
+      "extra": "动态参数必须读取当前描述，不能永久写死某nodeId或模型名字。"
+    },
+    "O45": {
+      "id": "O45",
+      "type": "O",
+      "name": "反馈／优化行动",
+      "meaning": "用户对输出的反馈、下周要试验的具体改变及验证结果。",
+      "shape": "AiResultFeedback；建议 actionItemId、owner、metric、window、status、evidenceRefs",
+      "location": "AiResultFeedback；本地周优化单与复盘/策略记录",
+      "status": "原代码有落点",
+      "extra": "业务上的“优化动作单”是一个待办对象；只有真正提交状态变化才是Ontology Action。"
+    },
+    "L01": {
+      "id": "L01",
+      "type": "L",
+      "name": "品牌拥有业务资产",
+      "meaning": "品牌→产品/问卷/账号/资料",
+      "shape": "1:N；对象brandId必须与当前品牌一致",
+      "location": "Brand到Product等有Prisma关系；部分OpenClaw表只有brandId字段",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L02": {
+      "id": "L02",
+      "type": "L",
+      "name": "方案依据事实与证据",
+      "meaning": "策略/报告→品牌资料/采集证据",
+      "shape": "N:M；建议保存sourceRef与版本",
+      "location": "目前常写于正文；结构化证据链建议补充",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L03": {
+      "id": "L03",
+      "type": "L",
+      "name": "日历安排选题",
+      "meaning": "方案→排期项→选题",
+      "shape": "1:N；一个选题可跨日复用，另记复用实例",
+      "location": "增长报告/日历/选题工具；完整版本关系待统一",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L04": {
+      "id": "L04",
+      "type": "L",
+      "name": "创作包承接选题",
+      "meaning": "选题→创作包",
+      "shape": "1:N版本；只能消费已确认或明确授权的输入版本",
+      "location": "文档交接规范；非现成外键",
+      "status": "文档约定",
+      "extra": ""
+    },
+    "L05": {
+      "id": "L05",
+      "type": "L",
+      "name": "配置落实创作包",
+      "meaning": "创作包→三件套→成片",
+      "shape": "1:N版本；配置确认要对应实际生产版本",
+      "location": "本地交付；建议WfArtifact/sourceRefs建链",
+      "status": "文档约定",
+      "extra": ""
+    },
+    "L06": {
+      "id": "L06",
+      "type": "L",
+      "name": "作品使用素材",
+      "meaning": "作品/配置→图片/配音/镜头",
+      "shape": "N:M；保留原图、音频、派生结果的身份",
+      "location": "素材ID已有；完整引用/来源链待补",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L07": {
+      "id": "L07",
+      "type": "L",
+      "name": "作业产生资源",
+      "meaning": "Task→MediaAsset",
+      "shape": "1:N；通过taskId关联",
+      "location": "Prisma MediaAsset.taskId及relation",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L08": {
+      "id": "L08",
+      "type": "L",
+      "name": "发布到账号",
+      "meaning": "文章/笔记/视频→发布记录→账号",
+      "shape": "1:N；每次账号+内容版本+动作有独立回执",
+      "location": "公众号session/draft/history字段；跨平台需适配",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L09": {
+      "id": "L09",
+      "type": "L",
+      "name": "作品具有观察数据",
+      "meaning": "作品→效果快照",
+      "shape": "1:N时间序列；标注平台和采样时间",
+      "location": "采集结果/达人指标/广告报表；统一快照身份建议补",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L10": {
+      "id": "L10",
+      "type": "L",
+      "name": "复盘产出经验",
+      "meaning": "观察→复盘→行动单→长期规律",
+      "shape": "N:M；结论引用数据窗口，长期规律引用验证记录",
+      "location": "现有复盘/优化表，关系常在正文",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L11": {
+      "id": "L11",
+      "type": "L",
+      "name": "GEO诊断来自查询样本",
+      "meaning": "品牌+查询+AI平台→回答证据→指标",
+      "shape": "1:N采样；固定测试口径和时间",
+      "location": "报告里描述；建议结构化保存样本与失败原因",
+      "status": "文档约定",
+      "extra": ""
+    },
+    "L12": {
+      "id": "L12",
+      "type": "L",
+      "name": "关键词驱动内容",
+      "meaning": "关键词→FAQ/知识条目→GEO内容",
+      "shape": "N:M；词优先级与覆盖状态可反查",
+      "location": "本地表格与文稿引用；建议统一keywordId",
+      "status": "文档约定",
+      "extra": ""
+    },
+    "L13": {
+      "id": "L13",
+      "type": "L",
+      "name": "网站属于品牌并接受诊断",
+      "meaning": "品牌→网站→诊断/页面内容",
+      "shape": "1:N；无URL时明确skipped，不伪造报告",
+      "location": "品牌资料+本地报告；网站对象是建议",
+      "status": "文档约定",
+      "extra": ""
+    },
+    "L14": {
+      "id": "L14",
+      "type": "L",
+      "name": "知识库组织并绑定内容",
+      "meaning": "知识库→文件→分块/嵌入；知识库→模块/技能绑定",
+      "shape": "以schema中的键及作用域为准；共享不等于无权限",
+      "location": "Knowledge系列模型",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L15": {
+      "id": "L15",
+      "type": "L",
+      "name": "刊发连接内容与媒体",
+      "meaning": "稿件→媒体资源→订单/发布回执",
+      "shape": "N:M；自媒体分发与媒体采购分开",
+      "location": "资源表/第三方delivery；完整业务关联建议",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L16": {
+      "id": "L16",
+      "type": "L",
+      "name": "线索来源于公开信号",
+      "meaning": "评论/用户/作品→候选线索",
+      "shape": "N:M；去重不丢多来源证据",
+      "location": "OpenClawCommentLead.sourceUrl/sourceCommentId；多来源建议扩展",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L17": {
+      "id": "L17",
+      "type": "L",
+      "name": "企业线索对应经营主体",
+      "meaning": "企业线索→企业信用身份/POI",
+      "shape": "N:1实体归并；名称仅备选键",
+      "location": "当前PlatformLead缺信用代码/来源字段",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L18": {
+      "id": "L18",
+      "type": "L",
+      "name": "达人匹配品牌",
+      "meaning": "品牌→匹配记录→达人档案",
+      "shape": "N:M，经匹配记录保存品牌特定推荐理由",
+      "location": "creatorId/sourceProfileId/brandId",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L19": {
+      "id": "L19",
+      "type": "L",
+      "name": "匹配进入跟踪",
+      "meaning": "达人匹配→跟踪档案",
+      "shape": "每品牌每达人建议唯一；确认后建档",
+      "location": "原有两张表，需通过creatorId等识别对应",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L20": {
+      "id": "L20",
+      "type": "L",
+      "name": "跟踪档案拥有合作作品",
+      "meaning": "跟踪档案→合作作品",
+      "shape": "1:N；trackingId，校验同brandId",
+      "location": "OpenClawCreatorCooperationWork.trackingId（标量非Prisma relation）",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L21": {
+      "id": "L21",
+      "type": "L",
+      "name": "广告使用资产并指向转化",
+      "meaning": "广告组→创意/素材/定向/落地页/转化目标",
+      "shape": "外部实体关系；必须限定account_id",
+      "location": "腾讯广告技能及平台；建议中台ExternalRef",
+      "status": "外部系统",
+      "extra": ""
+    },
+    "L22": {
+      "id": "L22",
+      "type": "L",
+      "name": "投放报告解释广告表现",
+      "meaning": "广告实体+时间窗→报表→复盘/新创意",
+      "shape": "N:M；账户、归因口径、币种一致",
+      "location": "外部报表与中台报告正文，结构关系建议",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "L23": {
+      "id": "L23",
+      "type": "L",
+      "name": "任务包含阶段并依赖产物",
+      "meaning": "任务→阶段→输入/输出版本；阶段→前置阶段",
+      "shape": "1:N和有向依赖；有效输入齐备方可执行",
+      "location": "lab WfTask/WfStageRun/WfArtifact；旧专家文档约定",
+      "status": "改造分支已有结构",
+      "extra": ""
+    },
+    "L24": {
+      "id": "L24",
+      "type": "L",
+      "name": "执行使用能力版本",
+      "meaning": "阶段/任务→专家/技能发布版本",
+      "shape": "N:M；用过哪一版不可被新版本覆盖",
+      "location": "lab WfVersionUsage；原SkillPackageVersion不能代替跨客户端关联",
+      "status": "改造分支已有结构",
+      "extra": ""
+    },
+    "L25": {
+      "id": "L25",
+      "type": "L",
+      "name": "验收决定对应产物版本",
+      "meaning": "验收/批准→交付物修订→阶段",
+      "shape": "1:N；输出改版后重新评估影响，不复用旧批准",
+      "location": "lab WfApproval/WfGateResult；文档已有确认闸",
+      "status": "改造分支已有结构",
+      "extra": ""
+    },
+    "L26": {
+      "id": "L26",
+      "type": "L",
+      "name": "设计依据简报与产品",
+      "meaning": "设计简报→产品/品牌约束→设计作品",
+      "shape": "N:M；真实产品图与模型生成结果分开",
+      "location": "create_design_work支持productId/referenceMaterialId",
+      "status": "原代码有落点",
+      "extra": ""
+    },
+    "L27": {
+      "id": "L27",
+      "type": "L",
+      "name": "运行作业引用当前能力描述",
+      "meaning": "生图/视频作业→模型或应用schema版本",
+      "shape": "N:1；记录提交参数快照与providerJobId",
+      "location": "运行选项工具存在；schema哈希/端到端映射建议补",
+      "status": "建议统一建模",
+      "extra": ""
+    },
+    "F01": {
+      "id": "F01",
+      "type": "F",
+      "name": "读取品牌上下文与资料",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "brandId/权限范围 → 档案、产品、IP、账号和资料摘要",
+      "location": "get_current_brand_context / get_brand_archive_summary / get_brand_products / manage_brand_library 的只读action",
+      "status": "现有查询入口",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F02": {
+      "id": "F02",
+      "type": "F",
+      "name": "检查数据充分性",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "目标+现有资料/近期数据 → 缺项、过期项、需补采清单",
+      "location": "各策略专家；建议将字段检查规则结构化",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F03": {
+      "id": "F03",
+      "type": "F",
+      "name": "判断任务路线与前置条件",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "用户意图+输入产物+已完成阶段 → 路线/下一阶段/缺口",
+      "location": "专家团路由表；route_website_function_by_intent只解决网站功能路由的一部分",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F04": {
+      "id": "F04",
+      "type": "F",
+      "name": "查询与聚合平台数据",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "平台/品牌/时间范围 → 作品、评论、用户、达人集合与统计",
+      "location": "get_*_collection_workspace；只读查询与sync写入分开",
+      "status": "现有查询入口",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F05": {
+      "id": "F05",
+      "type": "F",
+      "name": "规划品牌定位和内容组合",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "品牌事实+目标+市场证据 → 策略草案/内容家族配比/日历建议",
+      "location": "策略专家及内容组合技能；调用模型可有技术作业副作用",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F06": {
+      "id": "F06",
+      "type": "F",
+      "name": "选题相关性、去重与路线推荐",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "策略/近7天内容/候选 → 主备题、去重依据、专家和主技能推荐",
+      "location": "抖音/小红书/公众号选题；不把generate类MCP天然当只读",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F07": {
+      "id": "F07",
+      "type": "F",
+      "name": "生成创作候选",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "确认的选题+事实/素材 → 文案/脚本/简报/讲解/创意包",
+      "location": "WorkBuddy专家与创作技能执行；结果保存另走Action",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F08": {
+      "id": "F08",
+      "type": "F",
+      "name": "编制制作配置并校验输入",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "创作包+资产+媒介要求 → 三件套候选/缺口/一致性检查",
+      "location": "视频专家/技能；不是由中台替专家决定镜头",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F09": {
+      "id": "F09",
+      "type": "F",
+      "name": "读取模型与应用参数",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "连接器+模块/appKey → selectionKey/schema/模板/运行可用性",
+      "location": "get_design_workspace_options；manage_douyin_video_production action=get_app_detail等",
+      "status": "现有查询入口",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F10": {
+      "id": "F10",
+      "type": "F",
+      "name": "核验内容交付质量",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "产物版本+规则版本 → hardPass、softScore、failedItems、evidence",
+      "location": "各专家质量规则；统一评分模型建议补充",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F11": {
+      "id": "F11",
+      "type": "F",
+      "name": "效果复盘与优化建议",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "时间窗+作品数据+上周动作 → 原因假设/验证限制/下周动作",
+      "location": "抖音复盘5技能、小红书双维复盘、公众号复盘",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F12": {
+      "id": "F12",
+      "type": "F",
+      "name": "提炼并压缩长期记忆",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "多轮验证记录 → 适用条件、有效规律、合并/失效建议",
+      "location": "growth-memory-update / strategy-optimization-record-manager",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F13": {
+      "id": "F13",
+      "type": "F",
+      "name": "计算GEO可见度",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "查询样本+成功/失败观测+口径版本 → AOR/RR/SOV/IAR及覆盖率",
+      "location": "GEO诊断专家；口径需明确分子/分母/未观测项",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F14": {
+      "id": "F14",
+      "type": "F",
+      "name": "关键词分类和优先级",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "品牌+诊断 → 四层词库、P0/P1/P2、追问、估算依据",
+      "location": "geo-keyword-expert；缺来源的估算不得充当实测",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F15": {
+      "id": "F15",
+      "type": "F",
+      "name": "网站就绪度检查",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "URL+页面证据 → Schema/可读性/速度/移动适配等检查与建议",
+      "location": "geo-website-expert；检查不自动修改站点",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F16": {
+      "id": "F16",
+      "type": "F",
+      "name": "知识结构整理与检索",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "资料/问题 → 十板块知识候选、检索结果、引用出处、缺失答案",
+      "location": "知识专家；中台Knowledge系列模型支撑检索与绑定",
+      "status": "文档与代码共同支撑",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F17": {
+      "id": "F17",
+      "type": "F",
+      "name": "制定GEO计划和平台适配",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "诊断+词库+知识 → 三线排期/文稿/Schema标记建议",
+      "location": "geo-proposal及三条内容专家",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F18": {
+      "id": "F18",
+      "type": "F",
+      "name": "发布准备检查",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "内容版本+账号+资源+平台schema → 可发布性/缺项/预演结果",
+      "location": "公众号readiness；蚁小二validate/dry-run",
+      "status": "文档与代码共同支撑",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F19": {
+      "id": "F19",
+      "type": "F",
+      "name": "筛选、归并并解释候选线索",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "目标画像+公开信号 → 匹配程度/依据/重复组/缺失字段",
+      "location": "全网获客5专家；候选不等于意向，意向不等于客户",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F20": {
+      "id": "F20",
+      "type": "F",
+      "name": "达人匹配评分与推荐",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "品牌/产品/受众+达人快照 → 推荐理由/待补数据/候选顺序",
+      "location": "kol-matcher；模型评分要保存证据和置信说明",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F21": {
+      "id": "F21",
+      "type": "F",
+      "name": "达人合作效果评估",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "跟踪作品+时间窗+目标 → 表现分析/继续、调整、暂停建议",
+      "location": "kol-tracker；缺销售归因则不计算成交ROI",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F22": {
+      "id": "F22",
+      "type": "F",
+      "name": "查询广告配置和效果",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "account_id+时间窗+维度 → 广告组、创意、报表、操作日志",
+      "location": "tencentads-management外部脚本",
+      "status": "外部系统能力",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F23": {
+      "id": "F23",
+      "type": "F",
+      "name": "广告创意矩阵与测试设计",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "品牌事实+内容表现+历史 → 三类创意方案、A/B变量、CTA、排期",
+      "location": "ad-creative-strategist",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F24": {
+      "id": "F24",
+      "type": "F",
+      "name": "投放可行性与规则匹配",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "素材+营销目标+版位+预算 → 规格检查/转化资产/定向建议",
+      "location": "ad-campaign-manager的get-rules等步骤",
+      "status": "外部系统与专家判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F25": {
+      "id": "F25",
+      "type": "F",
+      "name": "设计分诊与视觉方案",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "用途+文案+尺寸+参考 → 视觉简报/设计令牌/提示词候选",
+      "location": "design-creator / design-toolkit",
+      "status": "文档中的专业判断",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F26": {
+      "id": "F26",
+      "type": "F",
+      "name": "查询任务状态并判断恢复方式",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "任务ID/providerJobId+错误 → 状态/可恢复性/是否需要人工选择",
+      "location": "get_task_detail与视频查询入口；不能凭超时认定失败后重复收费",
+      "status": "文档与代码共同支撑",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "F27": {
+      "id": "F27",
+      "type": "F",
+      "name": "读取规则和版本适配情况",
+      "meaning": "读、算、判断或生成候选，具体执行位置见下方。",
+      "shape": "专家/技能/路线版本+输入类型 → 可用能力/兼容性/缺依赖",
+      "location": "manifest、技能包、lab版本使用模型",
+      "status": "建议规范化封装",
+      "extra": "本报告F编号是分析用业务函数名，不表示代码中已有同名注册函数；LLM候选生成可能创建技术任务/消耗额度，需单独记录副作用。"
+    },
+    "A01": {
+      "id": "A01",
+      "type": "A",
+      "name": "补全品牌与产品资料",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "确认的资料映射+目标品牌 → Brand/Product/IP/问卷更新",
+      "location": "manage_brand_library：update_background/update_ip_library/create_product等",
+      "status": "动作候选映射",
+      "extra": "先核对来源和目标品牌；缺事实保留缺失，不推测补值"
+    },
+    "A02": {
+      "id": "A02",
+      "type": "A",
+      "name": "启动采集／刷新来源数据",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "关键词/账号/作品链接 → 采集任务与新的来源快照",
+      "location": "sync_douyin_* / sync_xiaohongshu_* / sync_wechat_*",
+      "status": "动作候选映射",
+      "extra": "记录请求、平台、范围、返回作业ID；刷新会改数据，不能当查询"
+    },
+    "A03": {
+      "id": "A03",
+      "type": "A",
+      "name": "保存策略、增长报告和营销日历",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "已审阅方案/排期 → 中台策略与日历记录",
+      "location": "manage_growth_reports / create_openclaw_marketing_plan",
+      "status": "动作候选映射",
+      "extra": "区分生成候选与正式采用；变更后通知受影响的下游"
+    },
+    "A04": {
+      "id": "A04",
+      "type": "A",
+      "name": "新增／修订选题",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "选题item/既有topicId → 选题库记录",
+      "location": "create_brand_growth_topic_library_item / update_brand_growth_topic_library_item",
+      "status": "动作候选映射",
+      "extra": "记录平台、路由、来源与版本；写库并不自动获得批准"
+    },
+    "A05": {
+      "id": "A05",
+      "type": "A",
+      "name": "提交每日计划／选题报告",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "日期+workspaceScope+标题/正文 → 每日计划",
+      "location": "create_ai_control_center_daily_plan",
+      "status": "动作候选映射",
+      "extra": "必须写对渠道作用域；日计划不是整条任务状态"
+    },
+    "A06": {
+      "id": "A06",
+      "type": "A",
+      "name": "登记创作包或素材",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "文本/文件+类型+来源 → 素材记录及可访问引用",
+      "location": "create_ai_control_center_creative_material",
+      "status": "动作候选映射",
+      "extra": "本地产物写入成功与中台归档成功分别报告"
+    },
+    "A07": {
+      "id": "A07",
+      "type": "A",
+      "name": "提交设计／图像生成",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "module/modelSelection/指令/参考 → Task及后续素材",
+      "location": "create_design_work",
+      "status": "动作候选映射",
+      "extra": "先查选项；保留参数/版本/失败原因；可能收费，供应商不可擅自替换"
+    },
+    "A08": {
+      "id": "A08",
+      "type": "A",
+      "name": "提交语音、口型或视频作业",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "应用模板+真实上传资源+参数 → provider作业/技术任务",
+      "location": "manage_douyin_video_production：generate/create_speech_task等",
+      "status": "动作候选映射",
+      "extra": "先get_app_detail；真实资源替换占位；口型与空镜按能力区分；异步完成另确认"
+    },
+    "A09": {
+      "id": "A09",
+      "type": "A",
+      "name": "归档视频成品",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "最终视频URL+脚本+封面 → 视频作品记录",
+      "location": "create_ai_control_center_video_work",
+      "status": "动作候选映射",
+      "extra": "核验成品及来源版本；归档≠平台发布"
+    },
+    "A10": {
+      "id": "A10",
+      "type": "A",
+      "name": "登记原创／二创笔记",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "原创正文或二创来源+参数 → 笔记生成/归档结果",
+      "location": "create_xiaohongshu_original_note / create_xiaohongshu_rewrite_note",
+      "status": "动作候选映射",
+      "extra": "二创接口可能触发再次生成，不能假设能直接接收所有本地成稿和配图"
+    },
+    "A11": {
+      "id": "A11",
+      "type": "A",
+      "name": "创建或更新公众号工作流内容",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "文章/HTML/配图/账号设置 → 工作流会话状态改变",
+      "location": "manage_wechat_workflow：create_workflow/set_article/set_html/set_images/set_publish_config等",
+      "status": "动作候选映射",
+      "extra": "绑定同一会话；set_html后以实际工作流预览检查图片顺序"
+    },
+    "A12": {
+      "id": "A12",
+      "type": "A",
+      "name": "提交公众号草稿／发布请求",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "已准备内容+明确目标动作 → 发布任务/回执",
+      "location": "publish_wechat_workflow / manage_wechat_workflow发布类action",
+      "status": "动作候选映射",
+      "extra": "核对目标账号和授权范围；草稿箱授权不等于群发授权；等待真实回执"
+    },
+    "A13": {
+      "id": "A13",
+      "type": "A",
+      "name": "保存复盘与优化记录",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "有来源的数据结论 → 复盘记录/长期策略记录",
+      "location": "create_ai_control_center_lobster_diary / create_ai_control_center_strategy_optimization",
+      "status": "动作候选映射",
+      "extra": "软判断写成假设；长期规律须有复验；保留被替代的历史"
+    },
+    "A14": {
+      "id": "A14",
+      "type": "A",
+      "name": "保存GEO诊断与内容交付",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "诊断HTML或词库/方案/文章附件 → GEO相应记录",
+      "location": "create_ai_control_center_geo_visibility_report / create_ai_control_center_geo_content",
+      "status": "动作候选映射",
+      "extra": "contentType区分词库、方案、文稿；保存报告不意味着已完成外部检索或已收录"
+    },
+    "A15": {
+      "id": "A15",
+      "type": "A",
+      "name": "建立／更新知识库内容与绑定",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "资料文件+知识库ID → 文件、索引/同步与绑定状态",
+      "location": "create_knowledge_base / upload_knowledge_base_files / manage_brand_library",
+      "status": "动作候选映射",
+      "extra": "上传、索引可用、外部平台发布是三个阶段；权限及资料来源可追溯"
+    },
+    "A16": {
+      "id": "A16",
+      "type": "A",
+      "name": "提交多平台内容分发",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "逐平台校验的payload+目标账号+授权 → 外部发布记录",
+      "location": "geo-publish-expert：yxer validate → dry-run → publish",
+      "status": "动作候选映射",
+      "extra": "不属于原品牌MCP动作；统一Action包装为建议，回写归档也需明确实现"
+    },
+    "A17": {
+      "id": "A17",
+      "type": "A",
+      "name": "提交媒体刊发或网站变更",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "批准稿件/媒体订单或官网变更包 → 外部状态变化",
+      "location": "第三方媒体delivery接口；官网/CMS连接器需核验",
+      "status": "动作候选映射",
+      "extra": "媒体写稿≠付费采购，网站建议≠部署；当前专家链缺完整统一执行契约"
+    },
+    "A18": {
+      "id": "A18",
+      "type": "A",
+      "name": "提取评论候选线索入库",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "来源平台/作品/关键词选项 → 评论获客候选记录",
+      "location": "create_ai_control_center_comment_leads",
+      "status": "动作候选映射",
+      "extra": "原接口是从中台来源提取，并非接受任意用户items；全量入库必须标候选状态"
+    },
+    "A19": {
+      "id": "A19",
+      "type": "A",
+      "name": "保存企业／平台获客名单",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "items(name,businessScope,selectedReason,contactInfo,address) → 平台线索",
+      "location": "create_ai_control_center_platform_leads",
+      "status": "动作候选映射",
+      "extra": "不要把信用代码/经营状态直接塞入不接受的字段；先扩字段或保留完整原表引用"
+    },
+    "A20": {
+      "id": "A20",
+      "type": "A",
+      "name": "处理重复线索",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "重复组+保留依据 → 合并记录/关系或删除多余项",
+      "location": "文档现用get_ai_control_center_comment_leads + delete_ai_control_center_comment_lead",
+      "status": "动作候选映射",
+      "extra": "建议用可审计合并替代盲删，保留多条原始来源；跨品牌不可合并"
+    },
+    "A21": {
+      "id": "A21",
+      "type": "A",
+      "name": "提交达人深抓并保存匹配",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "候选ID+推荐理由 → 深抓任务/匹配记录",
+      "location": "create_douyin_creator_deep_fetch_tasks / create_ai_control_center_creator_matches",
+      "status": "动作候选映射",
+      "extra": "深抓提交和结果到齐分开；匹配并不表示已联系或已成交"
+    },
+    "A22": {
+      "id": "A22",
+      "type": "A",
+      "name": "建立合作跟踪及作品",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "确认达人+作品链接 → tracking记录/合作作品",
+      "location": "create_ai_control_center_creator_tracking_records / create_ai_control_center_creator_tracking_work",
+      "status": "动作候选映射",
+      "extra": "进入跟踪不等于签约；作品必须归正确trackingId和brandId"
+    },
+    "A23": {
+      "id": "A23",
+      "type": "A",
+      "name": "刷新作品并登记评估",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "作品ID+刷新/评估内容 → 指标/评估/nextAction更新",
+      "location": "update_ai_control_center_creator_tracking_work",
+      "status": "动作候选映射",
+      "extra": "评估建议和真实执行复投分开；下一刷新时间与失败原因可见"
+    },
+    "A24": {
+      "id": "A24",
+      "type": "A",
+      "name": "保存广告策划或复盘",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "title/content → 腾讯营销板块文档记录",
+      "location": "create_ai_control_center_tencent_ad_lead",
+      "status": "动作候选映射",
+      "extra": "不是创建广告，不是写入已获客客户；用类型说明保存的是什么"
+    },
+    "A25": {
+      "id": "A25",
+      "type": "A",
+      "name": "创建／调整广告及投放配置",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "批准的账户/预算/出价/定向/转化配置 → 腾讯广告实体状态",
+      "location": "tencentads-delivery-standard-create；管理脚本的add/update/delete",
+      "status": "动作候选映射",
+      "extra": "外部有副作用动作；先动态取规则与资产，不能把创意建议直接当成执行授权"
+    },
+    "A26": {
+      "id": "A26",
+      "type": "A",
+      "name": "提交阶段产物与验收决定",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "任务/阶段/输入版本/产物引用 → submitted/accepted/changes_requested",
+      "location": "文档回传/确认；lab WfStageRun/WfArtifact/WfGateResult等",
+      "status": "动作候选映射",
+      "extra": "WorkBuddy制作，中台维护进度；上游改版需判断下游是否失效"
+    },
+    "A27": {
+      "id": "A27",
+      "type": "A",
+      "name": "登记使用版本／发布新能力版本",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "本次使用清单或经评审的变更 → usage或release记录",
+      "location": "manifest/中台技能包版本；lab WfVersionUsage/WfVersionRelease",
+      "status": "动作候选映射",
+      "extra": "每次执行记录用版；只有方法/结构真的改变才发新版；重大契约变更要迁移"
+    },
+    "A28": {
+      "id": "A28",
+      "type": "A",
+      "name": "记录阻塞／失败／重试／恢复",
+      "meaning": "对业务数据、状态或外部系统造成可记录的变化。",
+      "shape": "任务/作业ID+真实结果 → 状态及执行尝试记录",
+      "location": "原Task错误字段；lab执行事件、尝试、幂等模型",
+      "status": "动作候选映射",
+      "extra": "先查外部实际结果再重试；超时≠失败；重试不自动新建业务任务"
+    },
+    "I01": {
+      "id": "I01",
+      "type": "I",
+      "name": "BrandScoped 品牌归属对象",
+      "meaning": "统一品牌过滤和权限校验；原模型多有brandId，但没有证明已声明此Ontology Interface",
+      "shape": "objectId:string；brandId:string；updatedAt；所有链接必须同品牌或有明确共享授权",
+      "location": "建议实现者：产品、选题、报告、素材、线索、任务",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I02": {
+      "id": "I02",
+      "type": "I",
+      "name": "SourceBacked 有来源对象",
+      "meaning": "可追溯来源；品牌事实和AI推断分别标记。不是强制每张图有网络URL，本地原文件亦可",
+      "shape": "sourceRefs:[{type,id/url,observedAt,revision?}]；evidenceStatus；missingFields",
+      "location": "建议实现者：事实资料、用户信号、线索、诊断、复盘结论",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I03": {
+      "id": "I03",
+      "type": "I",
+      "name": "VersionedDeliverable 可交接版本产物",
+      "meaning": "能检索指定版本、检查完整性、登记提交；三件套和视频字段通过具体类型扩展",
+      "shape": "artifactId；revision；kind；uri；sha256；sourceRefs；status",
+      "location": "建议实现者：策略、选题报告、创作包、配置包、文章、成片、复盘",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I04": {
+      "id": "I04",
+      "type": "I",
+      "name": "Reviewable 可验收对象",
+      "meaning": "支持提交、通过、退回；80%仅在规则定义的软指标适用，不绕过硬门槛",
+      "shape": "inputRevision；policyVersion；hardChecks；softScore?；decision；reviewer；reviewedAt",
+      "location": "建议实现者：待确认选题、配置包、文稿、投放配置",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I05": {
+      "id": "I05",
+      "type": "I",
+      "name": "Publishable 可发布内容",
+      "meaning": "共同具备发布前检查和提交能力；各平台具体payload由适配器生成，Interface不是HTTP接口",
+      "shape": "title；body/assetRefs；platform；accountRef；contentRevision；readinessResult",
+      "location": "建议实现者：公众号文章、小红书笔记、GEO自媒体稿、视频",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I06": {
+      "id": "I06",
+      "type": "I",
+      "name": "Measurable 可观察成效对象",
+      "meaning": "统一读取可用指标；不强制每个渠道都有成交率，不把不同口径直接相加",
+      "shape": "subjectRef；metricDefinitions；timeWindow；observedAt；dataSource；missingReason",
+      "location": "建议实现者：内容作品、达人合作作品、广告、GEO查询集合",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I07": {
+      "id": "I07",
+      "type": "I",
+      "name": "LeadCandidate 可评估线索",
+      "meaning": "可去重、解释匹配依据、记录阶段；手机号不作为全部类型必填，不把候选等同客户",
+      "shape": "subjectKey；subjectType；sourceRefs；matchReason；intentStatus；contactability",
+      "location": "建议实现者：个人账号线索、企业线索、本地商家线索",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I08": {
+      "id": "I08",
+      "type": "I",
+      "name": "ExternalEntityRef 外部实体引用",
+      "meaning": "统一回查与关联；不直接复制密钥，不把外部状态变更假装本地数据库事务",
+      "shape": "provider；externalId；scope/accountRef；lastObservedAt；snapshotRef",
+      "location": "建议实现者：广告组、外部账号、发布回执、外部作业、媒体订单",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I09": {
+      "id": "I09",
+      "type": "I",
+      "name": "ExecutableStage 可执行阶段对象",
+      "meaning": "支持领取/提交/退回/阻塞；仅约束业务交接，阶段内部允许专家自主选择技能",
+      "shape": "taskId；stageKey；ownerExpert；inputRefs；outputKinds；dependencies；status；contractVersion",
+      "location": "建议实现者：策略阶段、选题阶段、内容生产阶段、数据复盘阶段",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "I10": {
+      "id": "I10",
+      "type": "I",
+      "name": "CapabilityVersion 可识别能力版本",
+      "meaning": "任务能记录用版，升级可检查兼容；不要求把WorkBuddy专属调度工具搬入中台",
+      "shape": "capabilityId；kind；version；hash；requires；input/outputContractRefs；compatibility",
+      "location": "建议实现者：专家包、专家定义、技能发布包、路线版本",
+      "status": "建议定义的业务契约",
+      "extra": "这是根据你的业务提炼的候选Interface；本轮没有发现这些名称已在原中台正式注册。"
+    },
+    "O46": {
+      "id": "O46",
+      "type": "O",
+      "name": "公域经营画像",
+      "meaning": "品牌在小红书、抖音、视频号、天猫、京东、快手、百度、公众号等公域平台的账号、内容、搜索、达人、投放、直播和同城经营事实。",
+      "shape": "platform；accountStatus；contentStatus；searchStatus；kolStatus；adStatus；liveStatus；localStatus；evidenceRefs",
+      "location": "BrandSurvey；BRAND_SURVEY_SECTIONS 公域经营信息；get_brand_archive_summary / get_current_brand_context",
+      "status": "本轮新增到品牌资料库与报告上下文",
+      "extra": "用于公域内容获客与 GEO 获客的一体化诊断，不把平台列表等同于策略。"
+    },
+    "O47": {
+      "id": "O47",
+      "type": "O",
+      "name": "私域生命周期画像",
+      "meaning": "品牌私域承接、会员体系、标签体系、自动化运营、商城、首单、复购和唤醒现状。",
+      "shape": "wechatWorkStatus；communityStatus；membershipStatus；commerceSystem；tags；automation；firstOrder；repurchase；reactivation",
+      "location": "BrandSurvey；BRAND_SURVEY_SECTIONS 私域经营信息；get_brand_archive_summary / get_current_brand_context",
+      "status": "本轮新增到品牌资料库与报告上下文",
+      "extra": "私域增长按客户行为标签提供内容、服务、活动与产品，支撑转化率、客单价和复购。"
+    },
+    "O48": {
+      "id": "O48",
+      "type": "O",
+      "name": "增长资源与约束",
+      "meaning": "年度或阶段预算、团队人数与岗位、门店/导购/区域团队、ERP/CRM/数据系统，以及预算、人力、产能、合规、供应链、门店能力等关键约束。",
+      "shape": "budget；teamRoles；stores；guides；regionalTeam；erp；crm；dataSystems；constraints",
+      "location": "BrandSurvey；BRAND_SURVEY_SECTIONS 资源与约束",
+      "status": "本轮新增到品牌资料库与报告上下文",
+      "extra": "用于判断策略是否可执行，避免只给理想化方案。"
+    },
+    "O49": {
+      "id": "O49",
+      "type": "O",
+      "name": "12个月增长目标",
+      "meaning": "品牌未来 12 个月的营收、利润、用户资产、经营效率、预算和 ROI 目标。",
+      "shape": "next12MonthGoal；growthPriority；revenueGoal；profitGoal；userAssetGoal；roiRequirement",
+      "location": "BrandSurvey；BRAND_SURVEY_SECTIONS 目标信息",
+      "status": "本轮新增到品牌资料库与报告上下文",
+      "extra": "没有目标时输出目标拆解模板，不编造具体数字。"
+    },
+    "O50": {
+      "id": "O50",
+      "type": "O",
+      "name": "品牌增长报告／策略母版",
+      "meaning": "由 WorkBuddy 全域增长策略专家团生成，并通过 MCP 上传归档的品牌增长总策略，是后续内容获客、GEO获客、投流获客、达人合作、营销日历和每日计划的上游指导思想。",
+      "shape": "reportId；brandId；cycle；diagnosis；painPoints；differentiatedSolution；publicGeoStrategy；privateLifecycleStrategy；roiModel；roadmap；downstreamGuidance",
+      "location": "BusinessAsset category=BRAND_GROWTH_REPORT；create_brand_growth_report 上传 WorkBuddy 已生成报告；reports.service.ts createUploadedGrowthReport",
+      "status": "原代码有报告落点，本轮强化为策略上下文对象",
+      "extra": "不是每日作品；主归档必须落到 BusinessAsset category=BRAND_GROWTH_REPORT。素材管理里出现同名 HTML 只代表附件旁路可见，不等于品牌增长报告板块已经正确落位；报告修订应保留历史版本或新记录。"
+    },
+    "L28": {
+      "id": "L28",
+      "type": "L",
+      "name": "品牌增长报告指导下游执行",
+      "meaning": "品牌增长报告→内容获客/GEO获客/投流获客/达人合作/营销日历/每日计划",
+      "shape": "reportId；downstreamModule；strategyFields；usageVersion；evidenceRefs",
+      "location": "品牌增长报告归档后作为后续模块上下文读取",
+      "status": "本轮新增规则",
+      "extra": "后续模块优先复用报告中的痛点、差异化方案、渠道分工和优先级。"
+    },
+    "L29": {
+      "id": "L29",
+      "type": "L",
+      "name": "公域内容资产与GEO获客同源",
+      "meaning": "目标客群痛点＋差异化解决方案→平台内容资产→用户主动咨询与AI检索展示",
+      "shape": "painPointId；solutionClaim；platform；contentAsset；geoEvidence；queryIntent",
+      "location": "brand-omni-growth-analysis；GEO 与内容获客链路",
+      "status": "本轮新增规则",
+      "extra": "禁止把GEO写成孤立技术优化；它必须服务品牌差异化答案被检索和引用。"
+    },
+    "L30": {
+      "id": "L30",
+      "type": "L",
+      "name": "私域标签驱动生命周期增长",
+      "meaning": "客户行为→标签组合→个性化内容/服务/活动/产品→转化、客单价、复购",
+      "shape": "customerBehavior；tagSet；segment；operationPlan；conversionGoal；repurchaseGoal",
+      "location": "brand-omni-growth-analysis；私域运营解决方案",
+      "status": "本轮新增规则",
+      "extra": "当前先进入策略设计，未来私域模块接入后承接执行。"
+    },
+    "F28": {
+      "id": "F28",
+      "type": "F",
+      "name": "全域增长信息充分性判断",
+      "meaning": "根据品牌、产品、公域、私域、资源、目标和历史报告判断信息充分性为 A/B/C。",
+      "shape": "brandCompleteness；productCompleteness；publicDomainCompleteness；privateDomainCompleteness；resourceCompleteness；goalCompleteness；grade；missingFields",
+      "location": "brand-omni-growth-analysis Skill",
+      "status": "本轮新增函数定义",
+      "extra": "C档先补问最小必要字段；B档可产出但标注待补充。"
+    },
+    "F29": {
+      "id": "F29",
+      "type": "F",
+      "name": "目标客群痛点与差异化方案提炼",
+      "meaning": "从品牌资料、产品资料、竞品和经营事实中提炼目标客群痛点及品牌差异化解决方案。",
+      "shape": "targetSegment；painPoints；competitorAlternatives；differentiatedSolution；proofAssets；riskNotes",
+      "location": "全域增长策略专家团主理人与公域/GEO专家",
+      "status": "本轮新增函数定义",
+      "extra": "这是公域内容和GEO内容的共同起点。"
+    },
+    "F30": {
+      "id": "F30",
+      "type": "F",
+      "name": "增长杠杆与ROI拆解",
+      "meaning": "把增长目标拆成流量获取效率、转化率、客单价、复购，并结合预算和资源约束形成优先级。",
+      "shape": "trafficEfficiency；conversionRate；averageOrderValue；repurchase；budget；roiAssumption；priority",
+      "location": "revenue-roi-growth-analyst；WorkBuddy 专家团生成报告；create_brand_growth_report 上传归档",
+      "status": "本轮新增函数定义",
+      "extra": "缺少真实数据时只给测算框架和待补充项。"
+    },
+    "A29": {
+      "id": "A29",
+      "type": "A",
+      "name": "保存全域经营调研信息",
+      "meaning": "将公域经营、私域经营、资源约束和目标信息保存到品牌资料库。",
+      "shape": "brandId；answers；updatedBy；savedAt",
+      "location": "PATCH /api/brands/:id/survey；manage_brand_library action=upsert_survey；BrandSurvey surveyType=BRAND_ARCHIVE",
+      "status": "本轮新增动作映射",
+      "extra": "OpenClaw 可直接填写这些字段，保存后进入报告上下文。"
+    },
+    "A30": {
+      "id": "A30",
+      "type": "A",
+      "name": "上传并归档 WorkBuddy 品牌增长报告",
+      "meaning": "WorkBuddy 专家团生成《品牌全域增长策略报告》后，通过 MCP 提交到【品牌增长报告】板块；中台只接收、保存和展示。",
+      "shape": "brandId；title；reportMarkdown；uploadedBy=workbuddy；category=BRAND_GROWTH_REPORT；createdAt",
+      "location": "create_brand_growth_report；reports.service.ts createUploadedGrowthReport；BusinessAsset category=BRAND_GROWTH_REPORT",
+      "status": "原代码有落点，本轮强化动作语义",
+      "extra": "报告是策略母版，不归入每日作品。主归档板块看 category=BRAND_GROWTH_REPORT；素材管理中的 HTML 附件只是并行留痕。"
+    },
+    "A31": {
+      "id": "A31",
+      "type": "A",
+      "name": "设定品牌增长报告为下游策略上下文",
+      "meaning": "将最新品牌增长报告作为后续内容、GEO、投流、达人合作和营销日历的优先读取上下文。",
+      "shape": "reportId；brandId；downstreamModules；contextPriority；versionRef",
+      "location": "WorkBuddy专家团交接契约；Ontology编排规则",
+      "status": "本轮新增动作映射",
+      "extra": "下游执行可引用，但不能伪造已经执行或投放。"
+    },
+    "I11": {
+      "id": "I11",
+      "type": "I",
+      "name": "BrandOmniGrowthContext 全域增长上下文",
+      "meaning": "品牌增长策略生成所需的统一输入接口，包含品牌、产品、公域、私域、资源、目标和历史报告。",
+      "shape": "brand；products；publicDomain；privateDomain；resources；goals；latestGrowthReport；missingFields",
+      "location": "get_brand_archive_summary / get_current_brand_context / BrandSurvey",
+      "status": "本轮新增接口定义",
+      "extra": "面向专家团隐藏底层路径，用户只表达业务目标。"
+    },
+    "I12": {
+      "id": "I12",
+      "type": "I",
+      "name": "BrandGrowthReportSubmission 品牌增长报告提交",
+      "meaning": "规范专家团向【品牌增长报告】提交策略母版的最小字段。",
+      "shape": "brandId；title；reportMarkdown；summary；sourceRefs；missingFacts；downstreamGuidance；uploadedBy",
+      "location": "品牌增长报告板块；create_brand_growth_report；reports.service.ts createUploadedGrowthReport",
+      "status": "本轮新增接口定义",
+      "extra": "用于保证报告能被后续模块稳定读取。"
+    }
+  },
+  "experts": {
+    "douyin-fullflow-ops-team-lead": {
+      "id": "douyin-fullflow-ops-team-lead",
+      "role": "决定入口、分工和阶段衔接，维护抖音全链路的任务边界。",
+      "inputs": "用户目标、品牌上下文、可复用上游产物、版本和连接器情况",
+      "outputs": "路线/任务简报、阶段状态、汇总交付与阻塞说明",
+      "O": [
+        "O01",
+        "O08",
+        "O10",
+        "O12",
+        "O13",
+        "O16",
+        "O21",
+        "O22",
+        "O23",
+        "O41",
+        "O42",
+        "O43"
+      ],
+      "L": [
+        "L01",
+        "L04",
+        "L05",
+        "L10",
+        "L23",
+        "L24",
+        "L25"
+      ],
+      "F": [
+        "F01",
+        "F02",
+        "F03",
+        "F10",
+        "F26",
+        "F27"
+      ],
+      "A": [
+        "A26",
+        "A27",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I03",
+        "I04",
+        "I09",
+        "I10"
+      ],
+      "gate": "选题与配置确认后进入相应生产；单点需求只补必要输入。",
+      "note": "专家团负责组织专业分工；中台管理跨阶段进度，WorkBuddy完成具体制作。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-fullflow-ops-team-lead.md",
+      "title": "抖音增长操盘手",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine"
+      ],
+      "tools": [
+        "create_design_work",
+        "list_my_third_party_platforms",
+        "check_my_third_party_platform_runtime_access",
+        "get_design_workspace_options",
+        "manage_douyin_video_production"
+      ]
+    },
+    "douyin-strategy-expert": {
+      "id": "douyin-strategy-expert",
+      "role": "给品牌确定内容方向和五类视频的组合策略。",
+      "inputs": "品牌/产品/账号、采集数据、历史策略优化",
+      "outputs": "营销方案、内容家族配比、日历与下游指引",
+      "O": [
+        "O01",
+        "O02",
+        "O04",
+        "O05",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O23"
+      ],
+      "L": [
+        "L01",
+        "L02",
+        "L03",
+        "L10"
+      ],
+      "F": [
+        "F01",
+        "F02",
+        "F04",
+        "F05"
+      ],
+      "A": [
+        "A02",
+        "A03",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "数据不足先补采；配比经确认后作为下游输入。",
+      "note": "五类是内容呈现家族，不能与产品的五条获客业务路线混淆。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-strategy-expert.md",
+      "title": "抖音策略专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine",
+        "douyin-content-form-mix-planning"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary",
+        "get_brand_archive_survey",
+        "get_brand_products",
+        "get_platform_accounts",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_brand_business_assets"
+      ]
+    },
+    "douyin-topic-expert": {
+      "id": "douyin-topic-expert",
+      "role": "把策略和真实用户信号变成能交付制作的选题。",
+      "inputs": "品牌事实、策略可选、竞品/评论/行业证据、既往选题",
+      "outputs": "主备选题、内容家族、推荐专家+主技能、写库结果",
+      "O": [
+        "O01",
+        "O02",
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O23",
+        "O43"
+      ],
+      "L": [
+        "L02",
+        "L03",
+        "L04",
+        "L24"
+      ],
+      "F": [
+        "F01",
+        "F04",
+        "F06",
+        "F27"
+      ],
+      "A": [
+        "A02",
+        "A04",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "允许直接从选题启动；缺策略时补齐事实依据；未经确认不自动创作。",
+      "note": "需要一个主视频技能；视觉参考/B-roll规划只作为辅助技能。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-topic-expert.md",
+      "title": "抖音选题专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine",
+        "douyin-topic-digital-human-planning",
+        "douyin-topic-microdrama-planning",
+        "douyin-topic-brand-promo-planning",
+        "douyin-topic-explainer-planning",
+        "douyin-topic-creative-planning"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_business_assets",
+        "get_brand_industry_feeds",
+        "manage_growth_reports",
+        "get_brand_growth_marketing_calendar_workspace",
+        "get_brand_growth_topic_library_workspace",
+        "get_douyin_collection_workspace",
+        "sync_douyin_search_works",
+        "sync_douyin_competitor_accounts",
+        "sync_douyin_comment_data",
+        "generate_brand_growth_topic_candidates",
+        "create_brand_growth_topic_library_item",
+        "update_brand_growth_topic_library_item"
+      ]
+    },
+    "douyin-copywriting-expert": {
+      "id": "douyin-copywriting-expert",
+      "role": "将选题转成匹配不同视频家族的创作包。",
+      "inputs": "已确认选题、主技能选择、证据与资产、优化经验",
+      "outputs": "口播/剧情/广告/讲解/创意包、资产缺口、生产约束",
+      "O": [
+        "O02",
+        "O10",
+        "O12",
+        "O14",
+        "O23",
+        "O43"
+      ],
+      "L": [
+        "L04",
+        "L06",
+        "L24"
+      ],
+      "F": [
+        "F06",
+        "F07",
+        "F10"
+      ],
+      "A": [
+        "A06",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "输入必须有标题、目标和视频路由；输出给对应视频专家。",
+      "note": "文案正文、创意钩子和镜头表达不需要被中台逐句规定。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-copywriting-expert.md",
+      "title": "抖音创作专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine",
+        "microdrama-ad-prompts",
+        "douyin-digital-human-copywriting",
+        "douyin-microdrama-script-package",
+        "douyin-brand-promo-creative-brief",
+        "douyin-explainer-creative-brief",
+        "douyin-creative-video-creative-brief"
+      ],
+      "tools": []
+    },
+    "douyin-digital-human-video-expert": {
+      "id": "douyin-digital-human-video-expert",
+      "role": "数字人口播制作与A-roll/B-roll合成",
+      "inputs": "口播稿、逐段证据/B-roll、IP图像与声音、已选主技能",
+      "outputs": "经确认的配置包、制作资产、成片或明确标记的片段、归档结果",
+      "O": [
+        "O02",
+        "O03",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O23",
+        "O42",
+        "O43",
+        "O44"
+      ],
+      "L": [
+        "L05",
+        "L06",
+        "L07",
+        "L24",
+        "L25",
+        "L27"
+      ],
+      "F": [
+        "F08",
+        "F09",
+        "F10",
+        "F26"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I08",
+        "I09"
+      ],
+      "gate": "成片技能先配置确认；真实素材/授权与应用参数齐备；失败时保留作业ID和断点。",
+      "note": "横屏HTML/Remotion、dynamic-video-craft、竖屏ABroll分别路由；参考文档要求口型走LTX2.3，模型/节点仍需运行时核验。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-digital-human-video-expert.md",
+      "title": "抖音数字人视频专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-dh-landscape-html-video",
+        "douyin-dh-landscape-remotion-video",
+        "dynamic-video-craft",
+        "douyin-dh-vertical-abroll-video",
+        "douyin-transcript-broll-planner"
+      ],
+      "tools": [
+        "check_timeline",
+        "start_time"
+      ]
+    },
+    "douyin-drama-video-expert": {
+      "id": "douyin-drama-video-expert",
+      "role": "剧情、短剧带货、3D、POV等故事制作",
+      "inputs": "确认的剧情脚本、分镜、真实产品图、角色/世界观约束",
+      "outputs": "经确认的配置包、制作资产、成片或明确标记的片段、归档结果",
+      "O": [
+        "O02",
+        "O03",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O23",
+        "O42",
+        "O43",
+        "O44"
+      ],
+      "L": [
+        "L05",
+        "L06",
+        "L07",
+        "L24",
+        "L25",
+        "L27"
+      ],
+      "F": [
+        "F08",
+        "F09",
+        "F10",
+        "F26"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I08",
+        "I09"
+      ],
+      "gate": "成片技能先配置确认；真实素材/授权与应用参数齐备；失败时保留作业ID和断点。",
+      "note": "微表情、悬疑开场可能只产出一个片段；不要把辅助片段验收成整条商业视频。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-drama-video-expert.md",
+      "title": "抖音剧情短片视频专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-microdrama-commerce-video",
+        "douyin-3d-animation-short-video",
+        "douyin-pov-short-film-video",
+        "douyin-chinese-style-short-drama-video",
+        "douyin-micro-expression-video",
+        "douyin-suspense-title-sequence-video"
+      ],
+      "tools": []
+    },
+    "douyin-brand-promo-video-expert": {
+      "id": "douyin-brand-promo-video-expert",
+      "role": "品牌、产品、活动及数字产品宣传片制作",
+      "inputs": "广告主张、卖点层级、真实品牌资产、参考风格",
+      "outputs": "经确认的配置包、制作资产、成片或明确标记的片段、归档结果",
+      "O": [
+        "O02",
+        "O03",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O23",
+        "O42",
+        "O43",
+        "O44"
+      ],
+      "L": [
+        "L05",
+        "L06",
+        "L07",
+        "L24",
+        "L25",
+        "L27"
+      ],
+      "F": [
+        "F08",
+        "F09",
+        "F10",
+        "F26"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I08",
+        "I09"
+      ],
+      "gate": "成片技能先配置确认；真实素材/授权与应用参数齐备；失败时保留作业ID和断点。",
+      "note": "产品外观与功能有事实边界；极简广告、品牌宣传、SaaS演示等共用交付规范但制作方法不同。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-brand-promo-video-expert.md",
+      "title": "抖音品牌/产品广告宣传片专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-brand-promo-video",
+        "douyin-minimalist-product-ad-video",
+        "douyin-silkscreen-illustration-short-video",
+        "douyin-digital-product-promo-video",
+        "douyin-promo-video",
+        "douyin-surreal-spot-video"
+      ],
+      "tools": []
+    },
+    "douyin-explainer-video-expert": {
+      "id": "douyin-explainer-video-expert",
+      "role": "知识、数据与复杂概念的讲解视频制作",
+      "inputs": "讲解结构、旁白、数据与图解证据",
+      "outputs": "经确认的配置包、制作资产、成片或明确标记的片段、归档结果",
+      "O": [
+        "O02",
+        "O03",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O23",
+        "O42",
+        "O43",
+        "O44"
+      ],
+      "L": [
+        "L05",
+        "L06",
+        "L07",
+        "L24",
+        "L25",
+        "L27"
+      ],
+      "F": [
+        "F08",
+        "F09",
+        "F10",
+        "F26"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I08",
+        "I09"
+      ],
+      "gate": "成片技能先配置确认；真实素材/授权与应用参数齐备；失败时保留作业ID和断点。",
+      "note": "Vox、纸拼贴、纸艺定格、线条讲解、MG各有技能；中台只验证资料与产物，不统一画面风格。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-explainer-video-expert.md",
+      "title": "抖音科普/讲解视频专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-paper-collage-explainer-video",
+        "douyin-papercraft-stop-motion-explainer-video",
+        "douyin-vox-style-video",
+        "douyin-line-doodle-explainer-video",
+        "douyin-mg-voiceover-animation-video"
+      ],
+      "tools": []
+    },
+    "douyin-creative-video-expert": {
+      "id": "douyin-creative-video-expert",
+      "role": "创意形式、空间沉浸与风格化视频制作",
+      "inputs": "创意概念、视觉动作、场景路径、授权IP或真实素材",
+      "outputs": "经确认的配置包、制作资产、成片或明确标记的片段、归档结果",
+      "O": [
+        "O02",
+        "O03",
+        "O12",
+        "O13",
+        "O14",
+        "O15",
+        "O16",
+        "O23",
+        "O42",
+        "O43",
+        "O44"
+      ],
+      "L": [
+        "L05",
+        "L06",
+        "L07",
+        "L24",
+        "L25",
+        "L27"
+      ],
+      "F": [
+        "F08",
+        "F09",
+        "F10",
+        "F26"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A08",
+        "A09",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I08",
+        "I09"
+      ],
+      "gate": "成片技能先配置确认；真实素材/授权与应用参数齐备；失败时保留作业ID和断点。",
+      "note": "手绘融合、FPV、潮玩宫格、音乐MV有不同输入；电影参考提示词仅辅助，不单独视为成片。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-creative-video-expert.md",
+      "title": "抖音创意视频专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-handdrawn-live-video",
+        "douyin-fpv-tour-video",
+        "douyin-live-sketch-motion-video",
+        "douyin-ip-toy-grid-motion-video",
+        "douyin-music-video-subtitle-video",
+        "douyin-film-reference-prompt-writer"
+      ],
+      "tools": []
+    },
+    "douyin-data-review-expert": {
+      "id": "douyin-data-review-expert",
+      "role": "以周度数据验证创作链路，并把有效规律送回前端。",
+      "inputs": "最近一周作品/评论、上周动作、策略和技能使用信息",
+      "outputs": "周复盘、下周动作单、策略记录、压缩后的增长记忆",
+      "O": [
+        "O07",
+        "O16",
+        "O21",
+        "O22",
+        "O23",
+        "O43",
+        "O45"
+      ],
+      "L": [
+        "L09",
+        "L10",
+        "L24"
+      ],
+      "F": [
+        "F04",
+        "F11",
+        "F12"
+      ],
+      "A": [
+        "A02",
+        "A13",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I06"
+      ],
+      "gate": "样本不足明确写不足；长期规律需复验；每4或8周压缩建议不能删除原始证据。",
+      "note": "复盘覆盖策略、选题、文案、脚本、形式、素材、剪辑、转化八维。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/douyin-fullflow-ops/agents/douyin-data-review-expert.md",
+      "title": "抖音数据分析与复盘专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "douyin-weekly-work-data-fetch",
+        "douyin-weekly-review-analysis",
+        "douyin-weekly-optimization-plan",
+        "douyin-strategy-optimization-record-manager",
+        "douyin-growth-memory-update"
+      ],
+      "tools": [
+        "get_douyin_collection_workspace",
+        "sync_douyin_brand_accounts",
+        "sync_douyin_comment_data"
+      ]
+    },
+    "xiaohongshu-fullflow-ops-team-lead": {
+      "id": "xiaohongshu-fullflow-ops-team-lead",
+      "role": "按策略、选题、创作与复盘组织小红书任务。",
+      "inputs": "用户目标/已有选题或对标链接、品牌资料、依赖技能",
+      "outputs": "任务简报、直调路线、阶段回传、汇总结论",
+      "O": [
+        "O01",
+        "O08",
+        "O11",
+        "O17",
+        "O21",
+        "O22",
+        "O41",
+        "O42",
+        "O43"
+      ],
+      "L": [
+        "L03",
+        "L08",
+        "L10",
+        "L23",
+        "L24"
+      ],
+      "F": [
+        "F01",
+        "F03",
+        "F10",
+        "F27"
+      ],
+      "A": [
+        "A26",
+        "A27",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I03",
+        "I04",
+        "I09",
+        "I10"
+      ],
+      "gate": "可直调任一专家；全流程不能在上游未回传时启动下游。",
+      "note": "文档中5:00/7:00/周六等是排期建议，必须另有自动化注册记录才算已启用。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/xiaohongshu-fullflow-ops/agents/xiaohongshu-fullflow-ops-team-lead.md",
+      "title": "小红书增长操盘手",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine"
+      ],
+      "tools": [
+        "get_current_brand_context"
+      ]
+    },
+    "xiaohongshu-strategy-expert": {
+      "id": "xiaohongshu-strategy-expert",
+      "role": "读取品牌底盘与数据，诊断账号定位并制定小红书营销方案。",
+      "inputs": "品牌/产品/账号/竞品、笔记/评论/人群数据",
+      "outputs": "数据充分性审计、定位诊断、营销方案和维护建议",
+      "O": [
+        "O01",
+        "O02",
+        "O04",
+        "O05",
+        "O07",
+        "O08",
+        "O09"
+      ],
+      "L": [
+        "L01",
+        "L02",
+        "L03"
+      ],
+      "F": [
+        "F01",
+        "F02",
+        "F04",
+        "F05"
+      ],
+      "A": [
+        "A02",
+        "A03",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03"
+      ],
+      "gate": "数据不足先补采；方案需要明确下游选题的主线和边界。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/xiaohongshu-fullflow-ops/agents/xiaohongshu-strategy-expert.md",
+      "title": "小红书策略专家",
+      "declaredSkills": [
+        "品牌运营助手"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_platform_accounts",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_xiaohongshu_collection_workspace",
+        "sync_xiaohongshu_search_notes",
+        "sync_xiaohongshu_competitor_accounts",
+        "sync_xiaohongshu_benchmark_notes",
+        "sync_xiaohongshu_brand_notes",
+        "sync_xiaohongshu_target_users",
+        "manage_growth_reports",
+        "get_website_function_execution_plan"
+      ]
+    },
+    "xiaohongshu-topic-expert": {
+      "id": "xiaohongshu-topic-expert",
+      "role": "决定当天做原创还是基于对标重构，给出有证据的选题。",
+      "inputs": "增长规划、日历、选题库、对标笔记、搜索材料、近7天记录",
+      "outputs": "选题报告、原创/二创路线、笔记类型、全部素材、选题维度复盘",
+      "O": [
+        "O06",
+        "O07",
+        "O08",
+        "O09",
+        "O10",
+        "O11",
+        "O17",
+        "O21",
+        "O22"
+      ],
+      "L": [
+        "L02",
+        "L03",
+        "L09",
+        "L10"
+      ],
+      "F": [
+        "F04",
+        "F06",
+        "F11"
+      ],
+      "A": [
+        "A02",
+        "A05",
+        "A13",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I06"
+      ],
+      "gate": "7天去重；二创需分析对标；报告归档到小红书每日计划。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/xiaohongshu-fullflow-ops/agents/xiaohongshu-topic-expert.md",
+      "title": "小红书选题专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-search-engine"
+      ],
+      "tools": [
+        "manage_growth_reports",
+        "get_xiaohongshu_collection_workspace",
+        "sync_xiaohongshu_search_notes",
+        "sync_xiaohongshu_competitor_accounts",
+        "sync_xiaohongshu_benchmark_notes",
+        "create_ai_control_center_daily_plan",
+        "sync_xiaohongshu_brand_notes",
+        "create_ai_control_center_lobster_diary"
+      ]
+    },
+    "xiaohongshu-creation-expert": {
+      "id": "xiaohongshu-creation-expert",
+      "role": "把选题或对标作品转成笔记、封面和内页图。",
+      "inputs": "选题报告或对标链接、品牌产品图、类型提示词",
+      "outputs": "标题/正文/标签、配图、检查结果、素材/作品归档及图文复盘",
+      "O": [
+        "O02",
+        "O07",
+        "O11",
+        "O14",
+        "O15",
+        "O17",
+        "O21",
+        "O22",
+        "O44"
+      ],
+      "L": [
+        "L04",
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L26"
+      ],
+      "F": [
+        "F07",
+        "F09",
+        "F10",
+        "F11"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A10",
+        "A13",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06"
+      ],
+      "gate": "原创/二创分路；检查与出图完成再交付；品牌产品外观不可虚构。",
+      "note": "原文的“原创度40%/60%”“限流权重”等属于内部经验表述，有冲突且未验证为平台规则，不能固化成官方事实。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/xiaohongshu-fullflow-ops/agents/xiaohongshu-creation-expert.md",
+      "title": "小红书创作专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "multi-wordcheck",
+        "xiaohongshu-quaiwei"
+      ],
+      "tools": [
+        "get_design_workspace_options",
+        "create_design_work",
+        "get_task_detail",
+        "create_ai_control_center_creative_material",
+        "create_xiaohongshu_original_note",
+        "create_xiaohongshu_rewrite_note",
+        "sync_xiaohongshu_brand_notes",
+        "create_ai_control_center_lobster_diary"
+      ]
+    },
+    "geo-local-business-optimizer-team-lead": {
+      "id": "geo-local-business-optimizer-team-lead",
+      "role": "组织GEO初始诊断链路与持续内容/分发链路。",
+      "inputs": "品牌资料、用户请求、已有诊断/词库/知识库/方案",
+      "outputs": "六步进度、三条内容线排期、条件跳过和发布回执汇总",
+      "O": [
+        "O01",
+        "O24",
+        "O25",
+        "O26",
+        "O27",
+        "O28",
+        "O29",
+        "O20",
+        "O41",
+        "O42"
+      ],
+      "L": [
+        "L11",
+        "L12",
+        "L13",
+        "L14",
+        "L15",
+        "L23",
+        "L25"
+      ],
+      "F": [
+        "F01",
+        "F02",
+        "F03",
+        "F18"
+      ],
+      "A": [
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I09"
+      ],
+      "gate": "首次完整建档六步串行，网站步骤有URL才做；单专家直调允许复用已有合格输入。",
+      "note": "“首次全流程”和“单点直调”是两种路线，不能用一个无条件串行规则同时描述。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-local-business-optimizer-team-lead.md",
+      "title": "GEO增长操盘手",
+      "declaredSkills": [
+        "品牌运营助手",
+        "mcp-curl-call"
+      ],
+      "tools": [
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "get_brand_business_assets",
+        "manage_brand_library",
+        "create_design_work",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_personal_center_overview",
+        "get_unified_material_library_items",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-brand-data-expert": {
+      "id": "geo-brand-data-expert",
+      "role": "提取真实品牌资料，并给出是否有官网的明确判断。",
+      "inputs": "中台品牌/产品/IP/竞品/行业/业务资产",
+      "outputs": "结构化品牌资料、缺项、网站URL或无网站结论",
+      "O": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O05",
+        "O06",
+        "O26"
+      ],
+      "L": [
+        "L01",
+        "L02",
+        "L13"
+      ],
+      "F": [
+        "F01",
+        "F02"
+      ],
+      "A": [
+        "A06",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03"
+      ],
+      "gate": "只读已有事实，不自行编造；提取与更新资料不同。",
+      "note": "此专家主要读库；本地资料首次导入需另走A01，不能把提取步骤误解成自动写库。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-brand-data-expert.md",
+      "title": "品牌资料提取专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "mcp-curl-call"
+      ],
+      "tools": [
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "get_brand_business_assets",
+        "manage_brand_library",
+        "create_design_work",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_personal_center_overview",
+        "get_unified_material_library_items",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-diagnosis-expert": {
+      "id": "geo-diagnosis-expert",
+      "role": "测量品牌在AI搜索中的真实出现情况。",
+      "inputs": "结构化品牌资料、品牌词/行业词、目标AI平台",
+      "outputs": "诊断HTML、四项指标、统计口径、竞争比较和查询证据",
+      "O": [
+        "O01",
+        "O07",
+        "O24",
+        "O21"
+      ],
+      "L": [
+        "L02",
+        "L11",
+        "L09"
+      ],
+      "F": [
+        "F04",
+        "F13"
+      ],
+      "A": [
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I06"
+      ],
+      "gate": "检索失败是未观测，不能直接计为未提及；指标要给样本和时间。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-diagnosis-expert.md",
+      "title": "GEO诊断专家",
+      "declaredSkills": [
+        "品牌GEO优化诊断"
+      ],
+      "tools": []
+    },
+    "geo-keyword-expert": {
+      "id": "geo-keyword-expert",
+      "role": "按品牌、行业、意图、长尾四层建立词库和追问库。",
+      "inputs": "品牌资料、诊断发现（单点路线可说明缺诊断）",
+      "outputs": "xlsx/html词库、P0/P1/P2优先级、触发词-追问-内容对策",
+      "O": [
+        "O01",
+        "O24",
+        "O25",
+        "O27"
+      ],
+      "L": [
+        "L11",
+        "L12"
+      ],
+      "F": [
+        "F14",
+        "F16"
+      ],
+      "A": [
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03"
+      ],
+      "gate": "真实数据与估算分开；不能为了填满字段伪造搜索量。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-keyword-expert.md",
+      "title": "关键词挖掘专家",
+      "declaredSkills": [
+        "geo-keyword-miner"
+      ],
+      "tools": []
+    },
+    "geo-website-expert": {
+      "id": "geo-website-expert",
+      "role": "检查真实官网的GEO就绪程度。",
+      "inputs": "已知有效网站URL、品牌资料",
+      "outputs": "六类检查项、评分依据、docx/html诊断和改进建议",
+      "O": [
+        "O01",
+        "O26",
+        "O25"
+      ],
+      "L": [
+        "L13",
+        "L12"
+      ],
+      "F": [
+        "F15"
+      ],
+      "A": [
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I06"
+      ],
+      "gate": "无网站明确跳过；访问失败不能输出基于假设的诊断。",
+      "note": "本职是诊断，不是自动修改网站；改站需另设发布/部署Action。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-website-expert.md",
+      "title": "网站GEO诊断专家",
+      "declaredSkills": [
+        "GEO网站诊断"
+      ],
+      "tools": []
+    },
+    "geo-knowledge-expert": {
+      "id": "geo-knowledge-expert",
+      "role": "将品牌事实整理成十板块、可检索引用的知识资料。",
+      "inputs": "品牌事实、诊断、意图词、网站建议（如有）",
+      "outputs": "知识库Markdown、部署策略HTML、已完成/待完成部署说明",
+      "O": [
+        "O04",
+        "O24",
+        "O25",
+        "O26",
+        "O27"
+      ],
+      "L": [
+        "L02",
+        "L12",
+        "L13",
+        "L14"
+      ],
+      "F": [
+        "F16"
+      ],
+      "A": [
+        "A15",
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03"
+      ],
+      "gate": "没有的资质/客户案例不可补造；外部平台部署需要真实回执。",
+      "note": "索引完成不代表DeepSeek等公开搜索引擎会引用；这需要单独可见度观测。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-knowledge-expert.md",
+      "title": "GEO知识库架构师",
+      "declaredSkills": [
+        "GEO结构化知识库搭建"
+      ],
+      "tools": [
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "get_brand_business_assets",
+        "manage_brand_library",
+        "create_design_work",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_personal_center_overview",
+        "get_unified_material_library_items",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-proposal-expert": {
+      "id": "geo-proposal-expert",
+      "role": "把前序分析变成三条内容线和监测迭代计划。",
+      "inputs": "品牌、诊断、词库、网站检查（适用时）、知识库",
+      "outputs": "GEO方案docx/html、自媒体/第三方/官网排期、监测安排",
+      "O": [
+        "O24",
+        "O25",
+        "O26",
+        "O27",
+        "O28",
+        "O09"
+      ],
+      "L": [
+        "L02",
+        "L03",
+        "L11",
+        "L12"
+      ],
+      "F": [
+        "F17"
+      ],
+      "A": [
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "计划引用实际基线；“无网站”作为适用性分支，不要求伪造第五份输入。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-proposal-expert.md",
+      "title": "GEO优化方案架构师",
+      "declaredSkills": [
+        "geo-proposal-generator"
+      ],
+      "tools": []
+    },
+    "geo-selfmedia-content-expert": {
+      "id": "geo-selfmedia-content-expert",
+      "role": "生产自媒体文章",
+      "inputs": "已批准排期+关键词表+品牌知识库；网站线可加诊断",
+      "outputs": "docx/html成稿、配图、事实引用和7天查重说明",
+      "O": [
+        "O02",
+        "O09",
+        "O14",
+        "O15",
+        "O25",
+        "O27",
+        "O28",
+        "O29"
+      ],
+      "L": [
+        "L06",
+        "L12",
+        "L13",
+        "L15"
+      ],
+      "F": [
+        "F06",
+        "F07",
+        "F09",
+        "F10",
+        "F17"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04",
+        "I05"
+      ],
+      "gate": "三份基础输入缺一先补；事实只来自资料/知识库；按内容线区分查重。",
+      "note": "按平台适配；日更频率是计划，实际按批准排期执行。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-selfmedia-content-expert.md",
+      "title": "自媒体内容创作专家",
+      "declaredSkills": [
+        "geo-content-engine"
+      ],
+      "tools": [
+        "create_design_work",
+        "get_unified_material_library_items",
+        "get_personal_center_overview",
+        "get_brand_business_assets",
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "manage_brand_library",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-thirdparty-content-expert": {
+      "id": "geo-thirdparty-content-expert",
+      "role": "生产新闻稿/第三方长文",
+      "inputs": "已批准排期+关键词表+品牌知识库；网站线可加诊断",
+      "outputs": "docx/html成稿、配图、事实引用和7天查重说明",
+      "O": [
+        "O02",
+        "O09",
+        "O14",
+        "O15",
+        "O25",
+        "O27",
+        "O28",
+        "O29"
+      ],
+      "L": [
+        "L06",
+        "L12",
+        "L13",
+        "L15"
+      ],
+      "F": [
+        "F06",
+        "F07",
+        "F09",
+        "F10",
+        "F17"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04",
+        "I05"
+      ],
+      "gate": "三份基础输入缺一先补；事实只来自资料/知识库；按内容线区分查重。",
+      "note": "文档要求与前次投放间隔至少3天；有稿不代表付费媒体刊发已完成。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-thirdparty-content-expert.md",
+      "title": "第三方媒体内容专家",
+      "declaredSkills": [
+        "geo-press-release",
+        "geo-content-engine"
+      ],
+      "tools": [
+        "create_design_work",
+        "get_unified_material_library_items",
+        "get_personal_center_overview",
+        "get_brand_business_assets",
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "manage_brand_library",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-website-content-expert": {
+      "id": "geo-website-content-expert",
+      "role": "生产官网产品页、行业文、案例、FAQ",
+      "inputs": "已批准排期+关键词表+品牌知识库；网站线可加诊断",
+      "outputs": "docx/html成稿、配图、事实引用和7天查重说明",
+      "O": [
+        "O02",
+        "O09",
+        "O14",
+        "O15",
+        "O25",
+        "O27",
+        "O28",
+        "O29"
+      ],
+      "L": [
+        "L06",
+        "L12",
+        "L13",
+        "L15"
+      ],
+      "F": [
+        "F06",
+        "F07",
+        "F09",
+        "F10",
+        "F17"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A14",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04",
+        "I05"
+      ],
+      "gate": "三份基础输入缺一先补；事实只来自资料/知识库；按内容线区分查重。",
+      "note": "附Schema标记建议；官网部署路径需要独立CMS适配，不能直接等同yxer分发。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-website-content-expert.md",
+      "title": "网站内容创作专家",
+      "declaredSkills": [
+        "geo-content-engine"
+      ],
+      "tools": [
+        "create_design_work",
+        "get_unified_material_library_items",
+        "get_personal_center_overview",
+        "get_brand_business_assets",
+        "get_brand_archive_summary",
+        "get_brand_products",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_current_brand_context",
+        "manage_brand_library",
+        "create_knowledge_base",
+        "upload_knowledge_base_files",
+        "get_douyin_material_library_items",
+        "get_wechat_collection_workspace",
+        "get_xiaohongshu_material_library_items"
+      ]
+    },
+    "geo-publish-expert": {
+      "id": "geo-publish-expert",
+      "role": "把已完成内容送往指定平台，并报告每账号结果。",
+      "inputs": "成品HTML/图片/视频、目标平台和账号、授权范围",
+      "outputs": "逐平台payload、上传资源、预演结果、发布回执/失败项",
+      "O": [
+        "O05",
+        "O14",
+        "O20",
+        "O29",
+        "O44"
+      ],
+      "L": [
+        "L08",
+        "L15",
+        "L27"
+      ],
+      "F": [
+        "F09",
+        "F18",
+        "F26"
+      ],
+      "A": [
+        "A16",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I03",
+        "I04",
+        "I05",
+        "I08"
+      ],
+      "gate": "查询schema→上传真实资源→同payload校验/预演→按授权提交；逐平台处理结果。",
+      "note": "该角色使用外部蚁小二CLI，不是品牌MCP原生发布工具；建议中台登记回执，不能声称已经自动回写。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/geo-local-business-optimizer/agents/geo-publish-expert.md",
+      "title": "多平台内容分发专家",
+      "declaredSkills": [
+        "yixiaoer"
+      ],
+      "tools": []
+    },
+    "quanyu-huke-team-lead": {
+      "id": "quanyu-huke-team-lead",
+      "role": "按C端/B端/区域属性选获客路线，做跨渠道归并。",
+      "inputs": "品牌客群、产品、城市、竞品、连接器与现有线索",
+      "outputs": "渠道组合、去重后的候选清单、来源统计、异常/跟进建议",
+      "O": [
+        "O01",
+        "O02",
+        "O07",
+        "O31",
+        "O32",
+        "O33",
+        "O41"
+      ],
+      "L": [
+        "L01",
+        "L16",
+        "L17",
+        "L18",
+        "L23"
+      ],
+      "F": [
+        "F01",
+        "F03",
+        "F19"
+      ],
+      "A": [
+        "A18",
+        "A19",
+        "A20",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07",
+        "I09"
+      ],
+      "gate": "B端和本地路线按品牌适用性触发；候选数量与真实高意向数量分别统计。",
+      "note": "三条C端路线共用评论候选库；全部同步的规则不能覆盖“高意向必须有信号证据”的业务定义。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/quanyu-huke-team-lead.md",
+      "title": "增长操盘手",
+      "declaredSkills": [],
+      "tools": [
+        "create_ai_control_center_comment_leads",
+        "get_ai_control_center_comment_leads",
+        "delete_ai_control_center_comment_lead"
+      ]
+    },
+    "comment-lead-expert": {
+      "id": "comment-lead-expert",
+      "role": "从作品评论形成有来源的个人候选清单。",
+      "inputs": "品牌画像、小红书/抖音作品及评论",
+      "outputs": "评论用户候选、原评论/作品链接、来源平台与去重统计",
+      "O": [
+        "O02",
+        "O07",
+        "O31"
+      ],
+      "L": [
+        "L16",
+        "L01"
+      ],
+      "F": [
+        "F04",
+        "F19"
+      ],
+      "A": [
+        "A02",
+        "A18",
+        "A20",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07"
+      ],
+      "gate": "全量模式matchKeywords=[]只说明全部收口；不自动标成高意向。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/comment-lead-expert.md",
+      "title": "评论获客专家",
+      "declaredSkills": [],
+      "tools": [
+        "delete_ai_control_center_comment_lead",
+        "create_ai_control_center_comment_leads",
+        "get_ai_control_center_comment_leads"
+      ]
+    },
+    "target-user-lead-expert": {
+      "id": "target-user-lead-expert",
+      "role": "按目标画像检索公开账号并分级匹配。",
+      "inputs": "目标客群画像、公开用户资料",
+      "outputs": "目标用户清单、匹配档位、入选理由和重叠项",
+      "O": [
+        "O01",
+        "O02",
+        "O07",
+        "O31"
+      ],
+      "L": [
+        "L16",
+        "L01"
+      ],
+      "F": [
+        "F04",
+        "F19"
+      ],
+      "A": [
+        "A02",
+        "A18",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07"
+      ],
+      "gate": "目标用户模块无数据就报异常；不得伪造账号。",
+      "note": "文档让它收口评论库，但原A18不接任意用户items。需要核验来源数据转换链，或增加通用候选写入Action。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/target-user-lead-expert.md",
+      "title": "目标用户获客专家",
+      "declaredSkills": [],
+      "tools": [
+        "create_ai_control_center_comment_leads"
+      ]
+    },
+    "competitor-intercept-expert": {
+      "id": "competitor-intercept-expert",
+      "role": "从已确认竞品作品中找出公开品类需求。",
+      "inputs": "品牌差异、确认竞品、作品互动与评论",
+      "outputs": "分级候选、意向原文、可切入卖点、竞品来源",
+      "O": [
+        "O02",
+        "O05",
+        "O07",
+        "O31"
+      ],
+      "L": [
+        "L02",
+        "L16"
+      ],
+      "F": [
+        "F04",
+        "F19"
+      ],
+      "A": [
+        "A02",
+        "A18",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07"
+      ],
+      "gate": "竞品先确认；公开信号用于判断，不能凭此认定客户愿意被联系。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/competitor-intercept-expert.md",
+      "title": "竞品截流获客专家",
+      "declaredSkills": [],
+      "tools": [
+        "create_ai_control_center_comment_leads"
+      ]
+    },
+    "local-merchant-lead-expert": {
+      "id": "local-merchant-lead-expert",
+      "role": "找同城商家、异业伙伴和本地达人。",
+      "inputs": "城市/商圈/品类、合作类型、POI与工商连接器",
+      "outputs": "商家表与达人表、联系方式缺项、合作理由",
+      "O": [
+        "O01",
+        "O32",
+        "O33",
+        "O07"
+      ],
+      "L": [
+        "L17",
+        "L18",
+        "L16"
+      ],
+      "F": [
+        "F03",
+        "F19",
+        "F20"
+      ],
+      "A": [
+        "A19",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07",
+        "I08"
+      ],
+      "gate": "无区域属性可跳过；不同主体分别去重。",
+      "note": "文档只明确输出两张表，A19为商家表建议归档映射；达人应走达人候选/匹配域，不塞入企业线索表。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/local-merchant-lead-expert.md",
+      "title": "本地商家获客专家",
+      "declaredSkills": [],
+      "tools": []
+    },
+    "b2b-lead-expert": {
+      "id": "b2b-lead-expert",
+      "role": "通过工商数据找到可核验的目标企业。",
+      "inputs": "B端客群、地区/行业/规模/经营范围、企查查；地图可选",
+      "outputs": "企业名称/信用代码/状态/联系/业务范围/地址/理由及Excel",
+      "O": [
+        "O01",
+        "O02",
+        "O32"
+      ],
+      "L": [
+        "L17",
+        "L02"
+      ],
+      "F": [
+        "F03",
+        "F19"
+      ],
+      "A": [
+        "A19",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I07",
+        "I08"
+      ],
+      "gate": "仅B端适用；经营范围来自工商源；地图只能补POI信息。",
+      "note": "资料要求多于旧接口可存字段：信用代码/经营状态/来源需扩展；不要把完整交付在落库时静默丢掉。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/quanyu-huke-team/agents/b2b-lead-expert.md",
+      "title": "B端获客专家",
+      "declaredSkills": [],
+      "tools": [
+        "get_company_by_query",
+        "get_contact_info",
+        "get_company_profile"
+      ]
+    },
+    "kol-screening-team-team-lead": {
+      "id": "kol-screening-team-team-lead",
+      "role": "组织找达人、形成匹配、确认跟踪和后续效果评估。",
+      "inputs": "品牌策略、预算/合作目标、已有达人记录",
+      "outputs": "候选→匹配→跟踪→作品评估的汇总状态",
+      "O": [
+        "O01",
+        "O08",
+        "O33",
+        "O34",
+        "O35",
+        "O36",
+        "O41"
+      ],
+      "L": [
+        "L18",
+        "L19",
+        "L20",
+        "L23"
+      ],
+      "F": [
+        "F01",
+        "F03",
+        "F20",
+        "F21"
+      ],
+      "A": [
+        "A21",
+        "A22",
+        "A23",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I04",
+        "I06",
+        "I09"
+      ],
+      "gate": "可仅匹配或仅复盘；确认后再建跟踪记录。",
+      "note": "",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/kol-screening-team/agents/kol-screening-team-team-lead.md",
+      "title": "达人合作总监",
+      "declaredSkills": [],
+      "tools": [
+        "manage_brand_library",
+        "get_archive_summary",
+        "get_ip_library",
+        "manage_growth_reports",
+        "get_openclaw_marketing_plans",
+        "sync_douyin_search_works",
+        "get_douyin_collection_workspace",
+        "create_douyin_creator_deep_fetch_tasks",
+        "create_ai_control_center_creator_matches",
+        "create_ai_control_center_creator_tracking_work"
+      ]
+    },
+    "kol-matcher": {
+      "id": "kol-matcher",
+      "role": "搜索、补抓并给出品牌相关的达人推荐理由。",
+      "inputs": "品牌/IP/产品/营销方案、关键词/粉丝区间/内容筛选条件",
+      "outputs": "达人池、深抓状态、匹配列表和推荐理由",
+      "O": [
+        "O01",
+        "O02",
+        "O03",
+        "O08",
+        "O33",
+        "O34"
+      ],
+      "L": [
+        "L01",
+        "L18",
+        "L19"
+      ],
+      "F": [
+        "F01",
+        "F04",
+        "F20"
+      ],
+      "A": [
+        "A02",
+        "A21",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03"
+      ],
+      "gate": "缺受众/作品数据先补抓；不编造粉丝画像。",
+      "note": "推荐理由是品牌特定关系属性，适合放匹配对象而不是改全局达人档案。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/kol-screening-team/agents/kol-matcher.md",
+      "title": "达人匹配专家",
+      "declaredSkills": [],
+      "tools": [
+        "manage_brand_library",
+        "get_archive_summary",
+        "get_ip_library",
+        "get_brand_products",
+        "get_current_brand_context",
+        "manage_growth_reports",
+        "get_openclaw_marketing_plans",
+        "get_brand_archive_summary",
+        "sync_douyin_search_works",
+        "get_douyin_collection_workspace",
+        "create_douyin_creator_deep_fetch_tasks",
+        "create_ai_control_center_creator_matches"
+      ]
+    },
+    "kol-tracker": {
+      "id": "kol-tracker",
+      "role": "建立跟踪档案、关联合作作品、刷新并评估表现。",
+      "inputs": "已确认达人、作品链接、已有跟踪数据",
+      "outputs": "合作作品、指标更新、resultEvaluation、nextAction、刷新周期",
+      "O": [
+        "O33",
+        "O35",
+        "O36",
+        "O21"
+      ],
+      "L": [
+        "L19",
+        "L20",
+        "L09"
+      ],
+      "F": [
+        "F04",
+        "F21",
+        "F26"
+      ],
+      "A": [
+        "A22",
+        "A23",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I06",
+        "I08"
+      ],
+      "gate": "有正确trackingId才建作品；刷新失败保留错误与最后成功时间。",
+      "note": "建议复投/暂停不是已执行新的合作；商务签约/付款不在这份专家证据中。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/kol-screening-team/agents/kol-tracker.md",
+      "title": "达人跟踪专家",
+      "declaredSkills": [],
+      "tools": [
+        "get_ai_control_center_creator_tracking_workspace",
+        "get_ai_control_center_creator_tracking_works",
+        "create_ai_control_center_creator_tracking_work",
+        "update_ai_control_center_creator_tracking_work",
+        "delete_ai_control_center_creator_tracking_work",
+        "delete_ai_control_center_creator_tracking_record"
+      ]
+    },
+    "tencent-ads-team-lead": {
+      "id": "tencent-ads-team-lead",
+      "role": "统筹品牌数据、历史投放、创意方案和复盘。",
+      "inputs": "中台品牌/多平台内容数据、广告账户与历史",
+      "outputs": "数据简报、HTML创意/复盘方案、中台归档和后续安排",
+      "O": [
+        "O01",
+        "O07",
+        "O08",
+        "O37",
+        "O38",
+        "O39",
+        "O41"
+      ],
+      "L": [
+        "L02",
+        "L21",
+        "L22",
+        "L23"
+      ],
+      "F": [
+        "F01",
+        "F03",
+        "F22",
+        "F23"
+      ],
+      "A": [
+        "A24",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I09"
+      ],
+      "gate": "无投放历史可用空白基线；无在投广告时复盘按适用规则跳过。",
+      "note": "中台负责资料和方案存储，腾讯广告实体由外部投放平台管理。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/tencent-ads/agents/tencent-ads-team-lead.md",
+      "title": "投流总监",
+      "declaredSkills": [],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary",
+        "get_brand_archive_survey",
+        "get_brand_products",
+        "get_brand_business_assets",
+        "get_platform_accounts",
+        "get_brand_competitor_accounts",
+        "get_brand_industry_feeds",
+        "get_recent_knowledge_files",
+        "get_douyin_collection_workspace",
+        "get_xiaohongshu_collection_workspace",
+        "get_wechat_collection_workspace",
+        "get_unified_material_library_items",
+        "get_douyin_material_library_items",
+        "get_xiaohongshu_material_library_items",
+        "get_openclaw_marketing_plans",
+        "get_ai_control_center_tencent_ad_leads",
+        "create_ai_control_center_tencent_ad_lead",
+        "delete_ai_control_center_tencent_ad_lead"
+      ]
+    },
+    "ad-creative-strategist": {
+      "id": "ad-creative-strategist",
+      "role": "把事实卖点、受众痛点和内容表现做成三类广告创意。",
+      "inputs": "品牌简报、历史效果、既有内容策略",
+      "outputs": "图文/短视频/长文章创意矩阵、定向建议、A/B测试排期HTML",
+      "O": [
+        "O02",
+        "O07",
+        "O08",
+        "O12",
+        "O37",
+        "O39"
+      ],
+      "L": [
+        "L02",
+        "L21",
+        "L22"
+      ],
+      "F": [
+        "F07",
+        "F23"
+      ],
+      "A": [
+        "A06",
+        "A26"
+      ],
+      "I": [
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "没有投放数据明示首次投放；创意建议不操作账户。",
+      "note": "A24由专家团汇编归档；本专家提交创作产物即可。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/tencent-ads/agents/ad-creative-strategist.md",
+      "title": "品牌广告创意策划专家",
+      "declaredSkills": [],
+      "tools": []
+    },
+    "ad-campaign-manager": {
+      "id": "ad-campaign-manager",
+      "role": "查询与操作外部广告账户，核验投放条件并做效果分析。",
+      "inputs": "account_id、真实素材/落地页、预算出价/定向/转化目标、操作授权",
+      "outputs": "历史报表、可行性判断、批准配置的执行回执、效果建议",
+      "O": [
+        "O14",
+        "O37",
+        "O38",
+        "O39",
+        "O44"
+      ],
+      "L": [
+        "L21",
+        "L22",
+        "L27"
+      ],
+      "F": [
+        "F09",
+        "F22",
+        "F24",
+        "F26"
+      ],
+      "A": [
+        "A25",
+        "A26",
+        "A28"
+      ],
+      "I": [
+        "I02",
+        "I04",
+        "I06",
+        "I08"
+      ],
+      "gate": "先get-rules/资产等动态查询；oCPM/oCPC需转化配置；写操作有明确授权。",
+      "note": "预算/定向/关键词/人群增删是Action；报告与建议是Function；不能统称“调用广告接口”。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/tencent-ads/agents/ad-campaign-manager.md",
+      "title": "创意广告管理专家",
+      "declaredSkills": [],
+      "tools": []
+    },
+    "design-creator": {
+      "id": "design-creator",
+      "role": "按用途设计海报、KV、品牌VI、人像、社交图片与UI。",
+      "inputs": "文案、用途、尺寸、品牌资料、真实产品/参考图",
+      "outputs": "设计哲学/视觉简报、提示词、设计成品；VI含令牌与应用规范",
+      "O": [
+        "O01",
+        "O02",
+        "O14",
+        "O15",
+        "O40",
+        "O44"
+      ],
+      "L": [
+        "L06",
+        "L07",
+        "L26",
+        "L27"
+      ],
+      "F": [
+        "F09",
+        "F10",
+        "F25"
+      ],
+      "A": [
+        "A06",
+        "A07",
+        "A26"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04"
+      ],
+      "gate": "按需先确认方向；生成后检查文字、尺寸和品牌一致性。",
+      "note": "只有一个本地design-toolkit技能，但它覆盖多个设计类型。其允许的工具路径与其他包不同，不能全局硬套同一降级规则。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/design-creator/agents/design-creator.md",
+      "title": "视觉设计专家",
+      "declaredSkills": [
+        "design-toolkit"
+      ],
+      "tools": [
+        "create_design_work",
+        "get_design_workspace_options"
+      ]
+    },
+    "brand-omni-growth-expert": {
+      "id": "brand-omni-growth-expert",
+      "role": "全域增长策略专家团主理人，负责信息充分性判断、成员分工、总策略整合和报告交付。",
+      "inputs": "品牌资料库、产品资料库、公域经营信息、私域经营信息、资源与约束、12个月目标、最新品牌增长报告",
+      "outputs": "品牌全域增长策略报告、待补充事实清单、下游执行指引、报告归档说明",
+      "O": [
+        "O01",
+        "O02",
+        "O03",
+        "O04",
+        "O46",
+        "O47",
+        "O48",
+        "O49",
+        "O50",
+        "O41",
+        "O42",
+        "O43",
+        "O45"
+      ],
+      "L": [
+        "L02",
+        "L23",
+        "L24",
+        "L25",
+        "L28",
+        "L29",
+        "L30"
+      ],
+      "F": [
+        "F01",
+        "F02",
+        "F03",
+        "F28",
+        "F29",
+        "F30"
+      ],
+      "A": [
+        "A02",
+        "A29",
+        "A30",
+        "A31",
+        "A26",
+        "A27"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I09",
+        "I10",
+        "I11",
+        "I12"
+      ],
+      "gate": "报告生成前必须先判断信息充分性；缺失经营数据必须标注待补充/待验证；报告归档后才能作为下游策略上下文。",
+      "note": "本轮已将原目录中的公众号专家错位内容改为全域增长策略专家团。该团队输出策略母版，不替代下游平台执行专家。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/brand-omni-growth-expert/agents/brand-omni-growth-expert.md",
+      "title": "全域增长策略专家团主理人",
+      "declaredSkills": [
+        "品牌运营助手",
+        "brand-omni-growth-analysis"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary",
+        "manage_brand_library",
+        "get_latest_brand_growth_report_summary",
+        "create_brand_growth_report",
+        "manage_growth_reports"
+      ]
+    },
+    "public-geo-growth-strategist": {
+      "id": "public-geo-growth-strategist",
+      "role": "公域与GEO获客策略专家，负责把目标客群痛点和差异化解决方案转成平台内容资产与AI检索可引用证据。",
+      "inputs": "目标客群痛点、产品差异化、公域经营信息、竞品内容、第三方媒体与搜索现状",
+      "outputs": "平台分工、内容选题方向、GEO内容资产、权威证据和获客路径",
+      "O": [
+        "O01",
+        "O02",
+        "O46",
+        "O50"
+      ],
+      "L": [
+        "L28",
+        "L29"
+      ],
+      "F": [
+        "F29"
+      ],
+      "A": [
+        "A30",
+        "A31"
+      ],
+      "I": [
+        "I11",
+        "I12"
+      ],
+      "gate": "不得把GEO写成孤立技术优化；必须回到目标客群痛点和差异化解决方案。",
+      "note": "公域内容获客与GEO获客同源，核心是让人和AI都能识别品牌可信答案。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/brand-omni-growth-expert/agents/public-geo-growth-strategist.md",
+      "title": "公域与GEO获客策略专家",
+      "declaredSkills": [
+        "brand-omni-growth-analysis"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary"
+      ]
+    },
+    "private-lifecycle-growth-strategist": {
+      "id": "private-lifecycle-growth-strategist",
+      "role": "私域生命周期增长专家，负责标签体系、个性化服务、会员活动、首单、复购和唤醒策略。",
+      "inputs": "私域经营信息、客户行为、会员体系、商城系统、标签体系、活动和复购数据",
+      "outputs": "标签分层、生命周期路径、私域活动、个性化内容/服务/产品策略",
+      "O": [
+        "O01",
+        "O02",
+        "O47",
+        "O50"
+      ],
+      "L": [
+        "L28",
+        "L30"
+      ],
+      "F": [
+        "F28",
+        "F30"
+      ],
+      "A": [
+        "A30",
+        "A31"
+      ],
+      "I": [
+        "I11",
+        "I12"
+      ],
+      "gate": "当前私域模块未完全接入执行时，只输出策略和建设路径，不伪造自动化执行结果。",
+      "note": "私域增长重点是提升转化率、客单价和复购，而不是简单发券或群发。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/brand-omni-growth-expert/agents/private-lifecycle-growth-strategist.md",
+      "title": "私域生命周期增长专家",
+      "declaredSkills": [
+        "brand-omni-growth-analysis"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary"
+      ]
+    },
+    "revenue-roi-growth-analyst": {
+      "id": "revenue-roi-growth-analyst",
+      "role": "营收与ROI拆解专家，负责把12个月目标、预算和资源约束拆成增长杠杆与优先级。",
+      "inputs": "目标信息、预算、人力、门店、导购、ERP/CRM/数据系统、历史经营指标",
+      "outputs": "流量、转化率、客单价、复购拆解，ROI前提，资源约束和优先级建议",
+      "O": [
+        "O01",
+        "O48",
+        "O49",
+        "O50"
+      ],
+      "L": [
+        "L28"
+      ],
+      "F": [
+        "F28",
+        "F30"
+      ],
+      "A": [
+        "A30",
+        "A31"
+      ],
+      "I": [
+        "I11",
+        "I12"
+      ],
+      "gate": "缺预算、毛利、客单价或复购数据时，只给测算模型和待补充项。",
+      "note": "所有ROI判断必须标明依据，不允许编造历史经营数据。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/brand-omni-growth-expert/agents/revenue-roi-growth-analyst.md",
+      "title": "营收与ROI拆解专家",
+      "declaredSkills": [
+        "brand-omni-growth-analysis"
+      ],
+      "tools": [
+        "get_current_brand_context",
+        "get_brand_archive_summary"
+      ]
+    },
+    "growth-report-archivist": {
+      "id": "growth-report-archivist",
+      "role": "增长报告归档专家，负责报告完整性检查、提交到【品牌增长报告】并声明下游引用范围。",
+      "inputs": "主理人整合报告、缺失字段清单、来源材料、下游引用说明",
+      "outputs": "已归档的品牌增长报告、报告版本说明、后续模块引用提示",
+      "O": [
+        "O01",
+        "O42",
+        "O50"
+      ],
+      "L": [
+        "L25",
+        "L28"
+      ],
+      "F": [
+        "F28"
+      ],
+      "A": [
+        "A30",
+        "A31"
+      ],
+      "I": [
+        "I12"
+      ],
+      "gate": "报告必须进入【品牌增长报告】；不得归档到每日作品；不得覆盖历史证据。",
+      "note": "报告完成不等于投放、发布或执行完成。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/brand-omni-growth-expert/agents/growth-report-archivist.md",
+      "title": "增长报告归档专家",
+      "declaredSkills": [
+        "brand-omni-growth-analysis"
+      ],
+      "tools": [
+        "create_brand_growth_report",
+        "manage_growth_reports"
+      ]
+    },
+    "wangxiaodong-gzh-article-expert": {
+      "id": "wangxiaodong-gzh-article-expert",
+      "role": "示例公众号：选题、写作、排版配图、公众号提交和复盘的独立专家",
+      "inputs": "品牌/IP、新闻/案例信源、7天内容记录、账号、既有方法和素材",
+      "outputs": "日选题计划、文章/HTML/配图、工作流/草稿回执、日/周复盘及优化建议",
+      "O": [
+        "O01",
+        "O03",
+        "O05",
+        "O06",
+        "O07",
+        "O10",
+        "O11",
+        "O14",
+        "O15",
+        "O18",
+        "O19",
+        "O20",
+        "O21",
+        "O22",
+        "O23",
+        "O43",
+        "O45"
+      ],
+      "L": [
+        "L02",
+        "L03",
+        "L06",
+        "L07",
+        "L08",
+        "L09",
+        "L10",
+        "L24"
+      ],
+      "F": [
+        "F01",
+        "F04",
+        "F06",
+        "F07",
+        "F09",
+        "F10",
+        "F11",
+        "F12",
+        "F18"
+      ],
+      "A": [
+        "A02",
+        "A05",
+        "A06",
+        "A07",
+        "A11",
+        "A12",
+        "A13",
+        "A26",
+        "A27"
+      ],
+      "I": [
+        "I01",
+        "I02",
+        "I03",
+        "I04",
+        "I05",
+        "I06",
+        "I10"
+      ],
+      "gate": "工作流会话和稿件版本一致；文章检查/配图检查完成后按本次授权提交；日常任务记使用版本，结构修改才发新版。",
+      "note": "文件夹名brand-omni-growth-expert容易误读：其正文实际是公众号运营专家。两份公众号长文档存在大量共用规则和不同IP设定；建议共享方法版本、分离品牌配置，不能当两套完全不同中台对象。",
+      "evidence": "资料/AI全域运营智能体/workbuddy专家技能文档/wangxiaodong-gzh-article-expert/agents/wangxiaodong-gzh-article-expert.md",
+      "title": "微信公众号运营专家",
+      "declaredSkills": [
+        "品牌运营助手",
+        "tencent-yuanbao-standard-search",
+        "multi-search-engine",
+        "wechat-viral-topic",
+        "wechat-viral-writer",
+        "wechat-article-pro-plus",
+        "wechat-article-pro",
+        "wechat-writing-system",
+        "wechat-article-preset-preview",
+        "khazix-writer",
+        "remove-ai-flavor"
+      ],
+      "tools": [
+        "create_design_work",
+        "manage_wechat_workflow",
+        "generate_images",
+        "set_html",
+        "create_wechat_article",
+        "sync_wechat_benchmark_articles",
+        "sync_wechat_search_articles",
+        "get_ai_control_center_daily_plans",
+        "get_douyin_collection_workspace",
+        "create_ai_control_center_daily_plan",
+        "create_workflow",
+        "set_article",
+        "generate_html",
+        "check_wechat_workflow_publish_readiness",
+        "publish_wechat_workflow",
+        "publish_wechat_article",
+        "check_readiness",
+        "publish_workflow",
+        "save_preferences",
+        "create_ai_control_center_lobster_diary",
+        "get_ai_control_center_lobster_diaries",
+        "set_images",
+        "get_wechat_workflow_sessions",
+        "get_wechat_official_accounts",
+        "get_recent_design_works",
+        "get_design_workspace_options",
+        "get_current_brand_context",
+        "delete_workflow",
+        "delete_wechat_collected_article",
+        "delete_draft",
+        "get_wechat_workflow_session_detail",
+        "get_wechat_publish_history",
+        "set_publish_config",
+        "get_wechat_collection_workspace",
+        "fetch_wechat_brand_articles",
+        "sync_wechat_brand_accounts"
+      ]
+    }
+  },
+  "flows": {
+    "douyin-fullflow-ops": [
+      "品牌/资料",
+      "策略（可选入口）",
+      "选题确认",
+      "创作包",
+      "配置确认",
+      "WorkBuddy制作",
+      "成片归档",
+      "数据复盘"
+    ],
+    "xiaohongshu-fullflow-ops": [
+      "品牌/策略",
+      "选题与7天去重",
+      "原创/二创分路",
+      "文案检查",
+      "封面配图",
+      "笔记归档",
+      "双维复盘"
+    ],
+    "geo-local-business-optimizer": [
+      "品牌资料",
+      "可见度诊断",
+      "四层词库",
+      "网站诊断（有URL）",
+      "知识库",
+      "优化方案",
+      "三线内容",
+      "分发/官网落地"
+    ],
+    "quanyu-huke-team": [
+      "品牌属性",
+      "C端/B端/区域分路",
+      "公开数据采集",
+      "候选收口",
+      "身份去重",
+      "意向核验",
+      "可跟进清单"
+    ],
+    "kol-screening-team": [
+      "品牌/策略",
+      "达人搜索/深抓",
+      "匹配推荐",
+      "确认跟踪",
+      "合作作品",
+      "周期刷新",
+      "效果评估"
+    ],
+    "tencent-ads": [
+      "品牌+内容数据",
+      "广告历史",
+      "创意矩阵",
+      "规则/资产校验",
+      "投放授权",
+      "外部执行",
+      "数据复盘"
+    ],
+    "design-creator": [
+      "设计需求",
+      "视觉简报",
+      "真实资产/参数",
+      "方案或提示词",
+      "生成/设计",
+      "检查",
+      "交付归档"
+    ],
+    "brand-omni-growth-expert": [
+      "资料与信源",
+      "选题/日计划",
+      "文章创作",
+      "排版配图",
+      "工作流检查",
+      "授权提交",
+      "日/周复盘"
+    ],
+    "wangxiaodong-gzh-article-expert": [
+      "个人品牌/信源",
+      "选题/日计划",
+      "文章创作",
+      "排版配图",
+      "工作流检查",
+      "授权提交",
+      "日/周复盘"
+    ]
+  },
+  "workflows": {
+    "brand-omni-growth-expert": [
+      "全域上下文",
+      "信息充分性",
+      "公域/GEO策略",
+      "私域生命周期",
+      "营收ROI拆解",
+      "报告生成",
+      "品牌增长报告归档",
+      "下游策略引用"
+    ]
+  }
+}

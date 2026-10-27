@@ -1,0 +1,1490 @@
+import { requireCurrentBrandId, getStoredCurrentBrandId } from "./auth-session";
+import { DEFAULT_BRAND_ID } from "./brand-growth";
+import { jsonRequest, request } from "./http";
+
+export type XhsAccountRole = "BRAND" | "STAFF" | "TALENT";
+export type XhsSyncAccountEntry = {
+  locator: string;
+  accountRole?: XhsAccountRole;
+};
+
+export type XhsCollectedAccountRecord = {
+  id: string;
+  kind: "XHS_BRAND_ACCOUNT" | "XHS_COMPETITOR_ACCOUNT";
+  sourceAccountId: string;
+  sourceAccountLink: string;
+  accountRole?: XhsAccountRole;
+  accountName: string;
+  externalUserId?: string;
+  postedCount?: number;
+  likedCount?: number;
+  collectedCount?: number;
+  avatar?: string;
+  description?: string;
+  ipLocation?: string;
+  followCount?: number;
+  fanCount?: number;
+  collectedAt: string;
+};
+
+export type XhsCollectedNoteRecord = {
+  id: string;
+  sourceAccountId: string;
+  noteId: string;
+  title: string;
+  noteType?: string;
+  nickname?: string;
+  imageList?: string[];
+  externalUserId?: string;
+  noteUrl?: string;
+  description?: string;
+  likeCount?: number;
+  collectCount?: number;
+  createdAtText?: string;
+  shareCount?: number;
+  commentCount?: number;
+  likeCollectRatio?: number;
+  likeCommentRatio?: number;
+  shareRatio?: number;
+  isExplosive?: string;
+  followUpDecision?: string;
+  videoUrl?: string;
+  collectedAt: string;
+  sourceUrl?: string;
+  syncStatus?: "IDLE" | "RUNNING" | "SUCCESS" | "FAILED";
+  retryCount?: number;
+  nextRetryAt?: string;
+  lastError?: string;
+  isInMaterialLibrary?: boolean;
+  materialAddedAt?: string;
+  sourceTableId?: string;
+  sourceRecordId?: string;
+  rawFields?: Record<string, unknown>;
+};
+
+export type XhsCollectedTargetUserRecord = {
+  id: string;
+  sourceUrl: string;
+  profileUrl?: string;
+  userId?: string;
+  nickname: string;
+  noteTitle?: string;
+  sourceCommentId?: string;
+  commentText?: string;
+  matchedKeyword?: string;
+  collectedAt: string;
+  syncStatus: "IDLE" | "RUNNING" | "SUCCESS" | "FAILED";
+  retryCount: number;
+  nextRetryAt?: string;
+  lastError?: string;
+};
+
+export type XhsCollectionWorkspace = {
+  brandAccounts: XhsCollectedAccountRecord[];
+  competitorAccounts: XhsCollectedAccountRecord[];
+  brandNotes: XhsCollectedNoteRecord[];
+  benchmarkNotes: XhsCollectedNoteRecord[];
+  searchNotes: XhsCollectedNoteRecord[];
+  commentData: XhsCommentRecord[];
+  targetUsers: XhsCollectedTargetUserRecord[];
+};
+
+export type XhsSyncPayload = {
+  accountLocators?: string[];
+  accountEntries?: XhsSyncAccountEntry[];
+  sourceUrls?: string[];
+  pageRequests?: XhsCommentPageRequest[];
+};
+
+export type XhsCommentRecord = {
+  id: string;
+  kind: "XHS_NOTE_COMMENT";
+  noteId: string;
+  noteUrl: string;
+  sourceUrl: string;
+  commentId: string;
+  commentText: string;
+  commentTime?: string;
+  commentUserName?: string;
+  commentUserId?: string;
+  commentUserProfileUrl?: string;
+  likeCount?: number;
+  replyCount?: number;
+  collectedAt: string;
+};
+
+export type XhsCommentPageRequest = {
+  sourceUrl: string;
+  cursor?: string;
+  index?: number;
+};
+
+export type XhsCommentPaginationState = {
+  sourceUrl: string;
+  noteId: string;
+  requestedCursor: string;
+  requestedIndex: number;
+  nextCursor: string;
+  nextIndex: number;
+  hasMore: boolean;
+  fetchedCount: number;
+};
+
+export type XhsSubCommentRecord = {
+  id: string;
+  kind: "XHS_NOTE_SUB_COMMENT";
+  noteId: string;
+  noteUrl: string;
+  sourceUrl: string;
+  parentCommentId: string;
+  commentId: string;
+  commentText: string;
+  commentTime?: string;
+  commentUserName?: string;
+  commentUserId?: string;
+  likeCount?: number;
+  collectedAt: string;
+};
+
+export type XhsSubCommentPaginationState = {
+  parentCommentId: string;
+  nextCursor: string;
+  nextIndex: number;
+  hasMore: boolean;
+  fetchedCount: number;
+};
+
+export type DouyinCollectedAccountRecord = {
+  id: string;
+  kind: "DOUYIN_BRAND_ACCOUNT" | "DOUYIN_COMPETITOR_ACCOUNT";
+  sourceAccountId: string;
+  sourceAccountLink?: string;
+  accountLink?: string;
+  accountRole?: XhsAccountRole;
+  externalUserId?: string;
+  accountName: string;
+  username?: string;
+  shortId?: string;
+  avatar?: string;
+  description?: string;
+  postedCount?: number;
+  likedCount?: number;
+  fanCount?: number;
+  followCount?: number;
+  ipLocation?: string;
+  enterpriseVerifyReason?: string;
+  customVerify?: string;
+  collectedAt: string;
+  rawFields?: Record<string, unknown>;
+};
+
+export type DouyinContentTagOption = {
+  label: string;
+  value: number;
+  children: Array<{
+    label: string;
+    value: number;
+  }>;
+};
+export type DouyinCityOption = {
+  label: string;
+  value: number;
+};
+export type DouyinCreatorSearchFieldOption = {
+  label: string;
+  value: string;
+};
+export type DouyinCreatorSearchFieldOptions = {
+  searchTypes: DouyinCreatorSearchFieldOption[];
+  timeRangeDays: DouyinCreatorSearchFieldOption[];
+  sortFields: DouyinCreatorSearchFieldOption[];
+  sortTypes: DouyinCreatorSearchFieldOption[];
+  firstIndustries: DouyinCreatorSearchFieldOption[];
+  marketingTargets: DouyinCreatorSearchFieldOption[];
+  taskCategories: DouyinCreatorSearchFieldOption[];
+  tags: DouyinCreatorSearchFieldOption[];
+};
+export type DouyinCityHotspotTrendRecord = {
+  datetime: string;
+  hotScore?: number;
+};
+
+export type DouyinCollectedWorkRecord = {
+  id: string;
+  kind:
+    | "DOUYIN_BRAND_WORK"
+    | "DOUYIN_COMPETITOR_WORK"
+    | "DOUYIN_BENCHMARK_WORK"
+    | "DOUYIN_SEARCH_WORK"
+    | "DOUYIN_LOW_FAN_EXPLOSIVE_WORK"
+    | "DOUYIN_HIGH_COMPLETION_RATE_WORK"
+    | "DOUYIN_HIGH_LIKE_RATE_WORK";
+  sourceAccountId: string;
+  sourceAccountLink?: string;
+  workId: string;
+  title: string;
+  description?: string;
+  workType?: string;
+  authorName?: string;
+  authorUniqueId?: string;
+  externalUserId?: string;
+  workUrl?: string;
+  coverUrl?: string;
+  imageList?: string[];
+  videoUrl?: string;
+  videoSourceUrl?: string;
+  videoStoragePath?: string;
+  hashtags?: string[];
+  publishTimeText?: string;
+  durationMs?: number;
+  mediaType?: number;
+  awemeType?: number;
+  musicTitle?: string;
+  musicAuthor?: string;
+  likeCount?: number;
+  playCount?: number;
+  shareCount?: number;
+  commentCount?: number;
+  collectCount?: number;
+  downloadCount?: number;
+  recommendCount?: number;
+  likeCollectRatio?: number;
+  likeCommentRatio?: number;
+  shareRatio?: number;
+  isExplosive?: string;
+  followUpDecision?: string;
+  statsPatched?: boolean;
+  authorFollowerCount?: number;
+  authorLikedCount?: number;
+  authorAvatar?: string;
+  collectedAt: string;
+  videoCacheStatus?: "PENDING" | "READY" | "FAILED" | "EXPIRED";
+  videoCacheLastError?: string;
+  transcript?: string;
+  transcriptSource?: string;
+  transcriptStatus?: "PENDING" | "SUCCESS" | "FAILED";
+  transcriptLastError?: string;
+  transcriptStatusUpdatedAt?: string;
+  transcribedAt?: string;
+  rawFields?: Record<string, unknown>;
+  isInMaterialLibrary?: boolean;
+  materialAddedAt?: string;
+  billboardLabel?: string;
+  primaryTagLabel?: string;
+  secondaryTagLabel?: string;
+  score?: number;
+};
+export type DouyinKeywordRecommendationRecord = {
+  id: string;
+  kind: "DOUYIN_KEYWORD_RECOMMENDATION";
+  searchKeyword: string;
+  recommendedKeyword: string;
+  searchTime?: string;
+  collectedAt: string;
+  queryId?: string;
+  wordsSource?: string;
+  position?: number;
+};
+export type DouyinCommentRecord = {
+  id: string;
+  kind: "DOUYIN_COMMENT";
+  sourceWorkId: string;
+  sourceWorkUrl: string;
+  sourceSecUserId: string;
+  commentId: string;
+  commentText: string;
+  commentTime?: string;
+  commentUserName?: string;
+  commentUserSecUserId: string;
+  commentUserProfileUrl?: string;
+  likeCount?: number;
+  replyCount?: number;
+  collectedAt: string;
+};
+
+export type DouyinCollectedTargetUserRecord = {
+  id: string;
+  sourceUrl: string;
+  profileUrl?: string;
+  secUserId?: string;
+  nickname: string;
+  workTitle?: string;
+  sourceCommentId?: string;
+  commentText?: string;
+  matchedKeyword?: string;
+  collectedAt: string;
+  syncStatus: "IDLE" | "RUNNING" | "SUCCESS" | "FAILED";
+  retryCount: number;
+  nextRetryAt?: string;
+  lastError?: string;
+};
+
+export type DouyinCommentPageRequest = {
+  sourceUrl: string;
+  cursor?: string;
+};
+
+export type DouyinCommentPaginationState = {
+  sourceUrl: string;
+  sourceWorkId: string;
+  requestedCursor: string;
+  nextCursor: string;
+  hasMore: boolean;
+  fetchedCount: number;
+};
+export type DouyinCityHotspotRecord = {
+  id: string;
+  kind: "DOUYIN_CITY_HOTSPOT";
+  cityCode: number;
+  cityLabel: string;
+  rank: number;
+  rankDiff?: number;
+  sentence: string;
+  sentenceId?: string;
+  createAtText?: string;
+  hotScore?: number;
+  videoCount?: number;
+  sentenceTag?: number;
+  trends: DouyinCityHotspotTrendRecord[];
+  collectedAt: string;
+};
+
+export type DouyinCreatorSearchRecord = {
+  id: string;
+  kind: "DOUYIN_CREATOR_SEARCH_RESULT";
+  creatorId: string;
+  oAuthorId: string;
+  secUserId?: string;
+  uniqueId?: string;
+  douyinUid?: string;
+  nickname: string;
+  avatar?: string;
+  signature?: string;
+  region?: string;
+  categoryLabels?: string[];
+  contentThemeLabels?: string[];
+  fansCount?: number;
+  expectedPlayCount?: number;
+  interactRate?: number;
+  playOverRate?: number;
+  spreadIndex?: number;
+  price?: number;
+  priceType?: string;
+  cpm?: number;
+  cpe?: number;
+  profileUrl?: string;
+  marketingLabel?: string;
+  taskCategoryLabel?: string;
+  collectedAt: string;
+  rawFields?: Record<string, unknown>;
+};
+
+export type DouyinCreatorProfileRecord = {
+  id: string;
+  kind: "DOUYIN_CREATOR_PROFILE";
+  creatorId: string;
+  oAuthorId: string;
+  secUserId?: string;
+  uniqueId?: string;
+  douyinUid?: string;
+  nickname: string;
+  avatar?: string;
+  signature?: string;
+  region?: string;
+  categoryLabels?: string[];
+  contentThemeLabels?: string[];
+  fansCount?: number;
+  expectedPlayCount?: number;
+  interactRate?: number;
+  playOverRate?: number;
+  spreadIndex?: number;
+  price?: number;
+  priceType?: string;
+  cpm?: number;
+  cpe?: number;
+  profileUrl?: string;
+  contactPhone?: string;
+  contactWechat?: string;
+  contactEmail?: string;
+  mcnName?: string;
+  marketingLabel?: string;
+  taskCategoryLabel?: string;
+  linkType?: number;
+  fansDistributionSummary?: string[];
+  audienceDistributionSummary?: string[];
+  hotCommentTokens?: string[];
+  contentHotKeywords?: string[];
+  recommendedVideoTitles?: string[];
+  homepageVideoCount?: number;
+  recommendedVideoCount?: number;
+  lastTaskId?: string;
+  lastFetchedAt: string;
+  rawFields?: Record<string, unknown>;
+};
+
+export type DouyinCreatorDeepFetchTaskRecord = {
+  id: string;
+  taskType: "DOUYIN_CREATOR_DEEP_FETCH";
+  taskTitle: string;
+  taskStatus: "PENDING" | "QUEUED" | "RUNNING" | "SUCCESS" | "FAILED" | "CANCELLED";
+  creatorId?: string;
+  oAuthorId?: string;
+  creatorName?: string;
+  creatorIdentifier?: string;
+  identityType?: "AUTO" | "O_AUTHOR_ID" | "UID" | "SEC_USER_ID" | "UNIQUE_ID";
+  linkType?: number;
+  errorMessage?: string;
+  startedAt?: string;
+  finishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type DouyinCollectionWorkspace = {
+  brandAccounts: DouyinCollectedAccountRecord[];
+  competitorAccounts: DouyinCollectedAccountRecord[];
+  brandWorks: DouyinCollectedWorkRecord[];
+  competitorWorks: DouyinCollectedWorkRecord[];
+  benchmarkWorks: DouyinCollectedWorkRecord[];
+  searchWorks: DouyinCollectedWorkRecord[];
+  keywordRecommendations: DouyinKeywordRecommendationRecord[];
+  commentData: DouyinCommentRecord[];
+  targetUsers: DouyinCollectedTargetUserRecord[];
+  lowFanExplosiveWorks: DouyinCollectedWorkRecord[];
+  highCompletionRateWorks: DouyinCollectedWorkRecord[];
+  highLikeRateWorks: DouyinCollectedWorkRecord[];
+  cityHotspots: DouyinCityHotspotRecord[];
+  creatorSearchResults: DouyinCreatorSearchRecord[];
+  creatorProfiles: DouyinCreatorProfileRecord[];
+  creatorDeepFetchTasks: DouyinCreatorDeepFetchTaskRecord[];
+  contentTags: DouyinContentTagOption[];
+  cityOptions: DouyinCityOption[];
+  creatorSearchFieldOptions: DouyinCreatorSearchFieldOptions;
+};
+
+export type UnifiedMaterialPlatform = "XIAOHONGSHU" | "DOUYIN" | "WECHAT_MP";
+
+export type UnifiedMaterialLibraryRecord = {
+  id: string;
+  platform: UnifiedMaterialPlatform;
+  platformLabel: "小红书" | "抖音" | "公众号";
+  sourceKind: string;
+  title: string;
+  description?: string;
+  workContent?: string;
+  authorName?: string;
+  publishTimeText?: string;
+  mediaTypeLabel: string;
+  imageCount: number;
+  imageUrls: string[];
+  detailUrl?: string;
+  workUrl?: string;
+  videoUrl?: string;
+  videoDownloadUrl?: string;
+  videoCopy?: string;
+  coverUrl?: string;
+  likeCount?: number;
+  commentCount?: number;
+  shareCount?: number;
+  collectCount?: number;
+  playCount?: number;
+  materialAddedAt?: string;
+  collectedAt: string;
+};
+
+export type UnifiedMaterialOption = {
+  id: string;
+  title: string;
+  videoUrl?: string;
+  platform: UnifiedMaterialPlatform;
+  platformLabel: "小红书" | "抖音" | "公众号";
+  label: string;
+};
+
+export function listXhsMaterialLibraryNotes(workspace: XhsCollectionWorkspace): XhsCollectedNoteRecord[] {
+  const deduped = new Map<string, XhsCollectedNoteRecord>();
+  [...workspace.benchmarkNotes, ...workspace.searchNotes]
+    .filter((item) => item.isInMaterialLibrary)
+    .forEach((item) => {
+      if (!deduped.has(item.id)) {
+        deduped.set(item.id, item);
+      }
+    });
+  return Array.from(deduped.values());
+}
+
+export function listDouyinMaterialLibraryWorks(workspace: DouyinCollectionWorkspace): DouyinCollectedWorkRecord[] {
+  const deduped = new Map<string, DouyinCollectedWorkRecord>();
+  [
+    ...workspace.competitorWorks,
+    ...workspace.benchmarkWorks,
+    ...workspace.searchWorks,
+    ...workspace.lowFanExplosiveWorks,
+    ...workspace.highCompletionRateWorks,
+    ...workspace.highLikeRateWorks,
+  ]
+    .filter((item) => item.isInMaterialLibrary)
+    .forEach((item) => {
+      if (!deduped.has(item.id)) {
+        deduped.set(item.id, item);
+      }
+    });
+  return Array.from(deduped.values());
+}
+
+export function listWechatMaterialLibraryItems(
+  benchmarkWorkspace: WechatMpBenchmarkWorkspace,
+  searchWorkspace: WechatSearchWorkspace,
+): Array<WechatMpBenchmarkArticleRecord | WechatSearchItemRecord> {
+  const deduped = new Map<string, WechatMpBenchmarkArticleRecord | WechatSearchItemRecord>();
+  [...benchmarkWorkspace.benchmarkArticles, ...searchWorkspace.items]
+    .filter((item) => item.isInMaterialLibrary)
+    .forEach((item) => {
+      if (!deduped.has(item.id)) {
+        deduped.set(item.id, item);
+      }
+    });
+  return Array.from(deduped.values());
+}
+
+function resolveUnifiedMaterialSortTime(item: { materialAddedAt?: string; collectedAt: string }) {
+  const timestamp = Date.parse(item.materialAddedAt || item.collectedAt || "");
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+export function buildUnifiedMaterialLibraryItems(
+  xhsWorkspace: XhsCollectionWorkspace,
+  douyinWorkspace: DouyinCollectionWorkspace,
+  wechatBenchmarkWorkspace: WechatMpBenchmarkWorkspace = wechatMpBenchmarkSeed,
+  wechatSearchWorkspace: WechatSearchWorkspace = wechatSearchSeed,
+): UnifiedMaterialLibraryRecord[] {
+  const buildImageUrls = (urls: Array<string | undefined>) =>
+    Array.from(new Set(urls.filter((value): value is string => Boolean(value))));
+
+  const xhsItems: UnifiedMaterialLibraryRecord[] = listXhsMaterialLibraryNotes(xhsWorkspace).map((item) => ({
+    id: item.id,
+    platform: "XIAOHONGSHU",
+    platformLabel: "小红书",
+    sourceKind: item.noteType || (item.videoUrl ? "视频笔记" : "图文笔记"),
+    title: item.title,
+    description: item.description,
+    workContent: item.description || item.title,
+    authorName: item.nickname,
+    publishTimeText: item.createdAtText,
+    mediaTypeLabel: item.videoUrl ? "视频" : "图文",
+    imageCount: item.imageList?.length || 0,
+    imageUrls: buildImageUrls(item.imageList || []),
+    detailUrl: item.noteUrl || item.sourceUrl,
+    workUrl: item.noteUrl || item.sourceUrl,
+    videoUrl: item.videoUrl,
+    videoDownloadUrl: item.videoUrl,
+    videoCopy: item.videoUrl ? item.description || item.title : undefined,
+    coverUrl: item.imageList?.[0],
+    likeCount: item.likeCount,
+    commentCount: item.commentCount,
+    shareCount: item.shareCount,
+    collectCount: item.collectCount,
+    materialAddedAt: item.materialAddedAt,
+    collectedAt: item.collectedAt,
+  }));
+  const douyinItems: UnifiedMaterialLibraryRecord[] = listDouyinMaterialLibraryWorks(douyinWorkspace).map((item) => ({
+    id: item.id,
+    platform: "DOUYIN",
+    platformLabel: "抖音",
+    sourceKind: item.workType || "抖音作品",
+    title: item.title,
+    description: item.description || item.title,
+    workContent: item.description || item.title,
+    authorName: item.authorName,
+    publishTimeText: item.publishTimeText,
+    mediaTypeLabel: item.videoUrl ? "视频" : item.imageList?.length ? "图文" : "未知",
+    imageCount: buildImageUrls([item.coverUrl, ...(item.imageList || [])]).length,
+    imageUrls: buildImageUrls([item.coverUrl, ...(item.imageList || [])]),
+    detailUrl: item.workUrl,
+    workUrl: item.workUrl,
+    videoUrl: item.videoUrl,
+    videoDownloadUrl: item.videoUrl,
+    videoCopy: item.transcript || (item.videoUrl ? item.description || item.title : undefined),
+    coverUrl: item.coverUrl || item.imageList?.[0],
+    likeCount: item.likeCount,
+    commentCount: item.commentCount,
+    shareCount: item.shareCount,
+    collectCount: item.collectCount,
+    playCount: item.playCount,
+    materialAddedAt: item.materialAddedAt,
+    collectedAt: item.collectedAt,
+  }));
+  const wechatItems: UnifiedMaterialLibraryRecord[] = listWechatMaterialLibraryItems(
+    wechatBenchmarkWorkspace,
+    wechatSearchWorkspace,
+  ).map((item) => ({
+    id: item.id,
+    platform: "WECHAT_MP",
+    platformLabel: "公众号",
+    sourceKind: "公众号文章",
+    title: item.title,
+    description: "desc" in item ? item.desc : undefined,
+    workContent: item.articleContent || ("desc" in item ? item.desc : undefined) || item.title,
+    authorName: "jumpInfoNickName" in item ? item.jumpInfoNickName : undefined,
+    publishTimeText: "publishTime" in item ? item.publishTime : undefined,
+    mediaTypeLabel: "图文",
+    imageCount: "images" in item ? item.images?.length || 0 : 0,
+    imageUrls: "images" in item ? buildImageUrls(item.images || []) : [],
+    detailUrl: item.url,
+    workUrl: item.url,
+    likeCount: item.likeCount,
+    commentCount: item.commentCount,
+    shareCount: item.shareCount,
+    collectCount: item.collectCount,
+    playCount: item.readNum,
+    materialAddedAt: item.materialAddedAt,
+    collectedAt: item.collectedAt,
+  }));
+  return [...xhsItems, ...douyinItems, ...wechatItems].sort(
+    (left, right) => resolveUnifiedMaterialSortTime(right) - resolveUnifiedMaterialSortTime(left),
+  );
+}
+
+export function buildUnifiedMaterialOptions(
+  xhsWorkspace: XhsCollectionWorkspace,
+  douyinWorkspace: DouyinCollectionWorkspace,
+  wechatBenchmarkWorkspace: WechatMpBenchmarkWorkspace = wechatMpBenchmarkSeed,
+  wechatSearchWorkspace: WechatSearchWorkspace = wechatSearchSeed,
+): UnifiedMaterialOption[] {
+  return buildUnifiedMaterialLibraryItems(
+    xhsWorkspace,
+    douyinWorkspace,
+    wechatBenchmarkWorkspace,
+    wechatSearchWorkspace,
+  ).map((item) => ({
+    id: item.id,
+    title: item.title,
+    videoUrl: item.videoUrl,
+    platform: item.platform,
+    platformLabel: item.platformLabel,
+    label: `[${item.platformLabel}] ${item.title}`,
+  }));
+}
+
+export type DouyinSyncPayload = {
+  scope?:
+    | "brandAccount"
+    | "competitorAccount"
+    | "brandWorks"
+    | "competitorWorks"
+    | "benchmarkWorks"
+    | "searchWorks"
+    | "keywordRecommendations"
+    | "commentData"
+    | "lowFanExplosiveWorks"
+    | "highCompletionRateWorks"
+    | "highLikeRateWorks"
+    | "cityHotspots";
+  brandAccountLinks?: string[];
+  competitorAccountLinks?: string[];
+  brandAccountEntries?: XhsSyncAccountEntry[];
+  competitorAccountEntries?: XhsSyncAccountEntry[];
+  benchmarkAwemeIds?: string[];
+  searchKeyword?: string;
+  searchSortType?: string;
+  searchPublishTime?: string;
+  searchFilterDuration?: string;
+  searchContentType?: string;
+  commentSourceUrls?: string[];
+  commentPageRequests?: DouyinCommentPageRequest[];
+  contentTagSelection?: {
+    primaryTagId?: number;
+    secondaryTagId?: number;
+  };
+  cityCode?: number;
+};
+
+export type DouyinCreatorIdentityType = "AUTO" | "O_AUTHOR_ID" | "UID" | "SEC_USER_ID" | "UNIQUE_ID";
+
+export type DouyinCreatorSearchPayload = {
+  keyword?: string;
+  seachType?: string;
+  timeRangeDays?: string;
+  page?: number;
+  sortField?: string;
+  sortType?: string;
+  taskCategory?: string;
+  marketingTarget?: string;
+  firstIndustryId?: string;
+  authorListId?: string;
+  tag?: string;
+  personaTags?: string;
+  gender?: string;
+  fansMin?: string;
+  fansMax?: string;
+  expectedPlayMin?: string;
+  expectedPlayMax?: string;
+  cpmMin?: string;
+  cpmMax?: string;
+  cpeMin?: string;
+  cpeMax?: string;
+  interactRateMin?: string;
+  interactRateMax?: string;
+  playOverRateMin?: string;
+  playOverRateMax?: string;
+  burstTextRateMin?: string;
+  burstTextRateMax?: string;
+  priceType?: string;
+  priceMin?: string;
+  priceMax?: string;
+  extraFilter?: string;
+};
+
+export type DouyinCreatorDeepFetchPayload = {
+  identifiers?: string[];
+  identityType?: DouyinCreatorIdentityType;
+  linkType?: number;
+  homepageVideoPageLimit?: number;
+};
+
+export type DouyinCreatorResultPoolPayload = {
+  searchResultIds?: string[];
+};
+
+export const xhsCollectionSeed: XhsCollectionWorkspace = {
+  brandAccounts: [
+    {
+      id: "ast_demo_xhs_brand_account_001",
+      kind: "XHS_BRAND_ACCOUNT",
+      sourceAccountId: "acc_demo_001",
+      sourceAccountLink: "https://www.xiaohongshu.com/user/profile/demo",
+      accountRole: "BRAND",
+      accountName: "武汉仟吉烘焙",
+      externalUserId: "xhs_brand_demo_001",
+      postedCount: 18,
+      likedCount: 3680,
+      collectedCount: 920,
+      avatar: "https://oss.example.com/avatar/qianji.png",
+      description: "区域烘焙品牌官方账号",
+      ipLocation: "湖北",
+      followCount: 126,
+      fanCount: 12680,
+      collectedAt: "2026-05-02T09:10:00.000Z",
+    },
+  ],
+  competitorAccounts: [
+    {
+      id: "ast_demo_xhs_competitor_account_001",
+      kind: "XHS_COMPETITOR_ACCOUNT",
+      sourceAccountId: "cmp_demo_001",
+      sourceAccountLink: "https://www.xiaohongshu.com/user/profile/comp-a",
+      accountRole: "BRAND",
+      accountName: "区域烘焙竞品A",
+      externalUserId: "xhs_comp_demo_001",
+      postedCount: 32,
+      likedCount: 5820,
+      collectedCount: 1430,
+      avatar: "https://oss.example.com/avatar/comp-a.png",
+      description: "区域竞品小红书账号",
+      ipLocation: "上海",
+      followCount: 215,
+      fanCount: 28400,
+      collectedAt: "2026-05-02T09:12:00.000Z",
+    },
+  ],
+  brandNotes: [
+    {
+      id: "ast_demo_xhs_note_001",
+      sourceAccountId: "acc_demo_001",
+      noteId: "demo-note-001",
+      title: "武汉仟吉爆浆提拉米苏值得买吗？",
+      noteType: "nomal",
+      nickname: "武汉仟吉烘焙",
+      imageList: ["https://oss.example.com/demo/note-001-1.jpg", "https://oss.example.com/demo/note-001-2.jpg"],
+      externalUserId: "xhs_brand_demo_001",
+      noteUrl: "https://www.xiaohongshu.com/explore/demo-note-001",
+      description: "门店新品种草向图文笔记",
+      likeCount: 186,
+      collectCount: 92,
+      createdAtText: "2026-05-02 09:15:00",
+      shareCount: 24,
+      commentCount: 16,
+      videoUrl: undefined,
+      collectedAt: "2026-05-02T09:15:00.000Z",
+    },
+  ],
+  benchmarkNotes: [],
+  searchNotes: [],
+  commentData: [],
+  targetUsers: [],
+};
+
+export const douyinCollectionSeed: DouyinCollectionWorkspace = {
+  brandAccounts: [
+    {
+      id: "ast_demo_douyin_brand_account_001",
+      kind: "DOUYIN_BRAND_ACCOUNT",
+      sourceAccountId: "MS4wLjABAAAA-brand-demo",
+      externalUserId: "92163827336",
+      accountName: "品牌抖音示例账号",
+      username: "brand_demo",
+      shortId: "BD2026",
+      accountLink: "https://www.douyin.com/user/MS4wLjABAAAA-brand-demo",
+      description: "品牌官方账号，日常发布新品、门店活动与短视频内容。",
+      postedCount: 128,
+      likedCount: 3480000,
+      fanCount: 126000,
+      followCount: 128,
+      ipLocation: "湖北",
+      enterpriseVerifyReason: "品牌官方账号",
+      customVerify: "本地生活品牌",
+      collectedAt: "2026-05-20T08:00:00.000Z",
+    },
+  ],
+  competitorAccounts: [
+    {
+      id: "ast_demo_douyin_competitor_account_001",
+      kind: "DOUYIN_COMPETITOR_ACCOUNT",
+      sourceAccountId: "MS4wLjABAAAA-competitor-demo",
+      externalUserId: "88210000123",
+      accountName: "竞品抖音示例账号",
+      username: "competitor_demo",
+      shortId: "CP2026",
+      accountLink: "https://www.douyin.com/user/MS4wLjABAAAA-competitor-demo",
+      description: "区域竞品账号，内容重心偏活动引流与门店转化。",
+      postedCount: 216,
+      likedCount: 5210000,
+      fanCount: 208000,
+      followCount: 96,
+      ipLocation: "上海",
+      enterpriseVerifyReason: "企业认证",
+      customVerify: "区域烘焙连锁",
+      collectedAt: "2026-05-20T08:02:00.000Z",
+    },
+  ],
+  brandWorks: [
+    {
+      id: "ast_demo_douyin_brand_work_001",
+      kind: "DOUYIN_BRAND_WORK",
+      sourceAccountId: "MS4wLjABAAAA-brand-demo",
+      workId: "7592116912205630761",
+      title: "新品上新图文示例",
+      description: "围绕新品口味、门店场景和转化话术展开的图文作品。",
+      workType: "图文",
+      authorName: "品牌抖音示例账号",
+      authorUniqueId: "brand_demo",
+      externalUserId: "92163827336",
+      workUrl: "https://www.douyin.com/note/7592116912205630761",
+      hashtags: ["新品上新", "门店活动", "本地生活"],
+      publishTimeText: "2026-05-20 00:31:28",
+      musicTitle: "作品原声",
+      musicAuthor: "品牌抖音示例账号",
+      likeCount: 4567,
+      playCount: 238961,
+      shareCount: 69,
+      commentCount: 128,
+      collectCount: 245,
+      downloadCount: 0,
+      statsPatched: true,
+      collectedAt: "2026-05-20T08:05:00.000Z",
+    },
+  ],
+  competitorWorks: [],
+  benchmarkWorks: [
+    {
+      id: "ast_demo_douyin_benchmark_work_001",
+      kind: "DOUYIN_BENCHMARK_WORK",
+      sourceAccountId: "MS4wLjABAAAA-competitor-demo",
+      workId: "7126745726494821640",
+      title: "竞品爆款短视频示例",
+      description: "竞品围绕节日热点制作的高播放视频，用于后续对标分析。",
+      workType: "短视频",
+      authorName: "竞品抖音示例账号",
+      authorUniqueId: "competitor_demo",
+      externalUserId: "88210000123",
+      workUrl: "https://www.douyin.com/video/7126745726494821640",
+      hashtags: ["节日营销", "门店爆款", "转化视频"],
+      publishTimeText: "2026-05-20 00:18:31",
+      durationMs: 32000,
+      musicTitle: "热门 BGM",
+      musicAuthor: "平台音乐库",
+      likeCount: 36566,
+      playCount: 1222750,
+      shareCount: 8491,
+      commentCount: 962,
+      collectCount: 2215,
+      downloadCount: 4515,
+      likeCollectRatio: 16.51,
+      likeCommentRatio: 38,
+      shareRatio: 0.69,
+      isExplosive: "是",
+      followUpDecision: "待拆解脚本",
+      statsPatched: true,
+      collectedAt: "2026-05-20T08:08:00.000Z",
+    },
+  ],
+  searchWorks: [],
+  keywordRecommendations: [],
+  commentData: [],
+  targetUsers: [],
+  lowFanExplosiveWorks: [],
+  highCompletionRateWorks: [],
+  highLikeRateWorks: [],
+  cityHotspots: [],
+  creatorSearchResults: [],
+  creatorProfiles: [],
+  creatorDeepFetchTasks: [],
+  contentTags: [],
+  cityOptions: [],
+  creatorSearchFieldOptions: {
+    searchTypes: [],
+    timeRangeDays: [],
+    sortFields: [],
+    sortTypes: [],
+    firstIndustries: [],
+    marketingTargets: [],
+    taskCategories: [],
+    tags: [],
+  },
+};
+
+export async function getDouyinCollectionWorkspace(brandId?: string) {
+  return request<DouyinCollectionWorkspace>(`/collectors/douyin/brands/${resolveBrandId(brandId)}/workspace`);
+}
+
+export async function syncDouyinCollectionWorkspace(payload: DouyinSyncPayload = {}, brandId?: string) {
+  return jsonRequest<{
+    syncedCount: number;
+    breakdown: {
+      brandAccounts: number;
+      competitorAccounts: number;
+      brandWorks: number;
+      competitorWorks: number;
+      benchmarkWorks: number;
+      searchWorks: number;
+      keywordRecommendations: number;
+      commentData: number;
+      targetUsers: number;
+      lowFanExplosiveWorks: number;
+      highCompletionRateWorks: number;
+      highLikeRateWorks: number;
+      cityHotspots: number;
+    };
+    commentPagination: DouyinCommentPaginationState[];
+    warnings?: string[];
+    workspace: DouyinCollectionWorkspace;
+  }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function searchDouyinCreators(payload: DouyinCreatorSearchPayload = {}, brandId?: string) {
+  return jsonRequest<{
+    syncedCount: number;
+    items: DouyinCreatorSearchRecord[];
+    workspace: DouyinCollectionWorkspace;
+  }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/creator-search`,
+    "POST",
+    payload,
+  );
+}
+
+export async function createDouyinCreatorDeepFetchTasks(payload: DouyinCreatorDeepFetchPayload = {}, brandId?: string) {
+  return jsonRequest<{
+    createdCount: number;
+    tasks: DouyinCreatorDeepFetchTaskRecord[];
+    workspace: DouyinCollectionWorkspace;
+  }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/creator-deep-fetch-tasks`,
+    "POST",
+    payload,
+  );
+}
+
+export async function addDouyinCreatorsToResultPool(payload: DouyinCreatorResultPoolPayload = {}, brandId?: string) {
+  return jsonRequest<{
+    importedCount: number;
+    items: DouyinCreatorProfileRecord[];
+    workspace: DouyinCollectionWorkspace;
+  }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/creator-result-pool`,
+    "POST",
+    payload,
+  );
+}
+
+export async function addDouyinBenchmarkWorkToMaterialLibrary(assetId: string, brandId?: string) {
+  return jsonRequest<{ item: DouyinCollectedWorkRecord; workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/material-library`,
+    "POST",
+    { assetId },
+  );
+}
+
+export async function removeDouyinBenchmarkWorkFromMaterialLibrary(assetId: string, brandId?: string) {
+  return jsonRequest<{ item: DouyinCollectedWorkRecord; workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/material-library/${assetId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function deleteDouyinCollectedWork(assetId: string, brandId?: string) {
+  return jsonRequest<{ workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/works/${assetId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function deleteDouyinBrandAccount(accountId: string, brandId?: string) {
+  return jsonRequest<{ workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/brand-accounts/${accountId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function deleteDouyinCompetitorAccount(accountId: string, brandId?: string) {
+  return jsonRequest<{ workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/competitor-accounts/${accountId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function extractDouyinWorkTranscript(assetId: string, brandId?: string) {
+  return jsonRequest<{ item: DouyinCollectedWorkRecord; workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/transcripts`,
+    "POST",
+    { assetId },
+  );
+}
+
+export async function removeDouyinKeywordRecommendation(assetId: string, brandId?: string) {
+  return jsonRequest<{ workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/keyword-recommendations/${assetId}`,
+    "DELETE",
+    {},
+  );
+}
+
+function resolveBrandId(brandId?: string) {
+  return brandId || requireCurrentBrandId();
+}
+
+export async function getXiaohongshuCollectionWorkspace(brandId?: string) {
+  return request<XhsCollectionWorkspace>(`/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/workspace`);
+}
+
+export async function syncXiaohongshuBrandAccounts(payload: XhsSyncPayload = {}, brandId?: string) {
+  return jsonRequest<{ syncedCount: number; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/brand-accounts/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncXiaohongshuCompetitorAccounts(payload: XhsSyncPayload = {}, brandId?: string) {
+  return jsonRequest<{ syncedCount: number; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/competitor-accounts/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncXiaohongshuBrandNotes(payload: XhsSyncPayload = {}, brandId?: string) {
+  return jsonRequest<{ syncedCount: number; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/brand-notes/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncXiaohongshuBenchmarkNotes(sourceUrls: string[], brandId?: string) {
+  return jsonRequest<{ syncedCount: number; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/benchmark-notes/sync`,
+    "POST",
+    { sourceUrls },
+  );
+}
+
+export async function syncXiaohongshuSearchNotes(keyword: string, brandId?: string) {
+  return jsonRequest<{ syncedCount: number; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/search-notes/sync`,
+    "POST",
+    { keyword },
+  );
+}
+
+export async function syncXiaohongshuCommentData(payload: XhsSyncPayload = {}, brandId?: string) {
+  return jsonRequest<{
+    syncedCount: number;
+    commentPagination: XhsCommentPaginationState[];
+    warnings?: string[];
+    workspace: XhsCollectionWorkspace;
+  }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/comment-data/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function getXiaohongshuCommentReplies(
+  payload: {
+    sourceUrl: string;
+    commentId: string;
+    cursor?: string;
+    index?: number;
+  },
+  brandId?: string,
+) {
+  return jsonRequest<{
+    items: XhsSubCommentRecord[];
+    pagination: XhsSubCommentPaginationState;
+  }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/comment-data/sub-comments`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncXiaohongshuTargetUsers(
+  payload: { sourceUrls?: string[]; matchKeywords?: string[]; syncCommentsFirst?: boolean } = {},
+  brandId?: string,
+) {
+  return jsonRequest<{ syncedCount: number; warnings?: string[]; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/target-users/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncDouyinTargetUsers(
+  payload: { sourceUrls?: string[]; matchKeywords?: string[]; syncCommentsFirst?: boolean } = {},
+  brandId?: string,
+) {
+  return jsonRequest<{ syncedCount: number; warnings?: string[]; workspace: DouyinCollectionWorkspace }>(
+    `/collectors/douyin/brands/${resolveBrandId(brandId)}/target-users/sync`,
+    "POST",
+    payload,
+  );
+}
+
+export async function syncXiaohongshuFromFeishu(brandId?: string) {
+  return jsonRequest<{
+    syncedCount: number;
+    tableCount: number;
+    workspace: XhsCollectionWorkspace;
+    matchedTables: {
+      brandAccounts: { tableId: string; tableName: string } | null;
+      competitorAccounts: { tableId: string; tableName: string } | null;
+      brandNotes: { tableId: string; tableName: string } | null;
+      benchmarkNotes: { tableId: string; tableName: string } | null;
+      targetUsers: { tableId: string; tableName: string } | null;
+    };
+    syncBreakdown: {
+      brandAccounts: number;
+      competitorAccounts: number;
+      brandNotes: number;
+      benchmarkNotes: number;
+      targetUsers: number;
+    };
+    workspaceCounts: {
+      brandAccounts: number;
+      competitorAccounts: number;
+      brandNotes: number;
+      benchmarkNotes: number;
+      targetUsers: number;
+    };
+  }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/feishu-sync`,
+    "POST",
+    {},
+  );
+}
+
+export async function addBenchmarkNoteToMaterialLibrary(assetId: string, brandId?: string) {
+  return jsonRequest<{ item: XhsCollectedNoteRecord; workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/material-library`,
+    "POST",
+    { assetId },
+  );
+}
+
+export async function deleteXhsCollectedNote(assetId: string, brandId?: string) {
+  return jsonRequest<{ workspace: XhsCollectionWorkspace }>(
+    `/collectors/xiaohongshu/brands/${resolveBrandId(brandId)}/notes/${assetId}`,
+    "DELETE",
+    {},
+  );
+}
+
+// ─── 公众号采集 ───
+
+export type WechatMpBrandAccountRecord = {
+  id: string;
+  ghUsername: string;
+  accountName: string;
+  collectedAt: string;
+};
+
+export type WechatMpArticleRecord = {
+  id: string;
+  sourceAccountId: string;
+  ghUsername?: string;
+  appMsgId?: string;
+  title: string;
+  digest?: string;
+  url: string;
+  cover?: string;
+  createTime?: string;
+  updateTime?: string;
+  idx?: number;
+  readNum?: number;
+  likeCount?: number;
+  oldLikeCount?: number;
+  shareCount?: number;
+  collectCount?: number;
+  commentCount?: number;
+  starNum?: number;
+  statsUpdatedAt?: string;
+  articleContent?: string;
+  contentReadAt?: string;
+  collectedAt: string;
+};
+
+export type WechatMpCollectionWorkspace = {
+  brandAccounts: WechatMpBrandAccountRecord[];
+  articles: WechatMpArticleRecord[];
+};
+
+export type WechatMpArticleFetchResult = {
+  isEnd: boolean;
+  nextOffset?: string;
+  count: number;
+  articles: WechatMpArticleRecord[];
+  workspace: WechatMpCollectionWorkspace;
+};
+
+export const wechatMpCollectionSeed: WechatMpCollectionWorkspace = {
+  brandAccounts: [],
+  articles: [],
+};
+
+export async function getWechatMpCollectionWorkspace(brandId?: string) {
+  return request<WechatMpCollectionWorkspace>(`/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/workspace`);
+}
+
+export async function bindWechatMpBrandAccount(ghUsername: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpBrandAccountRecord; workspace: WechatMpCollectionWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/brand-accounts`,
+    "POST",
+    { ghUsername },
+  );
+}
+
+export async function deleteWechatMpBrandAccount(accountId: string, brandId?: string) {
+  return jsonRequest<{ workspace: WechatMpCollectionWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/brand-accounts/${accountId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function fetchWechatMpArticles(ghUsername: string, offset?: string, brandId?: string) {
+  return jsonRequest<WechatMpArticleFetchResult>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/articles/fetch`,
+    "POST",
+    { ghUsername, offset },
+  );
+}
+
+export async function updateWechatMpArticleStats(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpArticleRecord; workspace: WechatMpCollectionWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/articles/stats`,
+    "POST",
+    { url },
+  );
+}
+
+export async function readWechatMpArticleContent(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpArticleRecord; workspace: WechatMpCollectionWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/articles/read`,
+    "POST",
+    { url },
+  );
+}
+
+// ─── 公众号对标作品 ───
+
+export type WechatMpBenchmarkArticleRecord = {
+  id: string;
+  title: string;
+  articleContent?: string;
+  url: string;
+  readNum?: number;
+  likeCount?: number;
+  shareCount?: number;
+  collectCount?: number;
+  commentCount?: number;
+  starNum?: number;
+  statsUpdatedAt?: string;
+  contentReadAt?: string;
+  isInMaterialLibrary?: boolean;
+  materialAddedAt?: string;
+  collectedAt: string;
+};
+
+export type WechatMpBenchmarkWorkspace = {
+  benchmarkArticles: WechatMpBenchmarkArticleRecord[];
+};
+
+export const wechatMpBenchmarkSeed: WechatMpBenchmarkWorkspace = {
+  benchmarkArticles: [],
+};
+
+export async function getWechatMpBenchmarkWorkspace(brandId?: string) {
+  return request<WechatMpBenchmarkWorkspace>(`/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/benchmark-workspace`);
+}
+
+export async function submitWechatMpBenchmarkArticle(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpBenchmarkArticleRecord; workspace: WechatMpBenchmarkWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/benchmark-articles/submit`,
+    "POST",
+    { url },
+  );
+}
+
+export async function updateWechatMpBenchmarkArticleStats(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpBenchmarkArticleRecord; workspace: WechatMpBenchmarkWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/benchmark-articles/stats`,
+    "POST",
+    { url },
+  );
+}
+
+export async function addWechatMpBenchmarkArticleToMaterialLibrary(articleId: string, brandId?: string) {
+  return jsonRequest<{ item: WechatMpBenchmarkArticleRecord; workspace: WechatMpBenchmarkWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/benchmark-articles/material-library`,
+    "POST",
+    { articleId },
+  );
+}
+
+export async function deleteWechatMpArticle(articleId: string, brandId?: string) {
+  return jsonRequest<{ workspace: WechatMpCollectionWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/articles/${articleId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function deleteWechatMpBenchmarkArticle(articleId: string, brandId?: string) {
+  return jsonRequest<{ workspace: WechatMpBenchmarkWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/benchmark-articles/${articleId}`,
+    "DELETE",
+    {},
+  );
+}
+
+export async function deleteWechatSearchItem(itemId: string, brandId?: string) {
+  return jsonRequest<{ workspace: WechatSearchWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search-items/${itemId}`,
+    "DELETE",
+    {},
+  );
+}
+
+// ─── 微信搜一搜 ───
+
+export type WechatSearchBusinessType =
+  | "all" | "account" | "article" | "video" | "live_stream"
+  | "moments" | "news" | "book" | "listen" | "image" | "encyclopedia" | "weixin_index";
+export type WechatSearchSortType = "default" | "latest" | "hot";
+export type WechatSearchPublishTime = "all" | "day" | "week" | "half_year";
+
+export type WechatSearchItemRecord = {
+  id: string;
+  title: string;
+  articleContent?: string;
+  desc?: string;
+  docId?: string;
+  accTypeName?: string;
+  url?: string;
+  images?: string[];
+  publishTime?: string;
+  jumpInfoUserName?: string;
+  jumpInfoNickName?: string;
+  jumpInfoSignature?: string;
+  readNum?: number;
+  likeCount?: number;
+  shareCount?: number;
+  collectCount?: number;
+  commentCount?: number;
+  starNum?: number;
+  statsUpdatedAt?: string;
+  contentReadAt?: string;
+  isInMaterialLibrary?: boolean;
+  materialAddedAt?: string;
+  collectedAt: string;
+};
+
+export type WechatSearchResult = {
+  keyword: string;
+  businessType: string;
+  total?: number;
+  continueFlag: boolean;
+  offset: number;
+  count: number;
+  items: WechatSearchItemRecord[];
+};
+
+export type WechatSearchWorkspace = {
+  items: WechatSearchItemRecord[];
+};
+
+export const wechatSearchSeed: WechatSearchWorkspace = {
+  items: [],
+};
+
+export async function getWechatSearchWorkspace(brandId?: string) {
+  return request<WechatSearchWorkspace>(`/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search-workspace`);
+}
+
+export async function searchWechat(
+  keyword: string,
+  businessType: WechatSearchBusinessType = "all",
+  sort: WechatSearchSortType = "default",
+  publishTime: WechatSearchPublishTime = "all",
+  offset: number = 0,
+  brandId?: string,
+) {
+  return jsonRequest<WechatSearchResult>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search`,
+    "POST",
+    { keyword, businessType, sort, publishTime, offset },
+  );
+}
+
+export async function readWechatSearchItemContent(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatSearchItemRecord; workspace: WechatSearchWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search-items/read`,
+    "POST",
+    { url },
+  );
+}
+
+export async function updateWechatSearchItemStats(url: string, brandId?: string) {
+  return jsonRequest<{ item: WechatSearchItemRecord; workspace: WechatSearchWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search-items/stats`,
+    "POST",
+    { url },
+  );
+}
+
+export async function addWechatSearchItemToMaterialLibrary(itemId: string, brandId?: string) {
+  return jsonRequest<{ item: WechatSearchItemRecord; workspace: WechatSearchWorkspace }>(
+    `/collectors/wechat-mp/brands/${resolveBrandId(brandId)}/search-items/material-library`,
+    "POST",
+    { itemId },
+  );
+}

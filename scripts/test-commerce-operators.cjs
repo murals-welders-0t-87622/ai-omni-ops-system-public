@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict'),{normalizeCommerceOperationSpec:normalize}=require('@ai-omni/shared/commerce-operations');
+const {commerceOperatorAction:run}=require('../apps/server/dist/apps/server/src/modules/openclaw/commerce-operator-actions');
+let checks=0;const check=async(n,f)=>{await f();checks++;console.log('PASS '+n)};
+const spec={module:'pricing',parameters:[{key:'itemId',value:'123'},{key:'targetPrice',value:'39.90'}]};
+const plan={id:'p',brandId:'b',title:'plan',metadataJson:{kind:'COMMERCE_OPERATIONS_PLAN',revision:3,shopId:'s',operatingMap:{initiatives:[{id:'i',actionKey:'a',title:'价格测试',settings:'按实际SKU核对',operation:spec}]}}},rows=[plan];
+const db={businessAsset:{findFirst:async({where})=>rows.find(r=>r.id===where.id&&r.brandId===where.brandId),create:async({data})=>{rows.push(data);return data},update:async({where,data})=>Object.assign(rows.find(r=>r.id===where.id),data)}};
+const p={planId:'p',planRevision:3,initiativeId:'i',operation:spec,expectedRevision:0,executionNotes:'明确模拟，无真实店铺操作'};
+(async()=>{
+await check('parameter types and supported module fields enforced',()=>{assert.deepEqual(normalize(spec),spec);for(const x of [{module:'shell',parameters:[]},{module:'pricing',parameters:[{key:'command',value:'x'}]},{module:'pricing',parameters:[{key:'targetPrice',value:'-1'}]}])assert.throws(()=>normalize(x));});
+await check('same field cannot appear twice',()=>assert.throws(()=>normalize({...spec,parameters:[...spec.parameters,spec.parameters[0]]})));
+await check('other brand cannot prepare operation',()=>assert.rejects(()=>run(db,'foreign','u','commerce_save_operation_draft',p)));
+await check('stale strategy link rejected',()=>assert.rejects(()=>run(db,'b','u','commerce_save_operation_draft',{...p,planRevision:2})));
+await check('operation module matches saved strategy',()=>assert.rejects(()=>run(db,'b','u','commerce_save_operation_draft',{...p,operation:{module:'advertising',parameters:[]}})));
+let saved;await check('execution sheet retains immutable source and revision',async()=>{saved=await run(db,'b','u','commerce_save_operation_draft',p);const row=rows.find(r=>r.id===saved.id);assert.equal(row.metadataJson.shopId,'s');assert.equal(row.metadataJson.planRevision,3);assert.equal(saved.externalExecuted,false);assert.ok(rows.some(r=>r.metadataJson.kind==='COMMERCE_OPERATION_REVISION'));});
+await check('stale execution sheet cannot overwrite',()=>assert.rejects(()=>run(db,'b','u','commerce_save_operation_draft',{...p,operationId:saved.id,expectedRevision:0})));
+await check('receipt cannot masquerade as independently verified',async()=>{const r=await run(db,'b','u','commerce_record_operation_receipt',{operationId:saved.id,expectedRevision:1,operationReceipt:{status:'reported_success',toolName:'QA manual platform',externalTaskId:'test',evidence:'明确模拟回执',afterEvidence:'模拟改后状态'}});assert.equal(r.evidenceStatus,'user_reported');assert.equal(r.externalExecuted,false);assert.equal(plan.metadataJson.operatingMap.initiatives[0].status,undefined);});
+await check('claimed success needs after-state evidence',()=>assert.rejects(()=>run(db,'b','u','commerce_record_operation_receipt',{operationId:saved.id,expectedRevision:1,operationReceipt:{status:'reported_success',toolName:'test',externalTaskId:'',evidence:'receipt',afterEvidence:''}})));
+await check('unconnected direct execution fails honestly',()=>assert.rejects(()=>run(db,'b','u','commerce_execute_operation',{operationId:saved.id,expectedRevision:1})));
+console.log(JSON.stringify({checks}));
+})().catch(e=>{console.error(e);process.exitCode=1});

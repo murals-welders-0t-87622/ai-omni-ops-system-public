@@ -1,0 +1,21 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript'),Module=require('node:module');
+const file=path.resolve(__dirname,'../apps/web/src/app/tabs/ecommerce/operations-view-model.ts');
+const compiled=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const moduleCopy=new Module(file,module);moduleCopy._compile(compiled,file);const v=moduleCopy.exports;
+let checks=0;const check=(n,f)=>{f();checks++;console.log('PASS '+n)};
+const legacy={report:'# 运营方案\n说明：建议未执行\n\n## 先改善商品承接，再扩量\n\n01 / 经营判断\n先改善商品承接，再扩量\n真实数据支持的判断，保留限制。\n\n## 行动路线\n先做说明，再观察数据。',actions:[{title:'修商品说明',stage:'merchandising',dueDate:'2026-11-02',status:'proposed'},{title:'核流量',stage:'traffic',dueDate:'2026-10-30',status:'closed'},{title:'客服FAQ',stage:'service',dueDate:'',status:'in_progress'}]};
+check('四个经营视图有独立标识',()=>assert.equal(new Set(v.COMMERCE_OPERATION_VIEWS.map(x=>x.key)).size,4));
+check('旧方案没有growth仍能读取经营方向',()=>assert.equal(v.commerceLegacyDirection(legacy).title,'先改善商品承接，再扩量'));
+check('旧正文只整理重复标题，不生成新判断',()=>assert.equal(v.commerceLegacyDirection(legacy).body,'真实数据支持的判断，保留限制。'));
+check('无Markdown章节时保留完整旧报告',()=>assert.equal(v.commerceLegacyDirection({report:'用户已有的完整意见'}).body,'用户已有的完整意见'));
+check('阶段路线按已有期限排列，未排期保留',()=>assert.deepEqual(v.commercePlanMilestones(legacy).map(x=>x.dueDate),['2026-10-30','2026-11-02','']));
+check('策略和执行均保留全部旧行动',()=>{assert.equal(v.commercePlanActions(legacy).length,3);assert.equal(v.commerceExecutionRows(legacy).length,3)});
+check('已关闭计划不当已执行或有效果',()=>assert.deepEqual(v.commerceExecutionSummary(legacy),{planned:3,withEvidence:0,withComparableResult:0}));
+check('没有方案和未排数据不造业务结果',()=>{assert.deepEqual(v.commerceExecutionSummary(null),{planned:0,withEvidence:0,withComparableResult:0});assert.equal(v.commerceLegacyDirection(undefined),undefined)});
+check('部分新字段不能吞掉可用旧报告',()=>{assert.equal(v.commerceStructuredGrowth({...legacy,growth:{}}),undefined);assert.ok(v.commerceLegacyDirection({...legacy,growth:{}}))});
+check('新版复测按稳定行动键关联而非行号',()=>{
+ const p={actions:[{key:'b'},{key:'a'},{key:'no-experiment'}],growth:{experiments:[{actionKey:'a',executionEvidence:'实际回执',executedOn:'2026-10-20'},{actionKey:'b',executionEvidence:'',executedOn:''}]},growthReview:[{comparable:true,after:'8'},{comparable:false}]};
+ const rows=v.commerceExecutionRows(p);assert.equal(rows[1].experiments[0].review.after,'8');assert.equal(rows[2].experiments.length,0);assert.deepEqual(v.commerceExecutionSummary(p),{planned:3,withEvidence:1,withComparableResult:1});
+});
+check('展示派生不改写历史方案',()=>{const before=JSON.stringify(legacy);v.commercePlanMilestones(legacy);v.commerceExecutionRows(legacy);v.commerceReportSections(legacy.report);assert.equal(JSON.stringify(legacy),before)});
+console.log(JSON.stringify({checks}));

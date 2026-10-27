@@ -1,0 +1,7 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),ts=require('typescript'),Module=require('node:module');
+const file=path.resolve(__dirname,'../apps/web/src/services/workspace-access.ts'),m=new Module(file,module);m.paths=module.paths;m._compile(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText,file);const {archiveControlDestination,controlWorkspaceDestination}=m.exports;
+const session=(role='OWNER',systemRole='USER')=>({user:{id:'u',systemRole},currentBrandId:'brand-a',brands:[{id:'brand-a',role},{id:'brand-b',role:'OWNER'}]});
+test('brand owner archive returns to brand control without platform privileges',()=>assert.equal(archiveControlDestination(session()),'/brand-admin'));
+test('brand administrator keeps own workspace on archive return',()=>assert.equal(archiveControlDestination(session('ADMIN')),'/brand-admin'));
+test('platform administrator on platform archive preserves platform return',()=>{assert.equal(archiveControlDestination(session('OWNER','ADMIN_OPERATOR')),'/ai-control');assert.equal(controlWorkspaceDestination(session('OWNER','ADMIN_OPERATOR')),'/brand-admin')});
+test('other brand ownership never grants current brand backend navigation',()=>{assert.equal(archiveControlDestination(session('VIEWER')),'/tabs/brand-control');assert.equal(archiveControlDestination(undefined),'/tabs/brand-control')});

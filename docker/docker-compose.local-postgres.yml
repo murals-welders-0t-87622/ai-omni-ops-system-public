@@ -1,0 +1,136 @@
+name: ai-omni-ops-local
+
+x-server-image: &server-image
+  build:
+    context: ..
+    dockerfile: docker/server.Dockerfile
+    args:
+      INSTALL_LOCAL_ASR: ${INSTALL_LOCAL_ASR:-0}
+  image: ai-omni-ops-local-server
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    container_name: ai-omni-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ai_omni_ops}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      TZ: Asia/Shanghai
+    ports:
+      - "${HOST_POSTGRES_PORT:-15432}:5432"
+    volumes:
+      - ${AI_OMNI_HOST_POSTGRES_ROOT:-./local-data/postgres}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ai_omni_ops}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  db-init:
+    <<: *server-image
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      APP_RUNTIME_MODE: standard
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      PORT: ${APP_PORT:-3011}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_omni_ops}?schema=public
+      WEB_PUBLIC_BASE_URL: ${WEB_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      API_PUBLIC_BASE_URL: ${API_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      WEB_API_BASE_URL: ${WEB_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      STORAGE_PROVIDER_MODE: ${STORAGE_PROVIDER_MODE:-local}
+      MATERIAL_LIBRARY_BASE_ROOT: ${MATERIAL_LIBRARY_BASE_ROOT:-/data/materials}
+      MATERIAL_LIBRARY_DISPLAY_ROOT: ${MATERIAL_LIBRARY_DISPLAY_ROOT:-docker/local-data/materials}
+      MANAGED_STORAGE_ROOT: ${MANAGED_STORAGE_ROOT:-/data/storage}
+      MANAGED_STORAGE_DISPLAY_ROOT: ${MANAGED_STORAGE_DISPLAY_ROOT:-docker/local-data/storage}
+      STANDARD_RUNTIME_UPDATE_MANIFEST_URL: ${STANDARD_RUNTIME_UPDATE_MANIFEST_URL:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-}
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_REGION: ${OSS_REGION:-}
+      VIDEO_TRANSCRIPT_ASR_PRIMARY: ${VIDEO_TRANSCRIPT_ASR_PRIMARY:-paraformer}
+      VIDEO_TRANSCRIPT_ASR_FALLBACK: ${VIDEO_TRANSCRIPT_ASR_FALLBACK:-whisper}
+      LOCAL_ASR_PYTHON_BIN: ${LOCAL_ASR_PYTHON_BIN:-python3}
+      VIDEO_TRANSCRIPT_LANGUAGE: ${VIDEO_TRANSCRIPT_LANGUAGE:-zh}
+      PARAFORMER_MODEL_NAME: ${PARAFORMER_MODEL_NAME:-iic/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch}
+      WHISPER_MODEL_NAME: ${WHISPER_MODEL_NAME:-large-v3}
+      WHISPER_DEVICE: ${WHISPER_DEVICE:-cpu}
+      WHISPER_COMPUTE_TYPE: ${WHISPER_COMPUTE_TYPE:-int8}
+    command: ["sh", "-lc", "npm run db:init:standard"]
+
+  server:
+    <<: *server-image
+    container_name: ai-omni-server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      APP_RUNTIME_MODE: standard
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      PORT: ${APP_PORT:-3011}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_omni_ops}?schema=public
+      WEB_PUBLIC_BASE_URL: ${WEB_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      API_PUBLIC_BASE_URL: ${API_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      WEB_API_BASE_URL: ${WEB_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      STORAGE_PROVIDER_MODE: ${STORAGE_PROVIDER_MODE:-local}
+      MATERIAL_LIBRARY_BASE_ROOT: ${MATERIAL_LIBRARY_BASE_ROOT:-/data/materials}
+      MATERIAL_LIBRARY_DISPLAY_ROOT: ${MATERIAL_LIBRARY_DISPLAY_ROOT:-docker/local-data/materials}
+      MANAGED_STORAGE_ROOT: ${MANAGED_STORAGE_ROOT:-/data/storage}
+      MANAGED_STORAGE_DISPLAY_ROOT: ${MANAGED_STORAGE_DISPLAY_ROOT:-docker/local-data/storage}
+      STANDARD_RUNTIME_UPDATE_MANIFEST_URL: ${STANDARD_RUNTIME_UPDATE_MANIFEST_URL:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-}
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_REGION: ${OSS_REGION:-}
+      VIDEO_TRANSCRIPT_ASR_PRIMARY: ${VIDEO_TRANSCRIPT_ASR_PRIMARY:-paraformer}
+      VIDEO_TRANSCRIPT_ASR_FALLBACK: ${VIDEO_TRANSCRIPT_ASR_FALLBACK:-whisper}
+      LOCAL_ASR_PYTHON_BIN: ${LOCAL_ASR_PYTHON_BIN:-python3}
+      VIDEO_TRANSCRIPT_LANGUAGE: ${VIDEO_TRANSCRIPT_LANGUAGE:-zh}
+      PARAFORMER_MODEL_NAME: ${PARAFORMER_MODEL_NAME:-iic/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch}
+      WHISPER_MODEL_NAME: ${WHISPER_MODEL_NAME:-large-v3}
+      WHISPER_DEVICE: ${WHISPER_DEVICE:-cpu}
+      WHISPER_COMPUTE_TYPE: ${WHISPER_COMPUTE_TYPE:-int8}
+    ports:
+      - "${HOST_API_PORT:-13011}:3011"
+    volumes:
+      - ${AI_OMNI_HOST_DATA_ROOT:-./local-data}:/data
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/web.Dockerfile
+    container_name: ai-omni-web
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: ${WEB_PORT:-3001}
+      HOSTNAME: ${WEB_HOST:-0.0.0.0}
+      WEB_PUBLIC_BASE_URL: ${WEB_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-http://127.0.0.1:${HOST_WEB_PORT:-13001}}
+      API_PUBLIC_BASE_URL: ${API_PUBLIC_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      WEB_API_BASE_URL: ${WEB_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://127.0.0.1:${HOST_API_PORT:-13011}/api}
+      INTERNAL_API_BASE_URL: ${INTERNAL_API_BASE_URL:-http://server:3011/api}
+      API_PROXY_TARGET: ${API_PROXY_TARGET:-http://server:3011/api}
+    ports:
+      - "${HOST_WEB_PORT:-13001}:3001"

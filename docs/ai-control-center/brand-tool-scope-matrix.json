@@ -1,0 +1,2750 @@
+[
+  {
+    "name": "get_brand_execution_profile",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "list_collected_works_for_analysis",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_collected_work_analysis_context",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_work_analysis_taxonomy",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "create_work_analysis_request",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "list_work_analysis_requests",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "update_work_analysis_request",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "submit_work_analysis_result",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "list_work_analysis_results",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_work_analysis_result",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "review_work_analysis_result",
+    "category": "human_review",
+    "reason": "人工审阅决定不作为普通客户端写入能力",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_growth_executor_state",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "report_growth_executor_state",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_growth_cockpit",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "create_growth_plan_request",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "list_growth_plans",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_growth_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "update_growth_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "submit_growth_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "record_growth_metric_fact",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "check_growth_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "list_growth_expert_queue",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "claim_growth_plan_check",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "submit_growth_plan_proposal",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "review_growth_plan_proposal",
+    "category": "human_review",
+    "reason": "人工审阅决定不作为普通客户端写入能力",
+    "handler": "get_brand_execution_profile / GrowthCockpitService / WorkAnalysisService dedicated brand dispatch"
+  },
+  {
+    "name": "get_website_function_catalog",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWebsiteFunctionCatalog",
+    "sourceLine": 16423,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_website_function_detail",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWebsiteFunctionDetail",
+    "sourceLine": 16428,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "route_website_function_by_intent",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "routeWebsiteFunctionByIntent",
+    "sourceLine": 16432,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_website_function_execution_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWebsiteFunctionExecutionPlan",
+    "sourceLine": 16437,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_current_brand_context",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getCurrentBrandContext",
+    "sourceLine": 16445,
+    "guards": [
+      "assertBrandAccess(currentBrandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_products",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandProducts",
+    "sourceLine": 16459,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_platform_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getPlatformAccounts",
+    "sourceLine": 16463,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_archive_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandArchiveSummary",
+    "sourceLine": 16468,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_archive_survey",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandArchiveSurvey",
+    "sourceLine": 16470,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_competitor_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandCompetitorAccounts",
+    "sourceLine": 16474,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_industry_feeds",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandIndustryFeeds",
+    "sourceLine": 16479,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_business_assets",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandBusinessAssets",
+    "sourceLine": 16483,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_collection_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuCollectionWorkspace",
+    "sourceLine": 16487,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_brand_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuBrandAccounts",
+    "sourceLine": 16491,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_competitor_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuCompetitorAccounts",
+    "sourceLine": 16507,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_brand_notes",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuBrandNotes",
+    "sourceLine": 16523,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_benchmark_notes",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuBenchmarkNotes",
+    "sourceLine": 16529,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_search_notes",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuSearchNotes",
+    "sourceLine": 16535,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_comment_data",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuCommentData",
+    "sourceLine": 16539,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_comment_replies",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuCommentReplies",
+    "sourceLine": 16556,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_target_users",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuTargetUsers",
+    "sourceLine": 16563,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_xiaohongshu_feishu_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncXiaohongshuFeishuWorkspace",
+    "sourceLine": 16573,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "add_xiaohongshu_note_to_material_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "addXiaohongshuNoteToMaterialLibrary",
+    "sourceLine": 16575,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_collection_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinCollectionWorkspace",
+    "sourceLine": 16579,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_brand_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinBrandAccounts",
+    "sourceLine": 16583,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_competitor_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinCompetitorAccounts",
+    "sourceLine": 16599,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_brand_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinBrandWorks",
+    "sourceLine": 16615,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_competitor_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinCompetitorWorks",
+    "sourceLine": 16631,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_benchmark_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinBenchmarkWorks",
+    "sourceLine": 16647,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_search_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinSearchWorks",
+    "sourceLine": 16653,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_comment_data",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinCommentData",
+    "sourceLine": 16661,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_target_users",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinTargetUsers",
+    "sourceLine": 16677,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "search_douyin_creators",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "searchDouyinCreators",
+    "sourceLine": 16687,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_douyin_creator_deep_fetch_tasks",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createDouyinCreatorDeepFetchTasks",
+    "sourceLine": 16706,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "add_douyin_creators_to_result_pool",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "addDouyinCreatorsToResultPool",
+    "sourceLine": 16715,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_douyin_brand_account",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteDouyinBrandAccount",
+    "sourceLine": 16744,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_douyin_competitor_account",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteDouyinCompetitorAccount",
+    "sourceLine": 16748,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_douyin_keyword_recommendation",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteDouyinKeywordRecommendation",
+    "sourceLine": 16752,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_keyword_recommendations",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinKeywordRecommendations",
+    "sourceLine": 16721,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_low_fan_explosive_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinLowFanExplosiveWorks",
+    "sourceLine": 16725,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_high_completion_rate_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinHighCompletionRateWorks",
+    "sourceLine": 16730,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_high_like_rate_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinHighLikeRateWorks",
+    "sourceLine": 16735,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_douyin_city_hotspots",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDouyinCityHotspots",
+    "sourceLine": 16740,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_daily_hotspot_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDailyHotspotWorkspace",
+    "sourceLine": 16756,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.dailyHotspot\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_daily_hotspots",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncDailyHotspots",
+    "sourceLine": 16760,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.dailyHotspot\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_opportunity_insight_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getOpportunityInsightWorkspace",
+    "sourceLine": 16766,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.opportunityInsight\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "generate_opportunity_insight_step_one",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateOpportunityInsightStepOne",
+    "sourceLine": 16768,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.opportunityInsight\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "generate_opportunity_insight_step_two",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateOpportunityInsightStepTwo",
+    "sourceLine": 16772,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.opportunityInsight\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "generate_opportunity_insight_step_three",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateOpportunityInsightStepThree",
+    "sourceLine": 16776,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.opportunityInsight\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "list_my_third_party_platforms",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "listMyThirdPartyPlatforms",
+    "sourceLine": 16780,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.thirdPartyPlatforms\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "check_my_third_party_platform_runtime_access",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "checkMyThirdPartyPlatformRuntimeAccess",
+    "sourceLine": 16782,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.thirdPartyPlatforms\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_my_third_party_platform_secret",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "updateMyThirdPartyPlatformSecret",
+    "sourceLine": 16788,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.thirdPartyPlatforms\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "list_my_orders",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "listMyOrders",
+    "sourceLine": 16793,
+    "guards": []
+  },
+  {
+    "name": "list_personal_material_assets",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "listPersonalMaterialAssets",
+    "sourceLine": 16798,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_local_material_storage_settings",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "getLocalMaterialStorageSettings",
+    "sourceLine": 16803,
+    "guards": []
+  },
+  {
+    "name": "update_local_material_storage_settings",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "updateLocalMaterialStorageSettings",
+    "sourceLine": 16805,
+    "guards": []
+  },
+  {
+    "name": "get_personal_center_overview",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "getPersonalCenterOverview",
+    "sourceLine": 16809,
+    "guards": []
+  },
+  {
+    "name": "list_brand_members",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "listBrandMembers",
+    "sourceLine": 16811,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.team\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "list_brand_invites",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "listBrandInvites",
+    "sourceLine": 16813,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.team\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_brand_invite_link",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "createBrandInviteLink",
+    "sourceLine": 16815,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.team\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "revoke_brand_invite",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "revokeBrandInvite",
+    "sourceLine": 16821,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.team\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_permission_settings",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandPermissionSettings",
+    "sourceLine": 16825,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.team\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "list_my_brand_invites",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "listMyBrandInvites",
+    "sourceLine": 16827,
+    "guards": []
+  },
+  {
+    "name": "list_my_brand_invite_notifications",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "listMyBrandInviteNotifications",
+    "sourceLine": 16829,
+    "guards": []
+  },
+  {
+    "name": "accept_my_brand_invite",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "acceptMyBrandInvite",
+    "sourceLine": 16831,
+    "guards": []
+  },
+  {
+    "name": "get_task_detail",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getTaskDetail",
+    "sourceLine": 16447,
+    "guards": []
+  },
+  {
+    "name": "cancel_task",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "cancelTask",
+    "sourceLine": 16451,
+    "guards": []
+  },
+  {
+    "name": "retry_task",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "retryTask",
+    "sourceLine": 16455,
+    "guards": []
+  },
+  {
+    "name": "get_recent_tasks_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentTasksSummary",
+    "sourceLine": 16835,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_failed_tasks_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getFailedTasksSummary",
+    "sourceLine": 16842,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_recent_knowledge_files",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentKnowledgeFiles",
+    "sourceLine": 16849,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_skill_config_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getSkillConfigSummary",
+    "sourceLine": 16855,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_skill_config_detail",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getSkillConfigDetail",
+    "sourceLine": 16859,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "update_skill_config",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateSkillConfig",
+    "sourceLine": 16863,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "reset_skill_to_platform_baseline",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "resetSkillToPlatformBaseline",
+    "sourceLine": 16884,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "submit_task_result_feedback",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "submitTaskResultFeedback",
+    "sourceLine": 16888,
+    "guards": []
+  },
+  {
+    "name": "get_feedback_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getFeedbackSummary",
+    "sourceLine": 16905,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_feedback_analysis",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getFeedbackAnalysis",
+    "sourceLine": 16912,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_prompt_optimization_suggestions",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getPromptOptimizationSuggestions",
+    "sourceLine": 16919,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandAccess(brandId, auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_article_drafts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatArticleDrafts",
+    "sourceLine": 16926,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_official_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatOfficialAccounts",
+    "sourceLine": 16930,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_workflow_sessions",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatWorkflowSessions",
+    "sourceLine": 16932,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_publish_history",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatPublishHistory",
+    "sourceLine": 16936,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_workflow_preferences",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatWorkflowPreferences",
+    "sourceLine": 16940,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_workflow_session_detail",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatWorkflowSessionDetail",
+    "sourceLine": 16942,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "check_wechat_workflow_publish_readiness",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "checkWechatWorkflowPublishReadiness",
+    "sourceLine": 16946,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_publish_history_detail",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatPublishHistoryDetail",
+    "sourceLine": 16950,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "publish_wechat_article",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "publishWechatArticle",
+    "sourceLine": 16954,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_xiaohongshu_mobile_draft_session",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "createXiaohongshuMobileDraftSession",
+    "sourceLine": 16958,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_mobile_draft_session",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuMobileDraftSession",
+    "sourceLine": 16963,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "create_xiaohongshu_desktop_draft_session",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "createXiaohongshuDesktopDraftSession",
+    "sourceLine": 16967,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_desktop_draft_session",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuDesktopDraftSession",
+    "sourceLine": 16972,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "create_douyin_mobile_publish_session",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "createDouyinMobilePublishSession",
+    "sourceLine": 16976,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_mobile_publish_session",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinMobilePublishSession",
+    "sourceLine": 16981,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "create_douyin_desktop_publish_session",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "createDouyinDesktopPublishSession",
+    "sourceLine": 16985,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_desktop_publish_session",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinDesktopPublishSession",
+    "sourceLine": 16990,
+    "guards": [
+      "requireCurrentBrandId(auth);\r"
+    ]
+  },
+  {
+    "name": "publish_wechat_workflow",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "publishWechatWorkflow",
+    "sourceLine": 16994,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "retry_wechat_publish_history",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "retryWechatPublishHistory",
+    "sourceLine": 16998,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_design_workspace_options",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDesignWorkspaceOptions",
+    "sourceLine": 17064,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.works\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_recent_design_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentDesignWorks",
+    "sourceLine": 17066,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.works\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_design_work",
+    "category": "brand_operations_image_only",
+    "reason": "品牌运营连接默认提供图片制作，仅module=image，不设独立制作期限；其他设计模块不在范围",
+    "handler": "createDesignWork",
+    "sourceLine": 17070,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"personalCenter.works\", \"edit\", auth);\r"
+    ],
+    "includedProductionPolicy": "brand-default-production/1.0.0: image module; digital_human:create_speech_task; runninghub:generate; own brand provider only"
+  },
+  {
+    "name": "get_latest_brand_growth_report_summary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getLatestBrandGrowthReportSummary",
+    "sourceLine": 17668,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.growthReport\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_brand_growth_report",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createBrandGrowthReport",
+    "sourceLine": 17670,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.growthReport\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_half_year_marketing_plan",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createHalfYearMarketingPlan",
+    "sourceLine": 17676,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.halfYearMarketingPlan\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_brand_growth_visual_report_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandGrowthVisualReportWorkspace",
+    "sourceLine": 17681,
+    "guards": []
+  },
+  {
+    "name": "generate_brand_growth_visual_report",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateBrandGrowthVisualReport",
+    "sourceLine": 17683,
+    "guards": []
+  },
+  {
+    "name": "get_brand_growth_marketing_calendar_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandGrowthMarketingCalendarWorkspace",
+    "sourceLine": 17685,
+    "guards": []
+  },
+  {
+    "name": "generate_brand_growth_marketing_calendar",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateBrandGrowthMarketingCalendar",
+    "sourceLine": 17687,
+    "guards": []
+  },
+  {
+    "name": "update_brand_growth_marketing_calendar",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateBrandGrowthMarketingCalendar",
+    "sourceLine": 17693,
+    "guards": []
+  },
+  {
+    "name": "get_brand_growth_topic_library_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandGrowthTopicLibraryWorkspace",
+    "sourceLine": 17700,
+    "guards": []
+  },
+  {
+    "name": "generate_brand_growth_topic_candidates",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "generateBrandGrowthTopicCandidates",
+    "sourceLine": 17704,
+    "guards": []
+  },
+  {
+    "name": "update_brand_growth_topic_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateBrandGrowthTopicLibrary",
+    "sourceLine": 17708,
+    "guards": []
+  },
+  {
+    "name": "create_brand_growth_topic_library_item",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createBrandGrowthTopicLibraryItem",
+    "sourceLine": 17714,
+    "guards": []
+  },
+  {
+    "name": "update_brand_growth_topic_library_item",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateBrandGrowthTopicLibraryItem",
+    "sourceLine": 17720,
+    "guards": []
+  },
+  {
+    "name": "delete_brand_growth_topic_library_item",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteBrandGrowthTopicLibraryItem",
+    "sourceLine": 17727,
+    "guards": []
+  },
+  {
+    "name": "get_brand_growth_material_library_items",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getBrandGrowthMaterialLibraryItems",
+    "sourceLine": 17731,
+    "guards": []
+  },
+  {
+    "name": "create_knowledge_base",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createKnowledgeBase",
+    "sourceLine": 17735,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "upload_knowledge_base_files",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "uploadKnowledgeBaseFiles",
+    "sourceLine": 17740,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_original_copy_options",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinOriginalCopyOptions",
+    "sourceLine": 17112,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_recent_douyin_original_copies",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentDouyinOriginalCopies",
+    "sourceLine": 17114,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_douyin_original_copy",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createDouyinOriginalCopy",
+    "sourceLine": 17118,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_remix_copy_options",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinRemixCopyOptions",
+    "sourceLine": 17126,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remix\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_recent_douyin_remix_copies",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentDouyinRemixCopies",
+    "sourceLine": 17128,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remix\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_douyin_remix_copy",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createDouyinRemixCopy",
+    "sourceLine": 17132,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remix\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_material_library_items",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuMaterialLibraryItems",
+    "sourceLine": 17144,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.remix\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_marketing_calendar_options",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuMarketingCalendarOptions",
+    "sourceLine": 17140,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_xiaohongshu_original_reference_templates",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getXiaohongshuOriginalReferenceTemplates",
+    "sourceLine": 17148,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_recent_xiaohongshu_original_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getRecentXiaohongshuOriginalWorks",
+    "sourceLine": 17153,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.original\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_lobster_diaries",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterLobsterDiaries",
+    "sourceLine": 17157,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_lobster_diary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterLobsterDiary",
+    "sourceLine": 17162,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_ai_control_center_lobster_diary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateAIControlCenterLobsterDiary",
+    "sourceLine": 17169,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_lobster_diary",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterLobsterDiary",
+    "sourceLine": 17177,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_marketing_plans",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterMarketingPlans",
+    "sourceLine": 17209,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_marketing_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterMarketingPlan",
+    "sourceLine": 17214,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_marketing_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterMarketingPlan",
+    "sourceLine": 17220,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_explosive_analyses",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterExplosiveAnalyses",
+    "sourceLine": 17187,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_explosive_analysis",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterExplosiveAnalysis",
+    "sourceLine": 17192,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_explosive_analysis",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterExplosiveAnalysis",
+    "sourceLine": 17204,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_strategy_optimizations",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterStrategyOptimizations",
+    "sourceLine": 17182,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_strategy_optimization",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterStrategyOptimization",
+    "sourceLine": 17225,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_ai_control_center_strategy_optimization",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateAIControlCenterStrategyOptimization",
+    "sourceLine": 17232,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_strategy_optimization",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterStrategyOptimization",
+    "sourceLine": 17239,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_daily_plans",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterDailyPlans",
+    "sourceLine": 17244,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_daily_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterDailyPlan",
+    "sourceLine": 17249,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_daily_plan",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterDailyPlan",
+    "sourceLine": 17257,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_volcengine_music_task",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createVolcengineMusicTask",
+    "sourceLine": 17262,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_volcengine_music_task",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getVolcengineMusicTask",
+    "sourceLine": 17271,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "search_ai_control_center_asset_archive",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "searchAIControlCenterAssetArchive",
+    "sourceLine": 17281,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_published_ontology_contract",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "getAIControlCenterPublishedOntologyContract",
+    "sourceLine": 17288,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_ontology_execution_plan",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "getAIControlCenterOntologyExecutionPlan",
+    "sourceLine": 17294,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_ontology_expert_source_diff_preview",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "getAIControlCenterOntologyExpertSourceDiffPreview",
+    "sourceLine": 17302,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "request_ai_control_center_ontology_expert_source_writeback",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "requestAIControlCenterOntologyExpertSourceWriteback",
+    "sourceLine": 17307,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "record_ai_control_center_ontology_execution_plan_evidence",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "recordAIControlCenterOntologyExecutionPlanEvidence",
+    "sourceLine": 17318,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "record_ai_control_center_ontology_node_execution_evidence",
+    "category": "platform_or_personal",
+    "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接",
+    "handler": "recordAIControlCenterOntologyNodeExecutionEvidence",
+    "sourceLine": 17336,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "record_ai_control_center_material_reuse_evidence",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "recordAIControlCenterMaterialReuseEvidence",
+    "sourceLine": 17360,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_creative_materials",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterCreativeMaterials",
+    "sourceLine": 17388,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_creative_material",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterCreativeMaterial",
+    "sourceLine": 17393,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_creative_material",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterCreativeMaterial",
+    "sourceLine": 17421,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_video_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterVideoWorks",
+    "sourceLine": 17426,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_video_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterVideoWork",
+    "sourceLine": 17648,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_video_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterVideoWork",
+    "sourceLine": 17657,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_video_work_douyin_desktop_publish_session",
+    "category": "publication",
+    "reason": "发布或发布会话/草稿传输，需要独立对外动作授权",
+    "handler": "createAIControlCenterVideoWorkDouyinDesktopPublishSession",
+    "sourceLine": 17662,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_geo_visibility_reports",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterGeoVisibilityReports",
+    "sourceLine": 17431,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_geo_visibility_report",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterGeoVisibilityReport",
+    "sourceLine": 17436,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_geo_visibility_report",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterGeoVisibilityReport",
+    "sourceLine": 17443,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_geo_contents",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterGeoContents",
+    "sourceLine": 17448,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_geo_content",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterGeoContent",
+    "sourceLine": 17454,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_geo_content",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterGeoContent",
+    "sourceLine": 17479,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_third_party_media_delivery_resources",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterThirdPartyMediaDeliveryResources",
+    "sourceLine": 17485,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_ai_control_center_third_party_media_delivery_resources",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncAIControlCenterThirdPartyMediaDeliveryResources",
+    "sourceLine": 17491,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_comment_leads",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterCommentLeads",
+    "sourceLine": 17497,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_comment_leads",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterCommentLeads",
+    "sourceLine": 17503,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_comment_lead",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterCommentLead",
+    "sourceLine": 17520,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_platform_leads",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterPlatformLeads",
+    "sourceLine": 17525,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_platform_leads",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterPlatformLeads",
+    "sourceLine": 17530,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_platform_lead",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterPlatformLead",
+    "sourceLine": 17545,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_tencent_ad_leads",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterTencentAdLeads",
+    "sourceLine": 17550,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_tencent_ad_lead",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterTencentAdLead",
+    "sourceLine": 17555,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_tencent_ad_lead",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterTencentAdLead",
+    "sourceLine": 17561,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_creator_match_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterCreatorMatchWorkspace",
+    "sourceLine": 17566,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_creator_matches",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterCreatorMatches",
+    "sourceLine": 17571,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_creator_matches",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterCreatorMatches",
+    "sourceLine": 17582,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "move_ai_control_center_creator_matches_to_tracking",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "moveAIControlCenterCreatorMatchesToTracking",
+    "sourceLine": 17589,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_creator_tracking_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterCreatorTrackingWorkspace",
+    "sourceLine": 17596,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_creator_tracking_records",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterCreatorTrackingRecords",
+    "sourceLine": 17601,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_creator_tracking_record",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterCreatorTrackingRecord",
+    "sourceLine": 17611,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_ai_control_center_creator_tracking_works",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getAIControlCenterCreatorTrackingWorks",
+    "sourceLine": 17616,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_ai_control_center_creator_tracking_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "createAIControlCenterCreatorTrackingWork",
+    "sourceLine": 17622,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_ai_control_center_creator_tracking_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateAIControlCenterCreatorTrackingWork",
+    "sourceLine": 17631,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_ai_control_center_creator_tracking_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteAIControlCenterCreatorTrackingWork",
+    "sourceLine": 17642,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_xiaohongshu_rewrite_note",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createXiaohongshuRewriteNote",
+    "sourceLine": 17773,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.remix\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_xiaohongshu_original_note",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createXiaohongshuOriginalNote",
+    "sourceLine": 17759,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "create_wechat_article",
+    "category": "separate_execution_authorization",
+    "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替",
+    "handler": "createWechatArticle",
+    "sourceLine": 17781,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "manage_wechat_workflow",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "manageWechatWorkflow",
+    "sourceLine": 17002,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.config\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r",
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"wechat.original\", \"edit\", auth);\r"
+    ],
+    "allowedActions": [
+      "list_drafts",
+      "get_preferences",
+      "list_accounts",
+      "list_workflows",
+      "get_workflow",
+      "create_workflow",
+      "update_input",
+      "set_article",
+      "update_article",
+      "set_images",
+      "set_html",
+      "update_html_style",
+      "check_publish",
+      "list_publish_history",
+      "get_publish_history",
+      "update_draft",
+      "delete_workflow"
+    ]
+  },
+  {
+    "name": "manage_brand_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "manageBrandLibrary",
+    "sourceLine": 17013,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.background\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.ipLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.ipLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.ipLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.products\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.products\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.products\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.survey\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.industryFeeds\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.library.businessAssets\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ],
+    "allowedActions": [
+      "get_archive_summary",
+      "get_ip_library",
+      "get_archive_survey",
+      "get_competitor_accounts",
+      "get_industry_feeds",
+      "get_business_assets",
+      "update_background",
+      "update_ip_library",
+      "upload_ip_image",
+      "upload_ip_voice",
+      "create_product",
+      "update_product",
+      "delete_product",
+      "upsert_survey",
+      "replace_platform_accounts",
+      "replace_competitor_accounts",
+      "replace_industry_feeds",
+      "replace_business_assets",
+      "list_knowledge_bases",
+      "create_knowledge_base",
+      "update_knowledge_base",
+      "delete_knowledge_base",
+      "list_knowledge_base_files",
+      "create_knowledge_base_files",
+      "get_knowledge_base_file",
+      "delete_knowledge_base_file"
+    ]
+  },
+  {
+    "name": "manage_growth_reports",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "manageGrowthReports",
+    "sourceLine": 17025,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.growthReport\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.growthReport\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.visualGrowthReport\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.visualGrowthReport\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.visualGrowthReport\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.halfYearMarketingPlan\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.plan\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.plan\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.plan\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.calendar\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.calendar\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.calendar\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.calendar\", \"edit\", auth);\r"
+    ],
+    "allowedActions": [
+      "get_growth_workspace",
+      "generate_growth_report",
+      "upload_growth_report",
+      "create_growth_report",
+      "update_growth_report",
+      "get_visual_growth_workspace",
+      "update_visual_growth_report",
+      "get_half_year_workspace",
+      "get_xiaohongshu_marketing_plan_workspace",
+      "update_xiaohongshu_marketing_plan",
+      "delete_xiaohongshu_marketing_plan",
+      "get_douyin_marketing_plan_workspace",
+      "update_douyin_marketing_plan",
+      "delete_douyin_marketing_plan",
+      "get_douyin_hot_topic_candidates_workspace",
+      "update_douyin_topic_library",
+      "create_douyin_topic_library_item",
+      "update_douyin_topic_library_item",
+      "delete_douyin_topic_library_item",
+      "get_openclaw_marketing_plans",
+      "create_openclaw_marketing_plan",
+      "delete_openclaw_marketing_plan",
+      "get_xiaohongshu_marketing_calendar_workspace",
+      "get_douyin_marketing_calendar_workspace",
+      "get_wechat_marketing_calendar_workspace",
+      "update_xiaohongshu_marketing_calendar",
+      "update_douyin_marketing_calendar",
+      "update_wechat_marketing_calendar",
+      "upsert_xiaohongshu_marketing_calendar_item",
+      "upsert_douyin_marketing_calendar_item",
+      "upsert_wechat_marketing_calendar_item"
+    ]
+  },
+  {
+    "name": "manage_xiaohongshu_video",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "manageXiaohongshuVideo",
+    "sourceLine": 17034,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"xiaohongshu.video\", \"edit\", auth);\r"
+    ],
+    "allowedActions": [
+      "list_works",
+      "list_providers",
+      "list_storyboard_image_providers",
+      "update",
+      "delete"
+    ]
+  },
+  {
+    "name": "manage_douyin_video_production",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "manageDouyinVideoProduction",
+    "sourceLine": 17042,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.video\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.videoDirect\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remixShortVideo\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remixShortVideo\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remixShortVideo\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remixShortVideo\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.digitalHuman\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.runningHub\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.runningHub\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.runningHub\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.runningHub\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.runningHub\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"view\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r",
+      "assertBrandPermission(brandId, \"douyin.adPreAudit\", \"edit\", auth);\r"
+    ],
+    "allowedActions": [
+      "video:list_works",
+      "video:list_providers",
+      "video:list_storyboard_image_providers",
+      "video:update",
+      "video:delete",
+      "direct_video:list_works",
+      "direct_video:list_providers",
+      "direct_video:update",
+      "direct_video:delete",
+      "remix_short_video:list_works",
+      "remix_short_video:delete",
+      "digital_human:list_template_tags",
+      "digital_human:list_templates",
+      "digital_human:list_voice_library",
+      "digital_human:list_custom_voices",
+      "digital_human:delete_custom_voice",
+      "digital_human:get_speech_task",
+      "digital_human:list_video_works",
+      "digital_human:list_custom_persons",
+      "digital_human:delete_custom_person",
+      "digital_human:list_favorites",
+      "digital_human:save_favorite",
+      "digital_human:delete_favorite",
+      "digital_human:list_script_templates",
+      "digital_human:create_script_template",
+      "digital_human:update_script_template",
+      "digital_human:delete_script_template",
+      "digital_human:delete_video",
+      "lip_sync:list_works",
+      "lip_sync:delete",
+      "runninghub:list_apps",
+      "runninghub:get_app_detail",
+      "runninghub:list_works",
+      "runninghub:delete",
+      "ad_preaudit:list_works",
+      "ad_preaudit:get_config",
+      "ad_preaudit:list_media_assets",
+      "ad_preaudit:delete"
+    ],
+    "includedProductionPolicy": "brand-default-production/1.0.0: image module; digital_human:create_speech_task; runninghub:generate; own brand provider only"
+  },
+  {
+    "name": "get_unified_material_library_items",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getUnifiedMaterialLibraryItems",
+    "sourceLine": 17789,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.report.topicLibrary\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "add_douyin_work_to_material_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "addDouyinWorkToMaterialLibrary",
+    "sourceLine": 17793,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "add_wechat_article_to_material_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "addWechatArticleToMaterialLibrary",
+    "sourceLine": 17797,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "remove_xiaohongshu_note_from_material_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "removeXiaohongshuNoteFromMaterialLibrary",
+    "sourceLine": 17802,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "remove_douyin_work_from_material_library",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "removeDouyinWorkFromMaterialLibrary",
+    "sourceLine": 17806,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_wechat_collection_workspace",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getWechatCollectionWorkspace",
+    "sourceLine": 17810,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"view\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_wechat_brand_accounts",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncWechatBrandAccounts",
+    "sourceLine": 17814,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_wechat_brand_account",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteWechatBrandAccount",
+    "sourceLine": 17818,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "fetch_wechat_brand_articles",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "fetchWechatBrandArticles",
+    "sourceLine": 17822,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "read_wechat_article_content",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "readWechatArticleContent",
+    "sourceLine": 17827,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_wechat_benchmark_articles",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncWechatBenchmarkArticles",
+    "sourceLine": 17831,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_wechat_benchmark_article_stats",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateWechatBenchmarkArticleStats",
+    "sourceLine": 17837,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "sync_wechat_search_articles",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "syncWechatSearchArticles",
+    "sourceLine": 17841,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "read_wechat_search_item_content",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "readWechatSearchItemContent",
+    "sourceLine": 17849,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_wechat_search_item_stats",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateWechatSearchItemStats",
+    "sourceLine": 17853,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "update_wechat_article_stats",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "updateWechatArticleStats",
+    "sourceLine": 17857,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_xhs_collected_note",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteXhsCollectedNote",
+    "sourceLine": 17861,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.xiaohongshuCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_douyin_collected_work",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteDouyinCollectedWork",
+    "sourceLine": 17865,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "extract_douyin_work_transcript",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "extractDouyinWorkTranscript",
+    "sourceLine": 17869,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.douyinCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "delete_wechat_collected_article",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "deleteWechatCollectedArticle",
+    "sourceLine": 17873,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"brandGrowth.collection.wechatMpCollection\", \"edit\", auth);\r"
+    ]
+  },
+  {
+    "name": "get_douyin_material_library_items",
+    "category": "brand_operations",
+    "reason": "服务端按当前品牌/业务权限及对象归属；原有业务工具，不授平台角色",
+    "handler": "getDouyinMaterialLibraryItems",
+    "sourceLine": 17878,
+    "guards": [
+      "requireCurrentBrandId(auth);\r",
+      "assertBrandPermission(brandId, \"douyin.remix\", \"view\", auth);\r"
+    ]
+  }
+]

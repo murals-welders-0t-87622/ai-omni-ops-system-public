@@ -1,0 +1,579 @@
+{
+  "title": "文字作品标签体系候选",
+  "status": "initial_dictionary",
+  "version": "text-1.0.0",
+  "profile": "text",
+  "dimensionCount": 32,
+  "designNote": "原创候选32维，不是资料文章96维字典复原；词值需按真实样本校准，候选阶段允许标明自由观察。三套分别评审、版本化与验证。",
+  "annotationUnit": "全文/标题/段落/句子",
+  "dimensions": [
+    {
+      "id": "T01",
+      "name": "目标读者",
+      "group": "用户与价值",
+      "definition": "从称谓、处境、案例识别具体读者，区分原文明示与推断",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁写、遇到什么事、读完得到什么；必须从原文举证",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T02",
+      "name": "阅读情境",
+      "group": "用户与价值",
+      "definition": "说明读者何时为何阅读，有原文线索",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁写、遇到什么事、读完得到什么；必须从原文举证",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T03",
+      "name": "核心问题",
+      "group": "用户与价值",
+      "definition": "归纳全文真正回应的问题，区分主次",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁写、遇到什么事、读完得到什么；必须从原文举证",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T04",
+      "name": "价值承诺",
+      "group": "用户与价值",
+      "definition": "提取读完可获得的帮助并核对兑现",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁写、遇到什么事、读完得到什么；必须从原文举证",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T05",
+      "name": "需求层次",
+      "group": "定位与选题",
+      "definition": "判断实用、认知、情感、身份等需求及其文本依据",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实用/认知/情感/身份；小切口/反常识/热点嫁接；教程/观点/故事/测评",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T06",
+      "name": "选题切口",
+      "group": "定位与选题",
+      "definition": "说明大题目如何缩小为具体切口",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实用/认知/情感/身份；小切口/反常识/热点嫁接；教程/观点/故事/测评",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T07",
+      "name": "中心主张",
+      "group": "定位与选题",
+      "definition": "提炼中心判断，并区分事实与主张",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实用/认知/情感/身份；小切口/反常识/热点嫁接；教程/观点/故事/测评",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T08",
+      "name": "内容类型",
+      "group": "定位与选题",
+      "definition": "按主要任务判断教程、观点、故事、测评等类型",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实用/认知/情感/身份；小切口/反常识/热点嫁接；教程/观点/故事/测评",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T09",
+      "name": "标题承诺",
+      "group": "标题与开头",
+      "definition": "记录标题作出的结果、代价、悬念等承诺",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "结果/代价/反差；问题/冲突/场景；承诺如何兑现",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T10",
+      "name": "开头钩子",
+      "group": "标题与开头",
+      "definition": "指出开头激发继续阅读的具体句子及作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "结果/代价/反差；问题/冲突/场景；承诺如何兑现",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T11",
+      "name": "悬念与信息差",
+      "group": "标题与开头",
+      "definition": "记录刻意保留的信息及其揭示位置",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "结果/代价/反差；问题/冲突/场景；承诺如何兑现",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T12",
+      "name": "读者代入",
+      "group": "标题与开头",
+      "definition": "标出使读者联想到自身的场景或表达",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "结果/代价/反差；问题/冲突/场景；承诺如何兑现",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T13",
+      "name": "全文骨架",
+      "group": "结构与推进",
+      "definition": "按功能分段描绘论证、叙事、步骤或比较的整体组织",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "论证/叙事/步骤/比较；提出/证明/转折/回收；内容如何推动阅读",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T14",
+      "name": "段落功能",
+      "group": "结构与推进",
+      "definition": "逐段标记提出、解释、证明、转折、回收等作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "论证/叙事/步骤/比较；提出/证明/转折/回收；内容如何推动阅读",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T15",
+      "name": "逻辑递进",
+      "group": "结构与推进",
+      "definition": "说明段落之间递进、因果、并列或反驳关系",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "论证/叙事/步骤/比较；提出/证明/转折/回收；内容如何推动阅读",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T16",
+      "name": "信息密度",
+      "group": "结构与推进",
+      "definition": "分析信息单元与铺垫比例，避免以字数代替信息量",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "论证/叙事/步骤/比较；提出/证明/转折/回收；内容如何推动阅读",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T17",
+      "name": "论据类型",
+      "group": "论据与信任",
+      "definition": "区分数据、经历、演示、引用与无证据判断",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "数据/经历/演示/引用；条件、出处与局限；身份与证据如何配合",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T18",
+      "name": "案例组织",
+      "group": "论据与信任",
+      "definition": "说明案例出场、冲突、变化、结果的组织方法",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "数据/经历/演示/引用；条件、出处与局限；身份与证据如何配合",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T19",
+      "name": "论断边界",
+      "group": "论据与信任",
+      "definition": "标出论断适用条件、例外和未证明部分",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "数据/经历/演示/引用；条件、出处与局限；身份与证据如何配合",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T20",
+      "name": "信任建立",
+      "group": "论据与信任",
+      "definition": "解释身份、过程、引用等如何支持可信度",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "数据/经历/演示/引用；条件、出处与局限；身份与证据如何配合",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T21",
+      "name": "叙述视角",
+      "group": "语言与人设",
+      "definition": "识别第一人称、第二人称或旁观视角及切换",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "第一/第三人称；长短句；类比/反问；同伴/教练/记录者",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T22",
+      "name": "句式节奏",
+      "group": "语言与人设",
+      "definition": "说明长短句、重复、停顿等形成的阅读节奏",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "第一/第三人称；长短句；类比/反问；同伴/教练/记录者",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T23",
+      "name": "修辞表达",
+      "group": "语言与人设",
+      "definition": "标注类比、反问、排比等及其实际作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "第一/第三人称；长短句；类比/反问；同伴/教练/记录者",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T24",
+      "name": "人设姿态",
+      "group": "语言与人设",
+      "definition": "识别原作呈现的同伴、教练、记录者等表达姿态",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "第一/第三人称；长短句；类比/反问；同伴/教练/记录者",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T25",
+      "name": "情绪触发",
+      "group": "情绪与互动",
+      "definition": "标出激起好奇、担忧、认同等情绪的语句",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "好奇/担忧/认同等；如何变化；讨论/收藏/分享；行动与上下文关系",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T26",
+      "name": "情绪变化",
+      "group": "情绪与互动",
+      "definition": "描述全文情绪如何发生变化并给出转折位置",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "好奇/担忧/认同等；如何变化；讨论/收藏/分享；行动与上下文关系",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T27",
+      "name": "互动动机",
+      "group": "情绪与互动",
+      "definition": "区分讨论、收藏、分享等动机的文本诱因",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "好奇/担忧/认同等；如何变化；讨论/收藏/分享；行动与上下文关系",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T28",
+      "name": "行动承接",
+      "group": "情绪与互动",
+      "definition": "说明行动建议与前文问题的承接关系",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "好奇/担忧/认同等；如何变化；讨论/收藏/分享；行动与上下文关系",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T29",
+      "name": "结尾回收",
+      "group": "结尾与迁移",
+      "definition": "判断结尾如何回答开头或留下新的问题",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "回答开头/升华/开放问题；可套用的组织方式；需替换的事实、经历和证据",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T30",
+      "name": "可复用结构",
+      "group": "结尾与迁移",
+      "definition": "提炼可迁移的组织结构并区分固定部分与变量",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "回答开头/升华/开放问题；可套用的组织方式；需替换的事实、经历和证据",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T31",
+      "name": "迁移前提",
+      "group": "结尾与迁移",
+      "definition": "列出迁移所需事实、案例、受众和能力条件",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "回答开头/升华/开放问题；可套用的组织方式；需替换的事实、经历和证据",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "T32",
+      "name": "表达风险",
+      "group": "结尾与迁移",
+      "definition": "指出无根据绝对化、虚构经历或模仿易误用的表达",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "回答开头/升华/开放问题；可套用的组织方式；需替换的事实、经历和证据",
+      "annotationUnit": "全文/标题/段落/句子",
+      "evidenceRequiredWhenObserved": true
+    }
+  ],
+  "evidenceRules": [
+    "字符区间在指定段落内，endChar > startChar",
+    "短引文必须与当前正文快照对应",
+    "不同正文修订的字符偏移不可混用"
+  ],
+  "coverageRule": "每个维度需明确判断状态，不强迫得出观察标签；执行失败不伪装为not_found，未分析不填成not_applicable。",
+  "outputSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "文字作品分析输出候选",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "schemaVersion",
+      "dictionaryVersion",
+      "sourceSnapshotRef",
+      "inputCoverage",
+      "annotations",
+      "structure",
+      "transferConditions",
+      "limitations",
+      "form"
+    ],
+    "properties": {
+      "schemaVersion": {
+        "const": "text-work-analysis-1.0.0"
+      },
+      "dictionaryVersion": {
+        "const": "text-1.0.0"
+      },
+      "sourceSnapshotRef": {
+        "type": "string",
+        "minLength": 1
+      },
+      "inputCoverage": {
+        "type": "object",
+        "required": [
+          "bodyComplete"
+        ],
+        "properties": {
+          "bodyComplete": {
+            "type": "boolean"
+          }
+        }
+      },
+      "annotations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dimensionId",
+            "status",
+            "values",
+            "observation",
+            "reason",
+            "evidence"
+          ],
+          "properties": {
+            "dimensionId": {
+              "enum": [
+                "T01",
+                "T02",
+                "T03",
+                "T04",
+                "T05",
+                "T06",
+                "T07",
+                "T08",
+                "T09",
+                "T10",
+                "T11",
+                "T12",
+                "T13",
+                "T14",
+                "T15",
+                "T16",
+                "T17",
+                "T18",
+                "T19",
+                "T20",
+                "T21",
+                "T22",
+                "T23",
+                "T24",
+                "T25",
+                "T26",
+                "T27",
+                "T28",
+                "T29",
+                "T30",
+                "T31",
+                "T32"
+              ]
+            },
+            "status": {
+              "enum": [
+                "observed",
+                "not_found",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "observation": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "snapshotRef",
+                  "paragraphId",
+                  "startChar",
+                  "endChar",
+                  "quote"
+                ],
+                "properties": {
+                  "snapshotRef": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "paragraphId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "startChar": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "endChar": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "quote": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "observed"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "observation": {
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "minLength": 1
+                  },
+                  "evidence": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "structure": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "unitRef",
+            "function",
+            "explanation"
+          ],
+          "properties": {
+            "unitRef": {
+              "type": "string"
+            },
+            "function": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "transferConditions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "form": {
+        "const": "text"
+      }
+    }
+  }
+}

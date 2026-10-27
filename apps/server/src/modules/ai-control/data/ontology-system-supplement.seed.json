@@ -1,0 +1,1103 @@
+{
+  "metadata": {
+    "updatedAt": "2026-10-06",
+    "source": "system supplement",
+    "objectCount": 33,
+    "linkCount": 17,
+    "interfaceCount": 12,
+    "note": "补齐资料库、契约、证据、会话、凭证与本机存储等非工具型系统元素。"
+  },
+  "items": [
+    {
+      "id": "O46",
+      "kind": "ontology_object",
+      "label": "O46 品牌资料库",
+      "name": "品牌资料库",
+      "refType": "system_supplement",
+      "description": "统一承接品牌背景、企业介绍、行业与品牌基础事实。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O46",
+      "primaryConsumers": [
+        "品牌增长",
+        "品牌资产设置"
+      ],
+      "bindings": [
+        "Brand"
+      ]
+    },
+    {
+      "id": "O47",
+      "kind": "ontology_object",
+      "label": "O47 IP资料库",
+      "name": "IP资料库",
+      "refType": "system_supplement",
+      "description": "统一承接 IP 人设、视觉、语音与账号资料。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O47",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "Brand.ipProfileJson"
+      ]
+    },
+    {
+      "id": "O48",
+      "kind": "ontology_object",
+      "label": "O48 产品资料库",
+      "name": "产品资料库",
+      "refType": "system_supplement",
+      "description": "统一承接产品、SKU、卖点、价格与素材引用。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O48",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "Product"
+      ]
+    },
+    {
+      "id": "O49",
+      "kind": "ontology_object",
+      "label": "O49 品牌账号资料库",
+      "name": "品牌账号资料库",
+      "refType": "system_supplement",
+      "description": "沉淀品牌在小红书、抖音、公众号等平台的官方账号绑定。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O49",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "PlatformAccount"
+      ]
+    },
+    {
+      "id": "O50",
+      "kind": "ontology_object",
+      "label": "O50 竞品账号资料库",
+      "name": "竞品账号资料库",
+      "refType": "system_supplement",
+      "description": "沉淀各平台竞品账号与后续采集入口。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O50",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "CompetitorAccount"
+      ]
+    },
+    {
+      "id": "O51",
+      "kind": "ontology_object",
+      "label": "O51 行业资料库",
+      "name": "行业资料库",
+      "refType": "system_supplement",
+      "description": "沉淀行业资料、行业报告与外部行业 feed。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O51",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "IndustryFeed"
+      ]
+    },
+    {
+      "id": "O52",
+      "kind": "ontology_object",
+      "label": "O52 业务资产库",
+      "name": "业务资产库",
+      "refType": "system_supplement",
+      "description": "沉淀品牌业务知识、业务资料和知识绑定摘要。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O52",
+      "primaryConsumers": [
+        "品牌增长",
+        "品牌资产设置"
+      ],
+      "bindings": [
+        "BusinessAsset"
+      ]
+    },
+    {
+      "id": "O53",
+      "kind": "ontology_object",
+      "label": "O53 知识库",
+      "name": "知识库",
+      "refType": "system_supplement",
+      "description": "承接可上传文件、可绑定品牌的知识库实体。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O53",
+      "primaryConsumers": [
+        "品牌资产设置",
+        "内容获客"
+      ],
+      "bindings": [
+        "KnowledgeBase"
+      ]
+    },
+    {
+      "id": "O54",
+      "kind": "ontology_object",
+      "label": "O54 统一素材档案",
+      "name": "统一素材档案",
+      "refType": "system_supplement",
+      "description": "聚合创作素材、视频作品、媒体资产、品牌资料与任务产物的统一素材档案。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O54",
+      "primaryConsumers": [
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "asset_archive"
+      ]
+    },
+    {
+      "id": "O55",
+      "kind": "ontology_object",
+      "label": "O55 创作素材档案",
+      "name": "创作素材档案",
+      "refType": "system_supplement",
+      "description": "保存文本、图片、音频、视频、BGM 等可复用创作素材。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O55",
+      "primaryConsumers": [
+        "统一素材管理",
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "AIControlCenterCreativeMaterial"
+      ]
+    },
+    {
+      "id": "O56",
+      "kind": "ontology_object",
+      "label": "O56 视频作品档案",
+      "name": "视频作品档案",
+      "refType": "system_supplement",
+      "description": "保存最终视频作品及其标题、描述、封面和成片地址。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O56",
+      "primaryConsumers": [
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "AIControlCenterVideoWork"
+      ]
+    },
+    {
+      "id": "O57",
+      "kind": "ontology_object",
+      "label": "O57 GEO工作流内容",
+      "name": "GEO工作流内容",
+      "refType": "system_supplement",
+      "description": "保存 GEO 可见度诊断之外的关键词挖掘、网站诊断、知识库搭建、优化方案等结果。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O57",
+      "primaryConsumers": [
+        "GEO获客"
+      ],
+      "bindings": [
+        "AIControlCenterGeoContent"
+      ]
+    },
+    {
+      "id": "O58",
+      "kind": "ontology_object",
+      "label": "O58 每周复盘",
+      "name": "每周复盘",
+      "refType": "system_supplement",
+      "description": "保存各板块每周复盘与历史追踪。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O58",
+      "primaryConsumers": [
+        "AI 智控中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "lobster_diary"
+      ]
+    },
+    {
+      "id": "O59",
+      "kind": "ontology_object",
+      "label": "O59 营销策划方案",
+      "name": "营销策划方案",
+      "refType": "system_supplement",
+      "description": "保存 HTML 营销策划方案与其留言协作。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O59",
+      "primaryConsumers": [
+        "AI 智控中心",
+        "内容获客"
+      ],
+      "bindings": [
+        "marketing_plan"
+      ]
+    },
+    {
+      "id": "O60",
+      "kind": "ontology_object",
+      "label": "O60 爆款拆解",
+      "name": "爆款拆解",
+      "refType": "system_supplement",
+      "description": "保存爆款分析记录与对应模板引用。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O60",
+      "primaryConsumers": [
+        "品牌增长",
+        "内容获客"
+      ],
+      "bindings": [
+        "explosive_analysis"
+      ]
+    },
+    {
+      "id": "O61",
+      "kind": "ontology_object",
+      "label": "O61 策略优化记录",
+      "name": "策略优化记录",
+      "refType": "system_supplement",
+      "description": "保存策略优化建议、行动项和历史版本。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O61",
+      "primaryConsumers": [
+        "AI 智控中心",
+        "品牌增长"
+      ],
+      "bindings": [
+        "strategy_optimization"
+      ]
+    },
+    {
+      "id": "O62",
+      "kind": "ontology_object",
+      "label": "O62 每日计划",
+      "name": "每日计划",
+      "refType": "system_supplement",
+      "description": "保存各板块每日计划与执行安排。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O62",
+      "primaryConsumers": [
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "daily_plan"
+      ]
+    },
+    {
+      "id": "O63",
+      "kind": "ontology_object",
+      "label": "O63 评论获客记录",
+      "name": "评论获客记录",
+      "refType": "system_supplement",
+      "description": "沉淀从评论用户提取后形成的获客对象。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O63",
+      "primaryConsumers": [
+        "全网获客"
+      ],
+      "bindings": [
+        "comment_lead"
+      ]
+    },
+    {
+      "id": "O64",
+      "kind": "ontology_object",
+      "label": "O64 平台获客记录",
+      "name": "平台获客记录",
+      "refType": "system_supplement",
+      "description": "沉淀手工或外部导入的平台获客对象。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O64",
+      "primaryConsumers": [
+        "全网获客"
+      ],
+      "bindings": [
+        "platform_lead"
+      ]
+    },
+    {
+      "id": "O65",
+      "kind": "ontology_object",
+      "label": "O65 腾讯投流获客记录",
+      "name": "腾讯投流获客记录",
+      "refType": "system_supplement",
+      "description": "沉淀投流获客线索与留言内容。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O65",
+      "primaryConsumers": [
+        "投流获客"
+      ],
+      "bindings": [
+        "tencent_ad_lead"
+      ]
+    },
+    {
+      "id": "O66",
+      "kind": "ontology_object",
+      "label": "O66 达人匹配记录",
+      "name": "达人匹配记录",
+      "refType": "system_supplement",
+      "description": "沉淀达人匹配列表及推荐理由。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O66",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "creator_match"
+      ]
+    },
+    {
+      "id": "O67",
+      "kind": "ontology_object",
+      "label": "O67 达人跟踪记录",
+      "name": "达人跟踪记录",
+      "refType": "system_supplement",
+      "description": "沉淀进入跟踪后的达人建档与跟进状态。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O67",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "creator_tracking"
+      ]
+    },
+    {
+      "id": "O68",
+      "kind": "ontology_object",
+      "label": "O68 达人合作作品",
+      "name": "达人合作作品",
+      "refType": "system_supplement",
+      "description": "沉淀某位达人下的合作作品与刷新状态。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O68",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "creator_tracking_work"
+      ]
+    },
+    {
+      "id": "O69",
+      "kind": "ontology_object",
+      "label": "O69 Ontology草稿",
+      "name": "Ontology草稿",
+      "refType": "system_supplement",
+      "description": "编排中心里可继续编辑的流程草稿。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O69",
+      "primaryConsumers": [
+        "Ontology"
+      ],
+      "bindings": [
+        "ontology_orchestration_flows"
+      ]
+    },
+    {
+      "id": "O70",
+      "kind": "ontology_object",
+      "label": "O70 Ontology正式契约",
+      "name": "Ontology正式契约",
+      "refType": "system_supplement",
+      "description": "发布后不可变的 published_contract。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O70",
+      "primaryConsumers": [
+        "Ontology",
+        "WorkBuddy 路由"
+      ],
+      "bindings": [
+        "published_contract"
+      ]
+    },
+    {
+      "id": "O71",
+      "kind": "ontology_object",
+      "label": "O71 Ontology执行前计划",
+      "name": "Ontology执行前计划",
+      "refType": "system_supplement",
+      "description": "从正式契约派生的 execution_plan。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O71",
+      "primaryConsumers": [
+        "Ontology",
+        "任务治理"
+      ],
+      "bindings": [
+        "execution_plan"
+      ]
+    },
+    {
+      "id": "O72",
+      "kind": "ontology_object",
+      "label": "O72 专家源候选Diff",
+      "name": "专家源候选Diff",
+      "refType": "system_supplement",
+      "description": "正式契约写回专家源前的候选 Diff 预览。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O72",
+      "primaryConsumers": [
+        "Ontology",
+        "专家源治理"
+      ],
+      "bindings": [
+        "expert_source_diff_preview"
+      ]
+    },
+    {
+      "id": "O73",
+      "kind": "ontology_object",
+      "label": "O73 任务治理证据",
+      "name": "任务治理证据",
+      "refType": "system_supplement",
+      "description": "记录执行前计划、节点推进和素材复用等任务治理证据。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O73",
+      "primaryConsumers": [
+        "任务治理",
+        "Ontology"
+      ],
+      "bindings": [
+        "wf_execution_events"
+      ]
+    },
+    {
+      "id": "O74",
+      "kind": "ontology_object",
+      "label": "O74 第三方平台凭证配置",
+      "name": "第三方平台凭证配置",
+      "refType": "system_supplement",
+      "description": "保存品牌共享或本机第三方平台凭证配置状态。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O74",
+      "primaryConsumers": [
+        "接口与连接器配置",
+        "个人中心"
+      ],
+      "bindings": [
+        "third_party_platform"
+      ]
+    },
+    {
+      "id": "O75",
+      "kind": "ontology_object",
+      "label": "O75 本地素材库存储设置",
+      "name": "本地素材库存储设置",
+      "refType": "system_supplement",
+      "description": "保存安装态本地素材库根目录与子目录规则。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O75",
+      "primaryConsumers": [
+        "个人中心",
+        "存储与连接器"
+      ],
+      "bindings": [
+        "local_material_storage"
+      ]
+    },
+    {
+      "id": "O76",
+      "kind": "ontology_object",
+      "label": "O76 发布接力会话",
+      "name": "发布接力会话",
+      "refType": "system_supplement",
+      "description": "保存抖音/小红书/公众号的手机端或电脑端接力发布会话。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O76",
+      "primaryConsumers": [
+        "内容获客",
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "publish_session"
+      ]
+    },
+    {
+      "id": "O77",
+      "kind": "ontology_object",
+      "label": "O77 设计任务",
+      "name": "设计任务",
+      "refType": "system_supplement",
+      "description": "保存设计工作台任务与模型选择。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O77",
+      "primaryConsumers": [
+        "设计工作台"
+      ],
+      "bindings": [
+        "design_work"
+      ]
+    },
+    {
+      "id": "O78",
+      "kind": "ontology_object",
+      "label": "O78 音乐生成任务",
+      "name": "音乐生成任务",
+      "refType": "system_supplement",
+      "description": "保存火山音乐等音频生成任务及结果状态。",
+      "elementType": "Object",
+      "status": "candidate",
+      "source": "ontology-system-supplement:O78",
+      "primaryConsumers": [
+        "AI 智控中心",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "music_task"
+      ]
+    },
+    {
+      "id": "L28",
+      "kind": "ontology_link",
+      "label": "L28 品牌拥有品牌资料库",
+      "name": "品牌拥有品牌资料库",
+      "refType": "system_supplement",
+      "description": "品牌与品牌资料库之间的一对一归属关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L28",
+      "primaryConsumers": [
+        "品牌增长"
+      ],
+      "bindings": [
+        "Brand->BrandArchive"
+      ]
+    },
+    {
+      "id": "L29",
+      "kind": "ontology_link",
+      "label": "L29 品牌绑定知识库",
+      "name": "品牌绑定知识库",
+      "refType": "system_supplement",
+      "description": "品牌与知识库之间的绑定关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L29",
+      "primaryConsumers": [
+        "品牌资产设置"
+      ],
+      "bindings": [
+        "Brand->KnowledgeBase"
+      ]
+    },
+    {
+      "id": "L30",
+      "kind": "ontology_link",
+      "label": "L30 品牌拥有统一素材档案",
+      "name": "品牌拥有统一素材档案",
+      "refType": "system_supplement",
+      "description": "品牌与统一素材档案之间的归属关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L30",
+      "primaryConsumers": [
+        "统一素材管理"
+      ],
+      "bindings": [
+        "Brand->AssetArchive"
+      ]
+    },
+    {
+      "id": "L31",
+      "kind": "ontology_link",
+      "label": "L31 品牌绑定第三方平台凭证",
+      "name": "品牌绑定第三方平台凭证",
+      "refType": "system_supplement",
+      "description": "品牌与第三方平台凭证配置之间的绑定关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L31",
+      "primaryConsumers": [
+        "接口与连接器配置"
+      ],
+      "bindings": [
+        "Brand->ThirdPartyPlatform"
+      ]
+    },
+    {
+      "id": "L32",
+      "kind": "ontology_link",
+      "label": "L32 品牌配置本地素材库目录",
+      "name": "品牌配置本地素材库目录",
+      "refType": "system_supplement",
+      "description": "品牌与本地素材库存储设置之间的配置关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L32",
+      "primaryConsumers": [
+        "存储与连接器",
+        "个人中心"
+      ],
+      "bindings": [
+        "Brand->LocalMaterialStorage"
+      ]
+    },
+    {
+      "id": "L33",
+      "kind": "ontology_link",
+      "label": "L33 统一素材档案支撑创作素材",
+      "name": "统一素材档案支撑创作素材",
+      "refType": "system_supplement",
+      "description": "统一素材档案与创作素材档案之间的引用关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L33",
+      "primaryConsumers": [
+        "统一素材管理"
+      ],
+      "bindings": [
+        "AssetArchive->CreativeMaterial"
+      ]
+    },
+    {
+      "id": "L34",
+      "kind": "ontology_link",
+      "label": "L34 创作素材产出视频作品",
+      "name": "创作素材产出视频作品",
+      "refType": "system_supplement",
+      "description": "创作素材与视频作品之间的生成/复用关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L34",
+      "primaryConsumers": [
+        "统一素材管理",
+        "内容获客"
+      ],
+      "bindings": [
+        "CreativeMaterial->VideoWork"
+      ]
+    },
+    {
+      "id": "L35",
+      "kind": "ontology_link",
+      "label": "L35 视频作品关联发布接力会话",
+      "name": "视频作品关联发布接力会话",
+      "refType": "system_supplement",
+      "description": "视频作品与发布接力会话之间的关联关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L35",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "VideoWork->PublishSession"
+      ]
+    },
+    {
+      "id": "L36",
+      "kind": "ontology_link",
+      "label": "L36 Ontology草稿发布为正式契约",
+      "name": "Ontology草稿发布为正式契约",
+      "refType": "system_supplement",
+      "description": "Ontology 草稿与正式契约之间的发布关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L36",
+      "primaryConsumers": [
+        "Ontology"
+      ],
+      "bindings": [
+        "Draft->PublishedContract"
+      ]
+    },
+    {
+      "id": "L37",
+      "kind": "ontology_link",
+      "label": "L37 正式契约派生执行前计划",
+      "name": "正式契约派生执行前计划",
+      "refType": "system_supplement",
+      "description": "Ontology 正式契约与执行前计划之间的派生关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L37",
+      "primaryConsumers": [
+        "Ontology"
+      ],
+      "bindings": [
+        "PublishedContract->ExecutionPlan"
+      ]
+    },
+    {
+      "id": "L38",
+      "kind": "ontology_link",
+      "label": "L38 正式契约生成专家源候选Diff",
+      "name": "正式契约生成专家源候选Diff",
+      "refType": "system_supplement",
+      "description": "正式契约与专家源候选 Diff 之间的预览关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L38",
+      "primaryConsumers": [
+        "Ontology",
+        "专家源治理"
+      ],
+      "bindings": [
+        "PublishedContract->ExpertSourceDiff"
+      ]
+    },
+    {
+      "id": "L39",
+      "kind": "ontology_link",
+      "label": "L39 执行前计划写入任务治理证据",
+      "name": "执行前计划写入任务治理证据",
+      "refType": "system_supplement",
+      "description": "执行前计划与任务治理证据之间的留证关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L39",
+      "primaryConsumers": [
+        "任务治理",
+        "Ontology"
+      ],
+      "bindings": [
+        "ExecutionPlan->Evidence"
+      ]
+    },
+    {
+      "id": "L40",
+      "kind": "ontology_link",
+      "label": "L40 素材复用写入任务治理证据",
+      "name": "素材复用写入任务治理证据",
+      "refType": "system_supplement",
+      "description": "素材档案与任务治理证据之间的复用留证关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L40",
+      "primaryConsumers": [
+        "统一素材管理",
+        "任务治理"
+      ],
+      "bindings": [
+        "AssetArchive->Evidence"
+      ]
+    },
+    {
+      "id": "L41",
+      "kind": "ontology_link",
+      "label": "L41 达人匹配转入达人跟踪",
+      "name": "达人匹配转入达人跟踪",
+      "refType": "system_supplement",
+      "description": "达人匹配记录进入达人跟踪记录。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L41",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "CreatorMatch->CreatorTracking"
+      ]
+    },
+    {
+      "id": "L42",
+      "kind": "ontology_link",
+      "label": "L42 达人跟踪包含合作作品",
+      "name": "达人跟踪包含合作作品",
+      "refType": "system_supplement",
+      "description": "达人跟踪记录与达人合作作品之间的包含关系。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L42",
+      "primaryConsumers": [
+        "达人合作"
+      ],
+      "bindings": [
+        "CreatorTracking->CreatorTrackingWork"
+      ]
+    },
+    {
+      "id": "L43",
+      "kind": "ontology_link",
+      "label": "L43 音乐生成任务沉淀为创作素材",
+      "name": "音乐生成任务沉淀为创作素材",
+      "refType": "system_supplement",
+      "description": "音乐生成任务成功后可沉淀为创作素材。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L43",
+      "primaryConsumers": [
+        "AI 智控中心",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "MusicTask->CreativeMaterial"
+      ]
+    },
+    {
+      "id": "L44",
+      "kind": "ontology_link",
+      "label": "L44 设计任务沉淀为创作素材",
+      "name": "设计任务沉淀为创作素材",
+      "refType": "system_supplement",
+      "description": "设计任务成功后可沉淀为创作素材。",
+      "elementType": "Link",
+      "status": "candidate",
+      "source": "ontology-system-supplement:L44",
+      "primaryConsumers": [
+        "设计工作台",
+        "统一素材管理"
+      ],
+      "bindings": [
+        "DesignWork->CreativeMaterial"
+      ]
+    },
+    {
+      "id": "I13",
+      "kind": "ontology_interface",
+      "label": "I13 BrandScoped 品牌隔离对象",
+      "name": "BrandScoped 品牌隔离对象",
+      "refType": "system_supplement",
+      "description": "任何读写都必须受当前品牌上下文约束。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I13",
+      "primaryConsumers": [
+        "品牌增长",
+        "AI 智控中心"
+      ],
+      "bindings": [
+        "brandId"
+      ]
+    },
+    {
+      "id": "I14",
+      "kind": "ontology_interface",
+      "label": "I14 KnowledgeBindable 可绑定知识库",
+      "name": "KnowledgeBindable 可绑定知识库",
+      "refType": "system_supplement",
+      "description": "对象可与知识库或业务知识绑定。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I14",
+      "primaryConsumers": [
+        "品牌资产设置",
+        "内容获客"
+      ],
+      "bindings": [
+        "knowledgeBaseId"
+      ]
+    },
+    {
+      "id": "I15",
+      "kind": "ontology_interface",
+      "label": "I15 AssetSearchable 可被统一素材检索",
+      "name": "AssetSearchable 可被统一素材检索",
+      "refType": "system_supplement",
+      "description": "对象可以进入统一素材档案并被搜索。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I15",
+      "primaryConsumers": [
+        "统一素材管理"
+      ],
+      "bindings": [
+        "asset_archive_search"
+      ]
+    },
+    {
+      "id": "I16",
+      "kind": "ontology_interface",
+      "label": "I16 TaskGoverned 可落任务治理",
+      "name": "TaskGoverned 可落任务治理",
+      "refType": "system_supplement",
+      "description": "动作或对象可写入 workflow-core 治理账本。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I16",
+      "primaryConsumers": [
+        "任务治理",
+        "Ontology"
+      ],
+      "bindings": [
+        "taskId"
+      ]
+    },
+    {
+      "id": "I17",
+      "kind": "ontology_interface",
+      "label": "I17 PublishSessionAttachable 可挂发布接力",
+      "name": "PublishSessionAttachable 可挂发布接力",
+      "refType": "system_supplement",
+      "description": "对象可以关联手机端或电脑端发布接力会话。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I17",
+      "primaryConsumers": [
+        "内容获客"
+      ],
+      "bindings": [
+        "publish_session"
+      ]
+    },
+    {
+      "id": "I18",
+      "kind": "ontology_interface",
+      "label": "I18 CredentialProtected 需凭证能力",
+      "name": "CredentialProtected 需凭证能力",
+      "refType": "system_supplement",
+      "description": "动作执行前必须校验第三方平台凭证。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I18",
+      "primaryConsumers": [
+        "接口与连接器配置"
+      ],
+      "bindings": [
+        "third_party_platform_secret"
+      ]
+    },
+    {
+      "id": "I19",
+      "kind": "ontology_interface",
+      "label": "I19 OntologyDraftable 可生成编排草稿",
+      "name": "OntologyDraftable 可生成编排草稿",
+      "refType": "system_supplement",
+      "description": "对象可作为 AI 生成 Ontology 草稿的目标。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I19",
+      "primaryConsumers": [
+        "Ontology"
+      ],
+      "bindings": [
+        "targetKind",
+        "targetId"
+      ]
+    },
+    {
+      "id": "I20",
+      "kind": "ontology_interface",
+      "label": "I20 ContractPublishable 可发布正式契约",
+      "name": "ContractPublishable 可发布正式契约",
+      "refType": "system_supplement",
+      "description": "对象可以从草稿发布为正式契约。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I20",
+      "primaryConsumers": [
+        "Ontology"
+      ],
+      "bindings": [
+        "published_contract"
+      ]
+    },
+    {
+      "id": "I21",
+      "kind": "ontology_interface",
+      "label": "I21 ExecutionPlannable 可派生执行前计划",
+      "name": "ExecutionPlannable 可派生执行前计划",
+      "refType": "system_supplement",
+      "description": "对象可以派生 execution_plan。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I21",
+      "primaryConsumers": [
+        "Ontology",
+        "任务治理"
+      ],
+      "bindings": [
+        "execution_plan"
+      ]
+    },
+    {
+      "id": "I22",
+      "kind": "ontology_interface",
+      "label": "I22 EvidenceAppendOnly 只追加留证",
+      "name": "EvidenceAppendOnly 只追加留证",
+      "refType": "system_supplement",
+      "description": "证据记录只能追加，不能伪造覆盖历史。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I22",
+      "primaryConsumers": [
+        "任务治理",
+        "Ontology"
+      ],
+      "bindings": [
+        "wf_execution_events"
+      ]
+    },
+    {
+      "id": "I23",
+      "kind": "ontology_interface",
+      "label": "I23 WritebackGuarded 受写回确认闸保护",
+      "name": "WritebackGuarded 受写回确认闸保护",
+      "refType": "system_supplement",
+      "description": "写回前必须经过 Diff/SHA/快照/授权确认闸。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I23",
+      "primaryConsumers": [
+        "Ontology",
+        "专家源治理"
+      ],
+      "bindings": [
+        "writeback_gate"
+      ]
+    },
+    {
+      "id": "I24",
+      "kind": "ontology_interface",
+      "label": "I24 LocalStorageConfigurable 本机目录可配置",
+      "name": "LocalStorageConfigurable 本机目录可配置",
+      "refType": "system_supplement",
+      "description": "对象允许在安装态下配置本机目录但不能手填绝对路径。",
+      "elementType": "Interface",
+      "status": "candidate",
+      "source": "ontology-system-supplement:I24",
+      "primaryConsumers": [
+        "个人中心",
+        "存储与连接器"
+      ],
+      "bindings": [
+        "local_material_storage"
+      ]
+    }
+  ]
+}

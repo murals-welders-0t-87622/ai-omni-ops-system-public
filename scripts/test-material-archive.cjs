@@ -1,0 +1,48 @@
+const assert = require('node:assert/strict');
+const {mediaType,cleanCandidate,tagCandidates,validateMaterialIndex}=require('../apps/server/dist/apps/server/src/modules/ai-control/material-index.contract.js');
+const {AiControlAssetArchiveService}=require('../apps/server/dist/apps/server/src/modules/ai-control/ai-control-asset-archive.service.js');
+const {probeMaterialBuffer}=require('../apps/server/dist/apps/server/src/modules/ai-control/material-probe.js');
+const sharp=require('sharp'),fs=require('fs/promises'),os=require('os'),path=require('path'),{promisify}=require('util'),run=promisify(require('child_process').execFile),ffmpeg=require('@ffmpeg-installer/ffmpeg');
+let passed=0;
+function check(name,fn){fn();passed++;console.log('PASS '+name)}
+(async()=>{
+ check('MIME outranks contradictory kind',()=>assert.deepEqual([mediaType('image/png','video','frame.png').materialType,mediaType('image/png','video','frame.png').conflict],['图片',true]));
+ check('Caption never determines media type',()=>assert.equal(mediaType('','image','frame.png',true).materialType,'图片'));
+ check('Audio MIME/kind/extensions',()=>{for(const args of [['audio/wav','text','x.wav'],['','audio',''],['','','x.mp3']])assert.equal(mediaType(...args).materialType,'音频')});
+ check('Extensions are not decoding proof',()=>assert.equal(mediaType('','','x.png').decoded,false));
+ check('No HTML CSS digits or prose candidates',()=>{for(const x of ['13','前2','0f172a','e2e8f0','color:red','<div>','关于一整段非常长的描述超过十八个字符了'])assert.equal(cleanCandidate(x),'');assert.deepEqual(tagCandidates('','#粘毛 #13 #0f172a','<style>#abc123{color:red}</style>').map(x=>x.value),['粘毛'])});
+ check('Manual business tags preserve numeric SKU',()=>assert.deepEqual(validateMaterialIndex({confirmedTags:['13','SKU-01','粘毛']}).confirmedTags,['13','SKU-01','粘毛']));
+ check('Unknown rights remain unknown',()=>assert.equal(validateMaterialIndex({}).rights.commercial.status,'unknown'));
+ check('Confirmation requires evidence',()=>assert.throws(()=>validateMaterialIndex({rights:{commercial:{status:'confirmed'}}})));
+ check('Clip bounds/ids/references',()=>{assert.throws(()=>validateMaterialIndex({clips:[{startMs:1000,endMs:0}]}));assert.throws(()=>validateMaterialIndex({clips:[{id:'a',startMs:0,endMs:1},{id:'a',startMs:0,endMs:1}]}));assert.throws(()=>validateMaterialIndex({relations:[{table:'MediaAsset',recordId:'x',type:'used_in',clipId:'absent',evidence:'check'}]}))});
+ check('Recommendation requires reason',()=>assert.throws(()=>validateMaterialIndex({recommendation:'not_recommended'})));
+ const prisma={canUseDatabase:async()=>true,tableExists:async()=>false,product:{findMany:async()=>[]}},svc=new AiControlAssetArchiveService(prisma,{}, {}, {},{});
+ const {WorkAnalysisService}=require('../apps/server/dist/apps/server/src/modules/openclaw/work-analysis.service.js');
+ const nonMaterials=['DOUYIN_COMMENT','XHS_NOTE_COMMENT','DOUYIN_CREATOR_SEARCH_RESULT','DOUYIN_TARGET_USER','XHS_TARGET_USER','DOUYIN_KEYWORD_RECOMMENDATION','DOUYIN_COMPETITOR_ACCOUNT','DOUYIN_BRAND_ACCOUNT'];
+ check('Prefiltered types are neither collected works nor renderable materials',()=>{const work=new WorkAnalysisService(prisma);for(const kind of nonMaterials){assert.equal(work.snapshot({id:'test',title:'test',description:null,fileUrl:null,metadataJson:{kind},updatedAt:new Date(0)}),null);assert.equal(svc.isRenderableBusinessAsset({kind}),false)}});
+ check('SQL exclusions match the tested kinds',()=>{const source=require('fs').readFileSync(path.join(__dirname,'../apps/server/src/modules/ai-control/ai-control-asset-archive.service.ts'),'utf8');const match=source.match(/CAST\("category" AS TEXT\)\) NOT IN \(\s*([\s\S]*?)\s*\)/);assert.ok(match);assert.deepEqual([...match[1].matchAll(/'([^']+)'/g)].map(m=>m[1]).sort(),[...nonMaterials].sort())});
+ const row=i=>({id:'id-'+i,brandId:'qa',source:'media_asset',kind:'image',title:'粘毛 视频参考 '+i,description:'视频说明',textContent:null,mimeType:'image/png',assetUrl:'http://example.invalid/'+i+'.png',evidenceTable:'MediaAsset',evidenceRecordId:'id-'+i,materialTags:'["13","前2","e2e8f0","粘毛"]',createdAt:new Date(2000000000000-i),updatedAt:new Date()});
+ const rows=Array.from({length:250},(_,i)=>row(i));rows[249]={...row(249),source:'collected_work',collection:{originalWorkId:'7693006000135214961'}};
+ svc.listCreativeMaterials=async()=>[];svc.listVideoWorks=async()=>[];svc.listMediaAssets=async()=>rows;svc.listBusinessAssets=async()=>[];svc.listWorkflowArtifacts=async()=>[];
+ rows[0].title += ' #实用';
+ const contract=require('../apps/server/dist/apps/server/src/modules/ai-control/material-index.contract.js');
+ const originalCandidates=contract.tagCandidates;let candidateCalls=0;
+ contract.tagCandidates=(...args)=>{candidateCalls++;return originalCandidates(...args)};
+ const first=await svc.getArchive({brandId:'qa',limit:'20'});
+ check('Candidates calculated only for returned items',()=>assert.equal(candidateCalls,20));
+ check('Returned tags preserve original legacy and hashtag candidates',()=>assert.deepEqual(first.items[0].tagCandidates,[{value:'粘毛',source:'legacy_unspecified',status:'unverified',confidence:null},...originalCandidates(rows[0].title,rows[0].description,rows[0].textContent||'')]));
+ contract.tagCandidates=originalCandidates;
+ check('Total is not returned page length',()=>assert.deepEqual([first.total,first.items.length],[250,20]));
+ const original=await svc.getArchive({brandId:'qa',keyword:'7693006000135214961',limit:'20'});check('Original outside first200 found by exact work ID',()=>assert.deepEqual([original.total,original.items[0].libraryState], [1,'collected']));
+ const video=await svc.getArchive({brandId:'qa',materialType:'视频',keyword:'粘毛'});check('Video filter excludes images with video captions',()=>assert.equal(video.total,0));
+ const page=await svc.getArchive({brandId:'qa',offset:'240',limit:'20'});check('Final page exact total',()=>assert.deepEqual([page.total,page.items.length],[250,10]));
+ await assert.rejects(()=>svc.getArchive({brandId:'qa',offset:'-1'}));passed++;
+ const png=await sharp({create:{width:24,height:24,channels:3,background:'#112233'}}).png().toBuffer(),image=await probeMaterialBuffer(png);check('Actual pixel decode and digest',()=>{assert.equal(image.materialType,'图片');assert.equal(image.evidenceLevel,'decoded_image_pixels');assert.equal(image.sha256.length,64)});
+ const wav=Buffer.alloc(44+16000*2);wav.write('RIFF');wav.writeUInt32LE(wav.length-8,4);wav.write('WAVEfmt ',8);wav.writeUInt32LE(16,16);wav.writeUInt16LE(1,20);wav.writeUInt16LE(1,22);wav.writeUInt32LE(16000,24);wav.writeUInt32LE(32000,28);wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeUInt32LE(wav.length-44,40);
+ const audio=await probeMaterialBuffer(wav);check('Actual audio sample decode',()=>{assert.equal(audio.materialType,'音频');assert.equal(audio.durationMs,1000)});
+ const temp=await fs.mkdtemp(path.join(os.tmpdir(),'qa357-video-'));try{const file=path.join(temp,'tiny.mp4');await run(ffmpeg.path,['-nostdin','-y','-f','lavfi','-i','color=c=blue:s=32x32:d=0.3','-an','-c:v','mpeg4',file],{windowsHide:true,timeout:20000});const video=await probeMaterialBuffer(await fs.readFile(file));check('Actual video stream/sample decode',()=>{assert.equal(video.materialType,'视频');assert.equal(video.mimeType,'video/mp4');assert.ok(video.durationMs>0)})}finally{await fs.rm(temp,{recursive:true,force:true})}
+ await assert.rejects(()=>probeMaterialBuffer(Buffer.from('not an image despite .png name')));passed++;
+ await assert.rejects(()=>probeMaterialBuffer(Buffer.from('#EXTM3U\nhttps://example.invalid/never-fetch.ts')));passed++;
+
+ console.log(JSON.stringify({pass:true,checks:passed,externalCalls:0}));
+})().catch(e=>{console.error(e);process.exitCode=1});

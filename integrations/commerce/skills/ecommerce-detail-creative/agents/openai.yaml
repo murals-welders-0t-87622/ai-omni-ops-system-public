@@ -1,0 +1,6 @@
+interface:
+  display_name: "详情页与商品视频"
+  short_description: "从当前品牌产品资料提炼卖点，制作电商详情页的逐页文案、画面及可选商品创意视频，并回写AI中台电商工作区。适用于“给这个商品做一套详情页，再做产品视频”等委托。"
+  default_prompt: "使用 $ecommerce-detail-creative 完成本品牌当前委托，读取已有上下文并保存可继续的结果。"
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,607 @@
+{
+  "title": "视频作品标签体系候选",
+  "status": "initial_dictionary",
+  "version": "video-1.0.0",
+  "profile": "video",
+  "dimensionCount": 32,
+  "designNote": "原创候选32维，不是资料文章96维字典复原；词值需按真实样本校准，候选阶段允许标明自由观察。三套分别评审、版本化与验证。",
+  "annotationUnit": "整片/片段/镜头/音轨时段",
+  "dimensions": [
+    {
+      "id": "V01",
+      "name": "目标观众",
+      "group": "用户与任务",
+      "definition": "依据表达、场景和问题识别目标观众",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁解决什么；讲述/演示/剧情/访谈/测评；同一作品可混合",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V02",
+      "name": "观看情境",
+      "group": "用户与任务",
+      "definition": "描述在何种情境观看以及需要解决的事",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁解决什么；讲述/演示/剧情/访谈/测评；同一作品可混合",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V03",
+      "name": "核心承诺",
+      "group": "用户与任务",
+      "definition": "提炼整片承诺并核对最终兑现程度",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁解决什么；讲述/演示/剧情/访谈/测评；同一作品可混合",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V04",
+      "name": "视频类型",
+      "group": "用户与任务",
+      "definition": "识别讲述、演示、剧情、访谈、测评等实际混合形式",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "为谁解决什么；讲述/演示/剧情/访谈/测评；同一作品可混合",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V05",
+      "name": "首屏信息",
+      "group": "开场动力",
+      "definition": "记录首个有效画面、声音、字幕分别传达的内容",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "看见/听见什么；冲突/结果/悬念；期待如何被后文兑现",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V06",
+      "name": "开场钩子",
+      "group": "开场动力",
+      "definition": "定位引发继续观看的冲突、结果、问题或悬念",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "看见/听见什么；冲突/结果/悬念；期待如何被后文兑现",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V07",
+      "name": "视听反差",
+      "group": "开场动力",
+      "definition": "说明声音、字幕、画面之间的反差及其作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "看见/听见什么；冲突/结果/悬念；期待如何被后文兑现",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V08",
+      "name": "期待建立",
+      "group": "开场动力",
+      "definition": "标明开头建立的期待以及后续兑现位置",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "看见/听见什么；冲突/结果/悬念；期待如何被后文兑现",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V09",
+      "name": "整体骨架",
+      "group": "叙事与留存",
+      "definition": "按整体功能划分叙事、逻辑、步骤或比较结构",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "事件/逻辑/任务推进；转折/证据/回扣；何处重新激发兴趣",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V10",
+      "name": "片段功能",
+      "group": "叙事与留存",
+      "definition": "逐段记录引入、证明、转折、回扣等功能",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "事件/逻辑/任务推进；转折/证据/回扣；何处重新激发兴趣",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V11",
+      "name": "推进动力",
+      "group": "叙事与留存",
+      "definition": "解释事件、问题、逻辑、共鸣如何驱动观看",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "事件/逻辑/任务推进；转折/证据/回扣；何处重新激发兴趣",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V12",
+      "name": "注意力回收",
+      "group": "叙事与留存",
+      "definition": "定位中途重新激发注意的变化与回扣",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "事件/逻辑/任务推进；转折/证据/回扣；何处重新激发兴趣",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V13",
+      "name": "镜头组织",
+      "group": "画面与镜头",
+      "definition": "描述镜头顺序、连续性、切换与意义关系",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "景别切换/连续性；表演或操作如何传意；实际展示能证明什么",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V14",
+      "name": "景别机位",
+      "group": "画面与镜头",
+      "definition": "记录景别、机位、运镜以及展示的信息",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "景别切换/连续性；表演或操作如何传意；实际展示能证明什么",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V15",
+      "name": "人物动作",
+      "group": "画面与镜头",
+      "definition": "描述人物动作、操作与表演如何传递信息",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "景别切换/连续性；表演或操作如何传意；实际展示能证明什么",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V16",
+      "name": "演示证据",
+      "group": "画面与镜头",
+      "definition": "说明实际演示展示了什么及不能证明什么",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "景别切换/连续性；表演或操作如何传意；实际展示能证明什么",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V17",
+      "name": "剪辑节奏",
+      "group": "剪辑与时间",
+      "definition": "依据镜头时长、切点和停留变化分析节奏",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "镜头时长变化；画面与语言信息负载；转场含义；强调与遮挡",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V18",
+      "name": "信息密度",
+      "group": "剪辑与时间",
+      "definition": "分析单位时段内画面、口播、字幕的信息负载",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "镜头时长变化；画面与语言信息负载；转场含义；强调与遮挡",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V19",
+      "name": "转场方式",
+      "group": "剪辑与时间",
+      "definition": "描述硬切、叠化、匹配等实际转场与作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "镜头时长变化；画面与语言信息负载；转场含义；强调与遮挡",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V20",
+      "name": "字幕包装",
+      "group": "剪辑与时间",
+      "definition": "定位字幕层级、强调、包装和遮挡",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "镜头时长变化；画面与语言信息负载；转场含义；强调与遮挡",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V21",
+      "name": "口播表达",
+      "group": "声音与协同",
+      "definition": "记录语速、重音、停顿和语气变化",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "语速/重音/情绪；推动/铺垫/对照；声音、字幕、画面关系",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V22",
+      "name": "音乐作用",
+      "group": "声音与协同",
+      "definition": "识别音乐在铺垫、推动、对照等方面的作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "语速/重音/情绪；推动/铺垫/对照；声音、字幕、画面关系",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V23",
+      "name": "音效与停顿",
+      "group": "声音与协同",
+      "definition": "定位音效、静默、停顿与信息或情绪的关系",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "语速/重音/情绪；推动/铺垫/对照；声音、字幕、画面关系",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V24",
+      "name": "视听配合",
+      "group": "声音与协同",
+      "definition": "说明画面、口播、字幕、音乐协同或冲突",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "语速/重音/情绪；推动/铺垫/对照；声音、字幕、画面关系",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V25",
+      "name": "情绪轨迹",
+      "group": "情绪与转化",
+      "definition": "沿时间轴记录由何种情绪向何种情绪变化",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "由何变化到何；可核查的身份/案例/演示；互动如何承接内容",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V26",
+      "name": "信任证据",
+      "group": "情绪与转化",
+      "definition": "定位身份、过程、案例、数据、演示等信任证据",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "由何变化到何；可核查的身份/案例/演示；互动如何承接内容",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V27",
+      "name": "互动触发",
+      "group": "情绪与转化",
+      "definition": "定位讨论、收藏、分享等互动诱因",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "由何变化到何；可核查的身份/案例/演示；互动如何承接内容",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V28",
+      "name": "行动承接",
+      "group": "情绪与转化",
+      "definition": "说明购买、咨询等行动承接何种内容与证据",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "由何变化到何；可核查的身份/案例/演示；互动如何承接内容",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V29",
+      "name": "结尾回收",
+      "group": "复现与边界",
+      "definition": "判断结尾如何兑现承诺并回收前文信息",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "承诺是否兑现；场景/人物/设备/素材需求；不可照搬的原作事实及不可见输入",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V30",
+      "name": "制作方法",
+      "group": "复现与边界",
+      "definition": "整理场景、人物、设备、拍摄、剪辑等制作条件",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "承诺是否兑现；场景/人物/设备/素材需求；不可照搬的原作事实及不可见输入",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V31",
+      "name": "迁移前提",
+      "group": "复现与边界",
+      "definition": "列出迁移所需品牌事实、素材、能力与适用范围",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "承诺是否兑现；场景/人物/设备/素材需求；不可照搬的原作事实及不可见输入",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "V32",
+      "name": "缺项与风险",
+      "group": "复现与边界",
+      "definition": "标明缺画面、缺声音、对齐问题及版权和事实风险",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "承诺是否兑现；场景/人物/设备/素材需求；不可照搬的原作事实及不可见输入",
+      "annotationUnit": "整片/片段/镜头/音轨时段",
+      "evidenceRequiredWhenObserved": true
+    }
+  ],
+  "evidenceRules": [
+    "endMs > startMs且不超过输入时长",
+    "画面、音轨、转写的引用必须在本次可读输入中",
+    "视觉结论附帧/镜头，音乐结论有音轨；逐字稿不可证明画面与音乐"
+  ],
+  "coverageRule": "每个维度需明确判断状态，不强迫得出观察标签；执行失败不伪装为not_found，未分析不填成not_applicable。",
+  "outputSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "视频作品分析输出候选",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "schemaVersion",
+      "dictionaryVersion",
+      "sourceSnapshotRef",
+      "inputCoverage",
+      "annotations",
+      "structure",
+      "transferConditions",
+      "limitations",
+      "form"
+    ],
+    "properties": {
+      "schemaVersion": {
+        "const": "video-work-analysis-1.0.0"
+      },
+      "dictionaryVersion": {
+        "const": "video-1.0.0"
+      },
+      "sourceSnapshotRef": {
+        "type": "string",
+        "minLength": 1
+      },
+      "inputCoverage": {
+        "type": "object",
+        "required": [
+          "visualReadable",
+          "audioReadable",
+          "transcriptReadable",
+          "alignmentKnown"
+        ],
+        "properties": {
+          "visualReadable": {
+            "type": "boolean"
+          },
+          "audioReadable": {
+            "type": "boolean"
+          },
+          "transcriptReadable": {
+            "type": "boolean"
+          },
+          "alignmentKnown": {
+            "type": "boolean"
+          }
+        }
+      },
+      "annotations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dimensionId",
+            "status",
+            "values",
+            "observation",
+            "reason",
+            "evidence"
+          ],
+          "properties": {
+            "dimensionId": {
+              "enum": [
+                "V01",
+                "V02",
+                "V03",
+                "V04",
+                "V05",
+                "V06",
+                "V07",
+                "V08",
+                "V09",
+                "V10",
+                "V11",
+                "V12",
+                "V13",
+                "V14",
+                "V15",
+                "V16",
+                "V17",
+                "V18",
+                "V19",
+                "V20",
+                "V21",
+                "V22",
+                "V23",
+                "V24",
+                "V25",
+                "V26",
+                "V27",
+                "V28",
+                "V29",
+                "V30",
+                "V31",
+                "V32"
+              ]
+            },
+            "status": {
+              "enum": [
+                "observed",
+                "not_found",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "observation": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "videoRef",
+                  "startMs",
+                  "endMs",
+                  "modalitiesUsed"
+                ],
+                "properties": {
+                  "videoRef": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "startMs": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "endMs": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "shotId": {
+                    "type": "string"
+                  },
+                  "frameRefs": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "audioTrackRef": {
+                    "type": "string"
+                  },
+                  "modalitiesUsed": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "visual",
+                        "audio",
+                        "transcript",
+                        "subtitle"
+                      ]
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  }
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "observed"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "observation": {
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "minLength": 1
+                  },
+                  "evidence": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "structure": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "unitRef",
+            "function",
+            "explanation"
+          ],
+          "properties": {
+            "unitRef": {
+              "type": "string"
+            },
+            "function": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "transferConditions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "form": {
+        "const": "video"
+      }
+    }
+  }
+}

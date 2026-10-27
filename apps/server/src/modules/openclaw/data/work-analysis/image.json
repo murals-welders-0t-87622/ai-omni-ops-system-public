@@ -1,0 +1,584 @@
+{
+  "title": "图片作品标签体系候选",
+  "status": "initial_dictionary",
+  "version": "image-1.0.0",
+  "profile": "image",
+  "dimensionCount": 32,
+  "designNote": "原创候选32维，不是资料文章96维字典复原；词值需按真实样本校准，候选阶段允许标明自由观察。三套分别评审、版本化与验证。",
+  "annotationUnit": "图片组/单张/区域/文字块",
+  "dimensions": [
+    {
+      "id": "I01",
+      "name": "目标观看者",
+      "group": "传播任务",
+      "definition": "依据图文线索判断具体观看者与需求",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "谁在何处看；识别/理解/比较/信任；封面/步骤/证据/转化页",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I02",
+      "name": "观看场景",
+      "group": "传播任务",
+      "definition": "识别信息流封面、详情页等观看环境及其约束",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "谁在何处看；识别/理解/比较/信任；封面/步骤/证据/转化页",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I03",
+      "name": "视觉任务",
+      "group": "传播任务",
+      "definition": "判断画面承担识别、理解、比较、信任或行动的任务",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "谁在何处看；识别/理解/比较/信任；封面/步骤/证据/转化页",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I04",
+      "name": "图片角色",
+      "group": "传播任务",
+      "definition": "识别封面、步骤、证据、转化页等组图角色",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "谁在何处看；识别/理解/比较/信任；封面/步骤/证据/转化页",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I05",
+      "name": "主体对象",
+      "group": "主体与关系",
+      "definition": "列出可见主要人物、产品、文字与环境",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "人/物/环境；前后/大小/因果/并置；表情、姿态及其可见证据",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I06",
+      "name": "场景线索",
+      "group": "主体与关系",
+      "definition": "指出支持场景判断的实际画面元素",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "人/物/环境；前后/大小/因果/并置；表情、姿态及其可见证据",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I07",
+      "name": "主体关系",
+      "group": "主体与关系",
+      "definition": "描述对象间前后、大小、并置或因果表达",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "人/物/环境；前后/大小/因果/并置；表情、姿态及其可见证据",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I08",
+      "name": "人物表达",
+      "group": "主体与关系",
+      "definition": "记录人物表情、姿态和动作的可见线索",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "人/物/环境；前后/大小/因果/并置；表情、姿态及其可见证据",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I09",
+      "name": "构图方式",
+      "group": "构图与注意力",
+      "definition": "说明中心、分区、留白、对角等布局与作用",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "中心/分区/留白；第一落点与次序；透视、指向、特写",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I10",
+      "name": "视觉焦点",
+      "group": "构图与注意力",
+      "definition": "标记第一注意点及次级注意点的区域",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "中心/分区/留白；第一落点与次序；透视、指向、特写",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I11",
+      "name": "视线引导",
+      "group": "构图与注意力",
+      "definition": "解释方向、线条、对比如何引导观看次序",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "中心/分区/留白；第一落点与次序；透视、指向、特写",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I12",
+      "name": "景别与视角",
+      "group": "构图与注意力",
+      "definition": "记录远近、俯仰、视角及信息呈现效果",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "中心/分区/留白；第一落点与次序；透视、指向、特写",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I13",
+      "name": "信息层级",
+      "group": "信息与图文",
+      "definition": "标记主标题、次级文字、主体和辅助信息的层级",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "主次字号与区域；反差/结果/冲突；互补/解释/重复/矛盾",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I14",
+      "name": "标题视觉钩子",
+      "group": "信息与图文",
+      "definition": "定位封面文字或视觉反差承诺了什么",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "主次字号与区域；反差/结果/冲突；互补/解释/重复/矛盾",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I15",
+      "name": "文字可读性",
+      "group": "信息与图文",
+      "definition": "检查字号、对比、密度及可读性，缺分辨率时注明",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "主次字号与区域；反差/结果/冲突；互补/解释/重复/矛盾",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I16",
+      "name": "图文关系",
+      "group": "信息与图文",
+      "definition": "判断图文是互补、解释、重复还是相互矛盾",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "主次字号与区域；反差/结果/冲突；互补/解释/重复/矛盾",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I17",
+      "name": "色彩体系",
+      "group": "视觉语言",
+      "definition": "描述主色、辅助色、对比与情绪用途",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "配色与对比；实拍/合成等实际线索；网格与留白；避免凭单图认定账号风格",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I18",
+      "name": "光影质感",
+      "group": "视觉语言",
+      "definition": "观察光源、阴影、材质和处理痕迹",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "配色与对比；实拍/合成等实际线索；网格与留白；避免凭单图认定账号风格",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I19",
+      "name": "字体排版",
+      "group": "视觉语言",
+      "definition": "记录字体、对齐、间距、网格和留白",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "配色与对比；实拍/合成等实际线索；网格与留白；避免凭单图认定账号风格",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I20",
+      "name": "风格识别",
+      "group": "视觉语言",
+      "definition": "归纳本图表现风格，不凭单图断言账号稳定风格",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "配色与对比；实拍/合成等实际线索；网格与留白；避免凭单图认定账号风格",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I21",
+      "name": "视觉论据",
+      "group": "证据与真实感",
+      "definition": "区分实物、过程、数据、标注等视觉论据",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实物/过程/数据/标注；时间光线角度是否可比；商标与产品露出",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I22",
+      "name": "对比条件",
+      "group": "证据与真实感",
+      "definition": "核对前后图的角度、光线、时间和条件是否可比",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实物/过程/数据/标注；时间光线角度是否可比；商标与产品露出",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I23",
+      "name": "真实感线索",
+      "group": "证据与真实感",
+      "definition": "描述实拍、合成或摆拍可见线索，避免绝对鉴真",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实物/过程/数据/标注；时间光线角度是否可比；商标与产品露出",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I24",
+      "name": "品牌识别",
+      "group": "证据与真实感",
+      "definition": "定位标志、产品、品牌色等识别元素",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "实物/过程/数据/标注；时间光线角度是否可比；商标与产品露出",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I25",
+      "name": "组图顺序",
+      "group": "组图与互动",
+      "definition": "逐页记录封面到主体到收束的功能",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "封面到主体到收束；承诺/递进/悬念；收藏清单或私信等触发位置",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I26",
+      "name": "翻页动力",
+      "group": "组图与互动",
+      "definition": "说明促使继续翻页的承诺、递进或悬念",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "封面到主体到收束；承诺/递进/悬念；收藏清单或私信等触发位置",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I27",
+      "name": "情绪触发",
+      "group": "组图与互动",
+      "definition": "指出引发好奇、焦虑、安心等感受的画面证据",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "封面到主体到收束；承诺/递进/悬念；收藏清单或私信等触发位置",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I28",
+      "name": "行动引导",
+      "group": "组图与互动",
+      "definition": "定位收藏清单、私信、购买等行动提示",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "封面到主体到收束；承诺/递进/悬念；收藏清单或私信等触发位置",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I29",
+      "name": "版式模板",
+      "group": "复用与制作",
+      "definition": "抽象可复用布局，分清框架与需要替换的图文",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "可复用布局及变量；拍摄/设计素材需要；版权、水印、夸张对比和事实风险",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I30",
+      "name": "制作条件",
+      "group": "复用与制作",
+      "definition": "列出复现需要的拍摄、设计和素材条件",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "可复用布局及变量；拍摄/设计素材需要；版权、水印、夸张对比和事实风险",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I31",
+      "name": "迁移前提",
+      "group": "复用与制作",
+      "definition": "说明适合的受众、产品及必须替换的品牌事实",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "可复用布局及变量；拍摄/设计素材需要；版权、水印、夸张对比和事实风险",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    },
+    {
+      "id": "I32",
+      "name": "视觉风险",
+      "group": "复用与制作",
+      "definition": "标记水印、版权线索、夸张对比与事实不明问题",
+      "valueType": "controlled_terms_with_observation",
+      "cardinality": "multiple_when_supported",
+      "valueGuidance": "可复用布局及变量；拍摄/设计素材需要；版权、水印、夸张对比和事实风险",
+      "annotationUnit": "图片组/单张/区域/文字块",
+      "evidenceRequiredWhenObserved": true
+    }
+  ],
+  "evidenceRules": [
+    "bbox顺序为x,y,width,height且宽高>0，x+width及y+height<=1",
+    "页序必须存在，原图hash匹配本次输入",
+    "跨页结论引用多条图片证据，OCR不能替代图像观察"
+  ],
+  "coverageRule": "每个维度需明确判断状态，不强迫得出观察标签；执行失败不伪装为not_found，未分析不填成not_applicable。",
+  "outputSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "图片作品分析输出候选",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "schemaVersion",
+      "dictionaryVersion",
+      "sourceSnapshotRef",
+      "inputCoverage",
+      "annotations",
+      "structure",
+      "transferConditions",
+      "limitations",
+      "form"
+    ],
+    "properties": {
+      "schemaVersion": {
+        "const": "image-work-analysis-1.0.0"
+      },
+      "dictionaryVersion": {
+        "const": "image-1.0.0"
+      },
+      "sourceSnapshotRef": {
+        "type": "string",
+        "minLength": 1
+      },
+      "inputCoverage": {
+        "type": "object",
+        "required": [
+          "originalImagesReadable",
+          "pageOrderKnown"
+        ],
+        "properties": {
+          "originalImagesReadable": {
+            "type": "boolean"
+          },
+          "pageOrderKnown": {
+            "type": "boolean"
+          }
+        }
+      },
+      "annotations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dimensionId",
+            "status",
+            "values",
+            "observation",
+            "reason",
+            "evidence"
+          ],
+          "properties": {
+            "dimensionId": {
+              "enum": [
+                "I01",
+                "I02",
+                "I03",
+                "I04",
+                "I05",
+                "I06",
+                "I07",
+                "I08",
+                "I09",
+                "I10",
+                "I11",
+                "I12",
+                "I13",
+                "I14",
+                "I15",
+                "I16",
+                "I17",
+                "I18",
+                "I19",
+                "I20",
+                "I21",
+                "I22",
+                "I23",
+                "I24",
+                "I25",
+                "I26",
+                "I27",
+                "I28",
+                "I29",
+                "I30",
+                "I31",
+                "I32"
+              ]
+            },
+            "status": {
+              "enum": [
+                "observed",
+                "not_found",
+                "unknown",
+                "not_applicable"
+              ]
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "observation": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "imageRef",
+                  "imageSha256",
+                  "pageIndex",
+                  "bbox"
+                ],
+                "properties": {
+                  "imageRef": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "imageSha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "pageIndex": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "bbox": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "minItems": 4,
+                    "maxItems": 4
+                  }
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "status": {
+                    "const": "observed"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "observation": {
+                    "minLength": 1
+                  },
+                  "reason": {
+                    "minLength": 1
+                  },
+                  "evidence": {
+                    "minItems": 1
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "structure": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "unitRef",
+            "function",
+            "explanation"
+          ],
+          "properties": {
+            "unitRef": {
+              "type": "string"
+            },
+            "function": {
+              "type": "string"
+            },
+            "explanation": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "transferConditions": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "limitations": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "form": {
+        "const": "image"
+      }
+    }
+  }
+}

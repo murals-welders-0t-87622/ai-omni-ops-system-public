@@ -1,0 +1,6 @@
+interface:
+  display_name: "淘宝／天猫运营"
+  short_description: "结合当前品牌资料与千问办公淘宝天猫商家端的真实回执，完成店铺体检、市场货盘、商品内容、搜索推广、活动会员、履约服务和经营复盘，并把快照与运营方案回写AI中台。适用于淘宝/"
+  default_prompt: "使用 $taobao-tmall-operations 完成本品牌当前委托，读取已有上下文并保存可继续的结果。"
+policy:
+  allow_implicit_invocation: true

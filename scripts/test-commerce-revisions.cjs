@@ -1,0 +1,21 @@
+const assert=require('node:assert/strict'),{mergeRevision}=require('../integrations/commerce/executor/revision.cjs');
+const {detailTaskAction:run}=require('../apps/server/dist/apps/server/src/modules/openclaw/commerce-detail-tasks');
+let checks=0;const check=async(n,f)=>{await f();checks++;console.log('PASS '+n)};
+const body={sellingPointReport:'old',sellingPoints:[{title:'old'}],listing:{title:'old'},mainImages:[{copy:'m0',mediaRef:{table:'MediaAsset',recordId:'old0'}},{copy:'m1'}],pages:[{copy:'p0'},{copy:'p1'}],video:{concept:'old',mediaRef:{table:'MediaAsset',recordId:'video-old'}}};
+(async()=>{
+await check('only selected page changes, assets and other sections retained',()=>{const v=mergeRevision({revisionScope:'pages',jobKind:'main_copy',targetIndexes:[0]},body,{pages:[{copy:'new'},{copy:'unsolicited'}]});assert.equal(v.mainImages[0].copy,'new');assert.equal(v.mainImages[0].mediaRef.recordId,'old0');assert.equal(v.mainImages[1].copy,'m1');assert.deepEqual(v.pages,body.pages);assert.equal(body.mainImages[0].copy,'m0');});
+await check('listing revision leaves images and details intact',()=>{const v=mergeRevision({revisionScope:'listing'},body,{listing:{title:'new'}});assert.equal(v.listing.title,'new');assert.deepEqual(v.mainImages,body.mainImages);});
+await check('video concept revision retains old video reference',()=>assert.equal(mergeRevision({revisionScope:'video'},body,{video:{concept:'new'}}).video.mediaRef.recordId,'video-old'));
+await check('missing selected result does not silently erase old page',()=>assert.throws(()=>mergeRevision({revisionScope:'pages',jobKind:'detail_copy',targetIndexes:[1]},body,{pages:[]})));
+const project={id:'p',brandId:'b',title:'test',metadataJson:{kind:'COMMERCE_DETAIL',revision:1,body}},tasks=[];
+const db={businessAsset:{findFirst:async({where})=>where.id==='p'&&where.brandId==='b'?project:null},task:{findFirst:async()=>null,create:async({data})=>{const r={id:'t',...data};tasks.push(r);return r}}};
+const executor={capabilities:['main_copy','detail_copy','main_images','video_generate','video_concept'],at:Date.now()},request={projectId:'p',expectedRevision:1,jobKind:'main_copy',generationMode:'revise',revisionScope:'pages',targetIndexes:[0],instructions:'只改所选文字'};
+await check('revision without feedback rejected',()=>assert.rejects(()=>run(db,'b','u','commerce_request_detail_task',{...request,instructions:''},executor)));
+await check('out of range or duplicate selection rejected',async()=>{for(const indexes of [[3],[0,0]])await assert.rejects(()=>run(db,'b','u','commerce_request_detail_task',{...request,targetIndexes:indexes},executor));});
+await check('image editing needs an existing selected image',()=>assert.rejects(()=>run(db,'b','u','commerce_request_detail_task',{...request,jobKind:'main_images',targetIndexes:[1],confirmationText:'scope'},executor)));
+await check('image editing still needs spending confirmation',()=>assert.rejects(()=>run(db,'b','u','commerce_request_detail_task',{...request,jobKind:'main_images'},executor)));
+await check('listing scope cannot masquerade as image edit',()=>assert.rejects(()=>run(db,'b','u','commerce_request_detail_task',{...request,jobKind:'main_images',revisionScope:'listing',confirmationText:'scope'},executor)));
+await check('saved queue freezes revision scope and original media',async()=>{await run(db,'b','u','commerce_request_detail_task',{...request,jobKind:'main_images',confirmationText:'scope'},executor);assert.equal(tasks[0].inputJson.sourceMedia[0].recordId,'old0');assert.deepEqual(tasks[0].inputJson.targetIndexes,[0]);});
+await check('selling points can be revised without selected page',async()=>{await run(db,'b','u','commerce_request_detail_task',{...request,revisionScope:'selling_points',targetIndexes:[]},executor);assert.equal(tasks[1].inputJson.revisionScope,'selling_points');});
+console.log(JSON.stringify({checks}));
+})().catch(e=>{console.error(e);process.exitCode=1});

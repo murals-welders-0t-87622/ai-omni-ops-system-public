@@ -1,0 +1,121 @@
+[
+  {
+    "source": "电商/详情页/1提炼产品卖点.txt",
+    "kind": "user-provided",
+    "sha256": "3adaa24a65523fc5c16bf1247c7eac323179c79d8e253e3e491684eb5f981ecc",
+    "use": "五步方法；最新用户10秒与模型选择优先于原稿示例",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "电商/详情页/2生成详情页文字.txt",
+    "kind": "user-provided",
+    "sha256": "b37f8943d93e225efa0fd2c93aee5875d863ab8925079e024daf68f558fb47c2",
+    "use": "五步方法；最新用户10秒与模型选择优先于原稿示例",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "电商/详情页/3生成详情页画面.txt",
+    "kind": "user-provided",
+    "sha256": "e691352897f789b8f509f1fcd39b4f35f10734190928963a23762dd0bc658102",
+    "use": "五步方法；最新用户10秒与模型选择优先于原稿示例",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "电商/详情页/4生成产品视频创意部分.txt",
+    "kind": "user-provided",
+    "sha256": "77eeebcae8de8d6eef2ba80a72ea2270dd9482f735f89e160eed90e9b2fcbf3d",
+    "use": "五步方法；最新用户10秒与模型选择优先于原稿示例",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "电商/详情页/5根据创意生成产品视频.txt",
+    "kind": "user-provided",
+    "sha256": "2dfcf42166c33eb9232380647faa6d33d97601b8cc651a538bdff19c7a73cf4c",
+    "use": "五步方法；最新用户10秒与模型选择优先于原稿示例",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/plugins/marketplaces/experts/plugins/china-ecommerce-operations-expert/agents/china-ecommerce-operations-expert.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "892084ec250c81c5ebb1e5932d6b29147931f2be6e1c3f81ef4eef84527ce9d5",
+    "use": "专家总流程；原生v1.0.1，文件无独立版本",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/skills/market-researcher/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "b86a63cc9631e4bb1261412cb39c2c05a9ec6e43d87c9f8d28c08bf6a51c1f2f",
+    "use": "1.0.1；决策驱动研究与证据",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/skills/product-video-studio__skillhub/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "8e4faa6d6ec4cfa26164980e52d30e6dc0f30a8a87434db251851665b427ca1f",
+    "use": "入口未标；事实溯源与产物验收，未采用其供应商和付费门禁",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/skills/ai-hive-everyday-creator-commerce-workflow__skillhub/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "db0b0b5bd046b16bda7ef77574f6099dc5f48bb116f239d8aacc95b89897e688",
+    "use": "20260904；商品事实到内容试验，未采用其平台/默认参数",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/skills/aipdd-kol-collab__skillhub/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "46af1c9dbb5c0f7d8e58287f5d9d5dd2d1dea5b784a9ae483a93fb5ef65d2d9f",
+    "use": "2.0.0；合作Brief/报价/归因框架",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/plugins/cache/experts/crm-management-expert/1.0.2/agents/crm-management-expert.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "c7fb9e306adeb87c7f7e8d3efab0cf59a34e9594726708d1894c86e6e442964e",
+    "use": "1.0.2；事实/计算/假设和客户价值路由，未采用轻流产品门禁",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/plugins/cache/workbuddy-connector-plugins-official/infimind-ecommerce-content/1.0.0-wb.a7f4d691e8bd94d6/skills/product-main-image/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "08d62809d233e69d88d5a5c6ec628f4b2665998b1cbe07951fdfd6006fe1aee5",
+    "use": "1.0.0；内容任务、商品事实与精确查询，不替代用户指定模型",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "WorkBuddy/plugins/cache/workbuddy-connector-plugins-official/infimind-ecommerce-content/1.0.0-wb.a7f4d691e8bd94d6/skills/detail-page/SKILL.md",
+    "kind": "installed-workbuddy-document",
+    "sha256": "2769353dd3ddceb9bbd2877505155276eaadd052372b7ba3fd32740f11a5e102",
+    "use": "1.0.0；内容任务、商品事实与精确查询，不替代用户指定模型",
+    "readScope": "入口及本轮相关方法段落；并非全部下游参考文档",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "workbuddy-expert-observed.txt",
+    "kind": "native-expert-response",
+    "use": "十一环节研究；支付、盈亏平衡及连接器范围由主助手复核纠正",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "https://qwenwork.cn/docs/features/connectors",
+    "kind": "official-doc",
+    "retrieved": "2026-10-25",
+    "use": "连接器入口与当前产品边界",
+    "distribution": "source-locator-only; original text not included"
+  },
+  {
+    "source": "https://developer.alibaba.com/docs/doc.htm?articleId=120314&docType=1&treeId=336",
+    "kind": "official-doc",
+    "retrieved": "2026-10-25",
+    "use": "数据维度/字段生命周期；不能直接套成本连接器schema",
+    "distribution": "source-locator-only; original text not included"
+  }
+]

@@ -1,0 +1,61 @@
+"use client";
+import {useEffect,useState} from "react";
+import type {AnalyticsChart,AnalyticsDomain,AnalyticsSection,AnalyticsUnit,PrivateAnalytics} from "../../../../../../../packages/shared/src/private-analytics";
+import {request} from "../../../../services/http";
+import {AUTH_SESSION_CHANGED_EVENT,getAuthSessionGeneration} from "../../../../services/auth-session";
+
+const colors=["#7c3aed","#0d9488","#ea580c","#2563eb","#db2777","#64748b"];
+const domains:Record<AnalyticsDomain,string>={business:"经营结果",traffic:"流量与转化",products:"商品与客单",customers:"新老客户",membership:"会员经营",marketing:"活动效果",retention:"留存与复购",audiences:"标签与人群"};
+const unitNames:Record<AnalyticsUnit,string>={CNY:"元",COUNT:"数量",PERCENT:"%",RATIO:"倍"};
+export function formatMetric(value:number|null,unit:AnalyticsUnit){return value===null?"待核实":`${unit==="CNY"?"¥":""}${value.toLocaleString("zh-CN",{maximumFractionDigits:unit==="COUNT"?0:2})}${unit==="PERCENT"?"%":unit==="RATIO"?"倍":""}`;}
+
+export function DataChart({chart}:{chart:AnalyticsChart}){
+ const values=chart.rows.flatMap(r=>r.values.filter((v):v is number=>v!==null));
+ const max=Math.max(1,...values),total=chart.rows.reduce((n,r)=>n+(r.values[0]||0),0);
+ const legend=<div className="mb-4 flex flex-wrap gap-x-5 gap-y-2 text-xs text-slate-600">{chart.series.map((s,i)=><span key={s.id} className="flex items-center gap-2"><i className="h-2.5 w-2.5 rounded-full" style={{backgroundColor:colors[i]}}/>{s.label}</span>)}</div>;
+ return <figure className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5" aria-label={chart.title}>
+  <figcaption className="mb-2 font-semibold text-slate-900">{chart.title}</figcaption><p className="mb-4 text-xs leading-5 text-slate-500">{chart.definition} · 单位：{unitNames[chart.unit]}</p>{legend}
+  {chart.kind==="line"?<svg role="img" aria-label={chart.title} viewBox="0 0 640 245" className="w-full"><title>{chart.title}</title>{[0,.5,1].map(k=><g key={k}><line x1="50" y1={195-k*160} x2="610" y2={195-k*160} stroke="#e2e8f0"/><text x="42" y={199-k*160} textAnchor="end" fontSize="11" fill="#64748b">{(max*k).toLocaleString("zh-CN",{maximumFractionDigits:1})}</text></g>)}{chart.series.map((s,j)=><g key={s.id}>{chart.rows.map((r,i)=>{const v=r.values[j],prev=chart.rows[i-1]?.values[j],x=50+i*560/Math.max(1,chart.rows.length-1);return v===null?null:<g key={i}>{i>0&&prev!==null&&prev!==undefined&&<line x1={50+(i-1)*560/Math.max(1,chart.rows.length-1)} y1={195-prev/max*160} x2={x} y2={195-v/max*160} stroke={colors[j]} strokeWidth="3"/>}<circle cx={x} cy={195-v/max*160} r="4" fill={colors[j]}><title>{r.label} · {s.label}：{formatMetric(v,chart.unit)}</title></circle></g>})}</g>)}{chart.rows.filter((_,i)=>i%Math.max(1,Math.ceil(chart.rows.length/7))===0||i===chart.rows.length-1).map(r=><text key={r.label} x={50+chart.rows.indexOf(r)*560/Math.max(1,chart.rows.length-1)} y="222" textAnchor="middle" fontSize="11" fill="#64748b">{r.label}</text>)}</svg>
+  :chart.kind==="donut"?<div className="flex flex-wrap items-center gap-5"><svg viewBox="0 0 200 200" role="img" aria-label={chart.title} className="h-44 w-44 shrink-0"><title>{chart.title}</title><circle cx="100" cy="100" r="70" fill="none" stroke="#f1f5f9" strokeWidth="25"/>{total>0&&chart.rows.map((r,i)=>{const preceding=chart.rows.slice(0,i).reduce((n,row)=>n+(row.values[0]||0),0);return <circle key={r.label} cx="100" cy="100" r="70" fill="none" stroke={colors[i%colors.length]} strokeWidth="25" pathLength="100" strokeDasharray={`${(r.values[0]||0)/total*100} 100`} strokeDashoffset={-preceding/total*100} transform="rotate(-90 100 100)"/>})}<text x="100" y="98" textAnchor="middle" fontSize="12" fill="#64748b">{total>0?"已知项合计":"暂无已知数值"}</text><text x="100" y="121" textAnchor="middle" fontSize="18" fill="#0f172a">{total>0?formatMetric(total,chart.unit):"—"}</text></svg><div className="min-w-0 flex-1 space-y-3">{chart.rows.map((r,i)=><div key={r.label} className="flex justify-between gap-3 text-sm"><span className="flex items-center gap-2"><i className="h-2.5 w-2.5 shrink-0 rounded-full" style={{backgroundColor:colors[i%colors.length]}}/>{r.label}</span><span>{formatMetric(r.values[0],chart.unit)}</span></div>)}</div></div>
+  :chart.kind==="cohort"?<div className="overflow-x-auto"><table className="w-full min-w-96 text-center text-xs"><thead><tr><th className="p-2 text-left">首购月份</th>{chart.series.map(s=><th key={s.id} className="p-2">{s.label}</th>)}</tr></thead><tbody>{chart.rows.map(r=><tr key={r.label}><th className="p-2 text-left font-normal">{r.label}</th>{r.values.map((v,j)=><td key={j} className="border-4 border-white p-3" style={{background:v===null?"#f1f5f9":`rgba(124,58,237,${.1+v/100*.7})`}}>{v===null?"未成熟 / 未返回":formatMetric(v,chart.unit)}</td>)}</tr>)}</tbody></table></div>
+  :<div className="space-y-4">{chart.rows.map(r=><div key={r.label}><p className="mb-1.5 text-sm text-slate-700">{r.label}</p><div className="space-y-1.5">{r.values.map((v,j)=><div key={j} className="flex items-center gap-2"><div className="h-6 flex-1 overflow-hidden rounded bg-slate-100"><div className="h-full rounded transition-all" style={{width:`${v===null?0:Math.max(v>0?1:0,v/max*100)}%`,background:colors[j]}}/></div><span className="w-24 shrink-0 text-right text-xs tabular-nums">{formatMetric(v,chart.unit)}</span></div>)}</div></div>)}</div>}
+  <details className="mt-4 text-xs text-slate-500"><summary className="cursor-pointer">查看原始数值</summary><div className="mt-2 overflow-x-auto"><table className="w-full text-left"><thead><tr><th className="p-2">项目</th>{chart.series.map(s=><th key={s.id} className="p-2">{s.label}</th>)}</tr></thead><tbody>{chart.rows.map(r=><tr key={r.label} className="border-t"><th className="p-2 font-normal">{r.label}</th>{r.values.map((v,j)=><td className="p-2" key={j}>{formatMetric(v,chart.unit)}</td>)}</tr>)}</tbody></table></div></details>
+ </figure>;
+}
+
+function Section({section,compact=false}:{section:AnalyticsSection;compact?:boolean}){
+ return <section className="min-w-0 space-y-4" aria-label={section.title}>
+  <header><p className="text-xs font-medium text-violet-700">{domains[section.domain]}</p><h2 className="mt-1 text-lg font-semibold">{section.title}</h2><p className="mt-2 text-xs leading-5 text-slate-500">{section.periodStart} 至 {section.periodEnd} · {section.scope}</p></header>
+  {!!section.metrics.length&&<div className="grid grid-cols-2 gap-3 xl:grid-cols-4">{section.metrics.slice(0,compact?4:24).map(m=><article key={m.id} className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-xs text-slate-500">{m.label}</p><p className="mt-2 text-2xl font-semibold tabular-nums text-slate-900">{formatMetric(m.value,m.unit)}</p><p className="mt-2 text-xs leading-5 text-slate-500">{m.definition}</p></article>)}</div>}
+  <div className="grid min-w-0 gap-4 xl:grid-cols-2">{section.charts.slice(0,compact?2:10).map(c=><DataChart key={c.id} chart={c}/>)}</div>
+  {!compact&&section.objects.length>0&&<div className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5"><h3 className="font-semibold">经营对象与下一步判断</h3>{section.objects.map(o=><article key={o.id} className="rounded-xl bg-slate-50 p-4 text-sm"><div className="flex flex-wrap justify-between gap-2"><h4 className="font-medium">{o.title}</h4><span className="text-xs text-violet-700">{o.state}</span></div><p className="mt-2 whitespace-pre-wrap leading-7 text-slate-700">{o.details}</p><p className="mt-2 break-all text-xs text-slate-500">依据：{o.reference}</p></article>)}</div>}
+  <details className="rounded-xl bg-slate-50 p-4 text-xs leading-6 text-slate-500"><summary className="cursor-pointer">数据依据与范围 · {section.complete?"本次声明范围完整":"本次为部分数据"}</summary><p>{section.source.description}</p><p className="break-all">{section.source.reference}</p><p>{section.limitations}</p></details>
+ </section>;
+}
+
+export default function PrivateAnalyticsPanel({brandId,refresh=0,filter,compact=false,global=false}:{brandId:string;refresh?:number;filter?:AnalyticsDomain[];compact?:boolean;global?:boolean}){
+ const [result,setResult]=useState<{available:boolean;data?:PrivateAnalytics} | null>(null),[error,setError]=useState(""),[selection,setSelection]=useState(""),[domain,setDomain]=useState("all");
+ useEffect(()=>{let active=true;const generation=getAuthSessionGeneration();setResult(null);setError("");setSelection("");setDomain("all");const clear=()=>{active=false;setResult(null);};window.addEventListener(AUTH_SESSION_CHANGED_EVENT,clear);
+  if(brandId)request<any>(`/ai-control-center/brands/${encodeURIComponent(brandId)}/private-operations/actions`,{method:"POST",body:JSON.stringify({action:"private_get_analytics",payload:{}})}).then(r=>{if(active&&generation===getAuthSessionGeneration())setResult(r)}).catch(e=>{if(active&&generation===getAuthSessionGeneration())setError(e.message)});
+  return()=>{active=false;window.removeEventListener(AUTH_SESSION_CHANGED_EVENT,clear)};
+ },[brandId,refresh]);
+ const sections=(result?.data?.sections||[]).filter(s=>(!filter||filter.includes(s.domain))&&(domain==="all"||s.domain===domain));
+ const selected=sections.find(s=>s.id===selection)||sections[0];
+ return <div className="min-w-0 space-y-5" aria-label={global?"私域业务数据总览":"经营分析图表"}>
+  <header className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-semibold">{global?"私域业务数据总览":compact?"支撑方向的经营依据":"业务总览 · 数据看经营"}</h2><p className="mt-1 text-xs leading-6 text-slate-500">各报表独立显示统计期间与店铺范围。回写后更新，最新保存不代表实时取数。</p></div>{global&&<a className="rounded-lg border px-3 py-2 text-sm text-violet-700" href="/tabs/private-repurchase/operations?view=overview">进入私域业务总览 →</a>}</header>
+  {error?<p role="alert" className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">经营图表暂不可读：{error}</p>:!result?<p role="status" className="text-sm text-slate-500">正在读取本品牌经营图表…</p>:!selected?<p className="rounded-xl border border-dashed p-5 text-sm text-slate-500">此板块尚无可核验的图表数据。可让 AI 读取对应经营报表并回写，未知不记为零。</p>:<>
+   {!compact&&<div className="flex flex-wrap gap-3">{!filter&&<select aria-label="分析板块" className="max-w-full rounded-xl border bg-white p-2 text-sm" value={domain} onChange={e=>{setDomain(e.target.value);setSelection("")}}><option value="all">全部经营板块</option>{Object.entries(domains).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select>}<select aria-label="报表与统计期间" className="max-w-full rounded-xl border bg-white p-2 text-sm" value={selected.id} onChange={e=>setSelection(e.target.value)}>{sections.map(s=><option key={s.id} value={s.id}>{s.title} · {s.periodStart}—{s.periodEnd}</option>)}</select></div>}
+   <Section section={selected} compact={compact}/><p className="text-xs text-slate-400">归档时间：{new Date(result.data!.capturedAt).toLocaleString("zh-CN",{hour12:false})} · 店铺 {result.data!.shopId}</p>
+  </>}
+ </div>;
+}
+
+export function ExecutionCharts({brandId,refresh=0}:{brandId:string;refresh?:number}){
+ const [rows,setRows]=useState<any>(null),[error,setError]=useState("");
+ useEffect(()=>{let active=true;const g=getAuthSessionGeneration();setRows(null);setError("");request<any>(`/ai-control-center/brands/${encodeURIComponent(brandId)}/private-operations/records?entity=task&limit=100`).then(r=>{if(active&&g===getAuthSessionGeneration())setRows(r)}).catch(e=>{if(active&&g===getAuthSessionGeneration())setError(e.message)});return()=>{active=false}},[brandId,refresh]);
+ if(error)return <p role="alert" className="text-sm text-amber-800">任务统计暂不可读：{error}</p>;
+ if(!rows)return <p className="text-sm text-slate-500">正在读取执行记录…</p>;
+ const names:Record<string,string>={draft:"拟议待确认",ready:"已准备",in_progress:"进行中",completed:"有回执已完成",blocked:"受阻",cancelled:"已取消",archived:"历史归档"};
+ const counts=new Map<string,number>();for(const r of rows.items)counts.set(r.body?.status||r.status||"unknown",(counts.get(r.body?.status||r.status||"unknown")||0)+1);
+ return <section className="space-y-3"><p className="text-sm leading-6 text-slate-500">执行状态只说明任务进度，达标仍须同口径目标与实际结果。{rows.total>rows.items.length?`当前显示${rows.items.length}/${rows.total}条，非全量。`: `当前${rows.items.length}条任务。`}</p>{counts.size>0&&<DataChart chart={{id:"execution",title:"计划执行状态",kind:"bar",unit:"COUNT",definition:"当前品牌已读任务的实际保存状态，草案不算已执行",series:[{id:"tasks",label:"任务数"}],rows:[...counts].map(([key,n])=>({label:names[key]||key,values:[n]}))}}/>}</section>;
+}

@@ -1,0 +1,634 @@
+import type { PromptTemplateRecord, SkillConfigRecord } from "./admin";
+import { jsonRequest, request } from "./http";
+import type { UserAccessFeatureKey } from "../../../../packages/shared/src/user-access";
+
+export type TaskStatus = "PENDING" | "QUEUED" | "RUNNING" | "SUCCESS" | "FAILED" | "CANCELLED";
+export type MediaType = "IMAGE" | "VIDEO" | "DOCUMENT" | "HTML" | "ARCHIVE";
+export type MediaScope = "XIAOHONGSHU" | "OTHER";
+
+export type TaskRecord = {
+  id: string;
+  userId: string;
+  brandId?: string;
+  taskType: string;
+  taskTitle: string;
+  taskStatus: TaskStatus;
+  modelName: string;
+  pointsCost: number;
+  errorMessage?: string;
+  startedAt?: string;
+  finishedAt?: string;
+  inputJson?: Record<string, unknown>;
+  outputJson?: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type MediaRecord = {
+  id: string;
+  userId: string;
+  brandId?: string;
+  taskId?: string;
+  title: string;
+  mediaType: MediaType;
+  assetUrl?: string;
+  scope: MediaScope;
+  mimeType?: string;
+  fileSize?: number;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type UserProfile = {
+  id: string;
+  mobile: string;
+  email: string;
+  nickname: string;
+  avatarUrl: string;
+  emailVerified?: boolean;
+  status: "ACTIVE" | "DISABLED";
+  membership: "FREE" | "BASIC" | "PRO" | "ENTERPRISE";
+  accessExpiresAt?: string | null;
+  allowedFeatureKeys?: UserAccessFeatureKey[];
+  hasFullFeatureAccess?: boolean;
+  pointsBalance: number;
+};
+
+export type PointLedgerRecord = {
+  id: string;
+  userId: string;
+  changeType: string;
+  pointsDelta: number;
+  balanceAfter: number;
+  description?: string;
+  relatedTaskId?: string;
+  createdAt: string;
+};
+
+export type OrderRecord = {
+  id: string;
+  userId: string;
+  orderNo: string;
+  orderType: string;
+  orderStatus: "PENDING" | "PAID" | "FAILED" | "REFUNDED" | "CANCELLED";
+  membership?: "FREE" | "BASIC" | "PRO" | "ENTERPRISE";
+  pointsAmount?: number;
+  amountYuan: number;
+  paidAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  user?: {
+    nickname: string;
+    mobile: string;
+    membership: "FREE" | "BASIC" | "PRO" | "ENTERPRISE";
+    pointsBalance: number;
+  };
+};
+
+export type UserSkillPromptRecord = {
+  id: string;
+  isCustomized: boolean;
+  basePrompt: PromptTemplateRecord;
+  effectivePrompt: PromptTemplateRecord;
+};
+
+export type UserSkillRecord = {
+  id: string;
+  brandId?: string;
+  isCustomized: boolean;
+  lastResetAt?: string;
+  baseSkill: SkillConfigRecord;
+  effectiveSkill: SkillConfigRecord & {
+    name: string;
+  };
+  prompts: UserSkillPromptRecord[];
+};
+
+export type UserSkillEditorModelOption = {
+  value: string;
+  label: string;
+  modelName: string;
+  providerId: string;
+  providerName: string;
+};
+
+export type UserSkillEditorOptions = {
+  modelOptions: UserSkillEditorModelOption[];
+};
+
+export type UserThirdPartyPlatformRecord = {
+  id: string;
+  name: string;
+  providerType: "OPENAI" | "GEMINI" | "DOUBAO" | "CUSTOM";
+  status: "ACTIVE" | "DISABLED" | "DRAFT";
+  baseUrl: string;
+  websiteUrl: string;
+  tutorialUrl: string;
+  modelIds: string[];
+  defaultModel: string;
+  remark: string;
+  updatedAt: string;
+  apiKey: string;
+  hasApiKey?: boolean;
+  effectiveApiKeyMasked: string;
+  dynamicStats?: {
+    status: "ready" | "partial" | "missing_credential" | "error";
+    templateCount?: number;
+    customPersonCount?: number;
+    tagCount?: number;
+    syncedAt?: string;
+    message?: string;
+  };
+};
+
+export type GetMyThirdPartyPlatformsResponse = {
+  brandId: string;
+  role: string;
+  canManage: boolean;
+  platforms: UserThirdPartyPlatformRecord[];
+};
+
+export type MyThirdPartyPlatformRuntimeAccessRecord = {
+  platformId: string;
+  aliasIds: string[];
+  platformName: string;
+  baseUrl: string;
+  websiteUrl: string;
+  defaultModel: string;
+  status: "resolved" | "brand-api-key-missing";
+  openClawCanUse: boolean;
+  resolvedFrom?: "brand" | "local-env";
+  effectiveApiKeyMasked: string;
+};
+
+export type UpdateUserSkillPayload = {
+  displayName?: string | null;
+  defaultModel?: string | null;
+  description?: string | null;
+  promptOverrides?: Array<{
+    promptId: string;
+    content?: string | null;
+    modelName?: string | null;
+    temperature?: number | null;
+    maxTokens?: number | null;
+  }>;
+};
+
+export type SystemUpdatePhase =
+  | "IDLE"
+  | "AVAILABLE"
+  | "DOWNLOADING"
+  | "READY_TO_APPLY"
+  | "APPLYING"
+  | "SUCCEEDED"
+  | "FAILED"
+  | "UNSUPPORTED";
+
+export type SystemUpdateCurrentBuild = {
+  version: string;
+  runtimeMode: "standard" | "local-single-user";
+  generatedAt: string | null;
+  buildName: string | null;
+  releaseTag: string | null;
+  installRoot: string | null;
+  projectRoot: string;
+  canApplyUpdate: boolean;
+  applyBlockedReason: string | null;
+};
+
+export type SystemUpdateAsset = {
+  name: string;
+  size: number;
+  downloadUrl: string;
+};
+
+export type SystemUpdateLatestRelease = {
+  tagName: string;
+  appVersion: string | null;
+  name: string;
+  htmlUrl: string;
+  publishedAt: string;
+  body: string;
+  summary: string | null;
+  changeLogs: Array<{
+    releaseTag: string | null;
+    appVersion: string | null;
+    publishedAt: string;
+    content: string;
+  }>;
+  zipAsset: SystemUpdateAsset | null;
+  checksumAsset: SystemUpdateAsset | null;
+  checksumValue: string | null;
+  updateGuide: {
+    commands: string[];
+    notices: string[];
+    requires: {
+      server: boolean;
+      web: boolean;
+      skillPackage: boolean;
+      migration: boolean;
+    };
+    changeLogUrl: string | null;
+    skillPackageUrl: string | null;
+  } | null;
+};
+
+export type SystemUpdateStatus = {
+  supported: boolean;
+  current: SystemUpdateCurrentBuild;
+  latest: SystemUpdateLatestRelease | null;
+  source: {
+    kind: "oss" | "manifest" | "repo";
+    label: string;
+    manifestUrl: string;
+    publicBaseUrl: string;
+    executionMode: "auto-apply" | "guide-only";
+  } | null;
+  phase: SystemUpdatePhase;
+  updateAvailable: boolean;
+  message: string;
+  checkedAt: string | null;
+  downloadedReleaseTag: string | null;
+  downloadedAt: string | null;
+  appliedAt: string | null;
+  failedAt: string | null;
+};
+
+export type ApplySystemUpdateResult = {
+  accepted: boolean;
+  phase: SystemUpdatePhase;
+  message: string;
+  updaterRunPath: string;
+};
+
+export type LocalRuntimeSettings = {
+  supported: boolean;
+  runtimeMode: "standard" | "local-single-user";
+  inviteCodeRequired: boolean;
+  currentLocalAppRoot: string;
+  configuredLocalAppRoot: string;
+  defaultLocalAppRoot: string;
+  settingsFilePath: string;
+  pendingMigrationFrom: string | null;
+  restartRequired: boolean;
+  materialLibrary: {
+    folderName: string;
+    currentBaseRoot: string;
+    configuredBaseRoot: string;
+    defaultBaseRoot: string;
+    libraryRoot: string;
+    categoryDirectories: {
+      text: string;
+      image: string;
+      audio: string;
+      video: string;
+    };
+    namingRules: string[];
+    appliesImmediately: boolean;
+  };
+  paths: {
+    appRoot: string;
+    dataRoot: string;
+    dbPath: string;
+    logsRoot: string;
+    runtimeRoot: string;
+    storageRoot: string;
+    cacheRoot: string;
+    backupRoot: string;
+    updatesRoot: string;
+  };
+};
+
+export const profileSeed: UserProfile = {
+  id: "usr_demo_001",
+  mobile: "13800000000",
+  email: "demo@ai-omni.local",
+  nickname: "演示账号",
+  avatarUrl: "https://coresg-normal.trae.ai/api/ide/v1/text_to_image?prompt=clean%20minimal%20professional%20user%20avatar%20portrait%2C%20asian%20young%20adult%2C%20soft%20studio%20lighting%2C%20blue%20gray%20background%2C%20realistic%20headshot&image_size=square",
+  emailVerified: true,
+  status: "ACTIVE",
+  membership: "PRO",
+  pointsBalance: 14240,
+};
+
+export const taskSeed: TaskRecord[] = [
+  {
+    id: "tsk_demo_001",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskType: "BRAND_GROWTH_REPORT",
+    taskTitle: "生成品牌增长报告",
+    taskStatus: "SUCCESS",
+    modelName: "gpt-5.4",
+    pointsCost: 320,
+    createdAt: "2026-05-01T09:20:00.000Z",
+    updatedAt: "2026-05-01T09:25:00.000Z",
+  },
+  {
+    id: "tsk_demo_002",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskType: "XHS_MARKETING_PLAN",
+    taskTitle: "生成小红书营销策划方案",
+    taskStatus: "RUNNING",
+    modelName: "gpt-5.4",
+    pointsCost: 260,
+    createdAt: "2026-05-02T02:00:00.000Z",
+    updatedAt: "2026-05-02T02:03:00.000Z",
+  },
+  {
+    id: "tsk_demo_003",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskType: "XHS_NOTE_GENERATION",
+    taskTitle: "生成小红书笔记：武汉仟吉爆浆提拉米苏值得买吗？",
+    taskStatus: "SUCCESS",
+    modelName: "gpt-5.4",
+    pointsCost: 180,
+    createdAt: "2026-05-02T04:15:00.000Z",
+    updatedAt: "2026-05-02T04:22:00.000Z",
+  },
+];
+
+export const mediaSeed: MediaRecord[] = [
+  {
+    id: "med_demo_001",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskId: "tsk_demo_001",
+    title: "品牌增长可视化报告",
+    mediaType: "HTML",
+    assetUrl: "/api/works/brands/br_demo_001/assets/growth-report.html",
+    scope: "OTHER",
+    mimeType: "text/html",
+    createdAt: "2026-05-01T10:00:00.000Z",
+    updatedAt: "2026-05-01T10:00:00.000Z",
+  },
+  {
+    id: "med_demo_002",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    title: "爆浆提拉米苏封面图",
+    mediaType: "IMAGE",
+    assetUrl: "/api/works/brands/br_demo_001/assets/post-cover-001.png",
+    scope: "OTHER",
+    mimeType: "image/png",
+    createdAt: "2026-05-02T03:10:00.000Z",
+    updatedAt: "2026-05-02T03:10:00.000Z",
+  },
+  {
+    id: "med_demo_003",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskId: "tsk_demo_003",
+    title: "小红书笔记 - 武汉仟吉爆浆提拉米苏值得买吗？",
+    mediaType: "HTML",
+    assetUrl: "/api/works/brands/br_demo_001/assets/xiaohongshu-note-demo-001.html",
+    scope: "XIAOHONGSHU",
+    mimeType: "text/html",
+    createdAt: "2026-05-02T04:22:00.000Z",
+    updatedAt: "2026-05-02T04:22:00.000Z",
+  },
+  {
+    id: "med_demo_004",
+    userId: "usr_demo_001",
+    brandId: "br_demo_001",
+    taskId: "tsk_demo_003",
+    title: "小红书封面图 - 武汉仟吉爆浆提拉米苏值得买吗？",
+    mediaType: "IMAGE",
+    assetUrl: "/api/works/brands/br_demo_001/assets/xiaohongshu-cover-demo-001.png",
+    scope: "XIAOHONGSHU",
+    mimeType: "image/png",
+    createdAt: "2026-05-02T04:22:00.000Z",
+    updatedAt: "2026-05-02T04:22:00.000Z",
+  },
+];
+
+export const pointLedgerSeed: PointLedgerRecord[] = [
+  {
+    id: "ptl_demo_001",
+    userId: "usr_demo_001",
+    changeType: "SYSTEM_GRANT",
+    pointsDelta: 10000,
+    balanceAfter: 10000,
+    description: "新用户演示点数发放",
+    createdAt: "2026-04-30T10:00:00.000Z",
+  },
+  {
+    id: "ptl_demo_002",
+    userId: "usr_demo_001",
+    changeType: "TASK_CONSUME",
+    pointsDelta: -320,
+    balanceAfter: 9680,
+    description: "生成品牌增长报告",
+    relatedTaskId: "tsk_demo_001",
+    createdAt: "2026-05-01T09:25:00.000Z",
+  },
+  {
+    id: "ptl_demo_003",
+    userId: "usr_demo_001",
+    changeType: "POINTS_RECHARGE",
+    pointsDelta: 5000,
+    balanceAfter: 14680,
+    description: "点数充值到账",
+    createdAt: "2026-05-02T01:40:00.000Z",
+  },
+  {
+    id: "ptl_demo_004",
+    userId: "usr_demo_001",
+    changeType: "TASK_CONSUME",
+    pointsDelta: -260,
+    balanceAfter: 14420,
+    description: "生成小红书营销策划方案",
+    relatedTaskId: "tsk_demo_002",
+    createdAt: "2026-05-02T02:03:00.000Z",
+  },
+  {
+    id: "ptl_demo_005",
+    userId: "usr_demo_001",
+    changeType: "TASK_CONSUME",
+    pointsDelta: -180,
+    balanceAfter: 14240,
+    description: "生成小红书笔记：武汉仟吉爆浆提拉米苏值得买吗？",
+    relatedTaskId: "tsk_demo_003",
+    createdAt: "2026-05-02T04:22:00.000Z",
+  },
+];
+
+export const orderSeed: OrderRecord[] = [
+  {
+    id: "ord_demo_001",
+    userId: "usr_demo_001",
+    orderNo: "MO202605010001",
+    orderType: "MEMBERSHIP_PURCHASE",
+    orderStatus: "PAID",
+    membership: "PRO",
+    amountYuan: 699,
+    paidAt: "2026-05-01T08:50:00.000Z",
+    createdAt: "2026-05-01T08:45:00.000Z",
+    updatedAt: "2026-05-01T08:50:00.000Z",
+  },
+  {
+    id: "ord_demo_002",
+    userId: "usr_demo_001",
+    orderNo: "PO202605020001",
+    orderType: "POINTS_RECHARGE",
+    orderStatus: "PAID",
+    pointsAmount: 5000,
+    amountYuan: 50,
+    paidAt: "2026-05-02T01:40:00.000Z",
+    createdAt: "2026-05-02T01:35:00.000Z",
+    updatedAt: "2026-05-02T01:40:00.000Z",
+  },
+];
+
+export async function getProfile() {
+  return request<UserProfile>("/auth/profile");
+}
+
+export async function getPointLedgers() {
+  return request<PointLedgerRecord[]>("/auth/point-ledgers");
+}
+
+export async function getOrders() {
+  return request<OrderRecord[]>("/orders");
+}
+
+export async function getOrderById(orderId: string) {
+  return request<OrderRecord>(`/orders/${orderId}`);
+}
+
+export async function getOrderStatus(orderId: string) {
+  return request<Pick<OrderRecord, "id" | "orderNo" | "orderStatus" | "paidAt" | "updatedAt">>(`/orders/${orderId}/status`);
+}
+
+export async function createOrder(payload: {
+  orderType: string;
+  membership?: "FREE" | "BASIC" | "PRO" | "ENTERPRISE";
+  pointsAmount?: number;
+  amountYuan: number;
+}) {
+  return jsonRequest<OrderRecord>("/orders", "POST", payload);
+}
+
+export async function payOrder(orderId: string) {
+  return request<OrderRecord>(`/orders/${orderId}/pay`, {
+    method: "PATCH",
+  });
+}
+
+export async function cancelOrder(orderId: string) {
+  return request<OrderRecord>(`/orders/${orderId}/cancel`, {
+    method: "PATCH",
+  });
+}
+
+export async function getTasks() {
+  return request<TaskRecord[]>("/tasks");
+}
+
+export async function retryTask(taskId: string) {
+  return request<TaskRecord>(`/tasks/${taskId}/retry`, {
+    method: "PATCH",
+  });
+}
+
+export async function cancelTask(taskId: string) {
+  return request<TaskRecord>(`/tasks/${taskId}/cancel`, {
+    method: "PATCH",
+  });
+}
+
+export async function createTask(payload: {
+  brandId?: string;
+  taskType: string;
+  taskTitle: string;
+  modelName?: string;
+  pointsCost?: number;
+}) {
+  return jsonRequest<TaskRecord>("/tasks", "POST", payload);
+}
+
+export async function getMedia() {
+  return request<MediaRecord[]>("/media");
+}
+
+export async function getUserSkills() {
+  return request<UserSkillRecord[]>("/user-skills");
+}
+
+export async function getUserSkillEditorOptions() {
+  return request<UserSkillEditorOptions>("/user-skills/editor-options");
+}
+
+export async function getUserSkill(skillId: string) {
+  return request<UserSkillRecord>(`/user-skills/${skillId}`);
+}
+
+export async function updateUserSkill(skillId: string, payload: UpdateUserSkillPayload) {
+  return jsonRequest<UserSkillRecord>(`/user-skills/${skillId}`, "PATCH", payload);
+}
+
+export async function resetUserSkill(skillId: string) {
+  return jsonRequest<UserSkillRecord>(`/user-skills/${skillId}/reset`, "POST", {});
+}
+
+export async function getMyThirdPartyPlatforms() {
+  return request<GetMyThirdPartyPlatformsResponse>("/third-party-platforms");
+}
+
+export async function updateMyThirdPartyPlatformSecret(platformId: string, payload: { apiKey?: string }) {
+  return jsonRequest<UserThirdPartyPlatformRecord>(`/third-party-platforms/${platformId}/secret`, "PATCH", payload);
+}
+
+export async function getMyThirdPartyPlatformRuntimeAccess() {
+  return request<MyThirdPartyPlatformRuntimeAccessRecord[]>("/third-party-platforms/runtime-access");
+}
+
+export async function getSystemUpdateStatus() {
+  return request<SystemUpdateStatus>("/system/update/status");
+}
+
+export async function checkSystemUpdate() {
+  return jsonRequest<SystemUpdateStatus>("/system/update/check", "POST", {});
+}
+
+export async function downloadSystemUpdate() {
+  return jsonRequest<SystemUpdateStatus>("/system/update/download", "POST", {});
+}
+
+export async function applySystemUpdate() {
+  return jsonRequest<ApplySystemUpdateResult>("/system/update/apply", "POST", {});
+}
+
+export async function getLocalRuntimeSettings() {
+  return request<LocalRuntimeSettings>("/local-runtime/settings");
+}
+
+export async function updateLocalRuntimeSettings(payload: { localAppDataRoot?: string | null; materialLibraryBaseRoot?: string | null }) {
+  return request<LocalRuntimeSettings & { success: boolean; message: string }>("/local-runtime/settings", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function pickLocalMaterialLibraryBaseRoot() {
+  return jsonRequest<{ canceled: boolean; selectedPath: string; libraryRoot: string }>(
+    "/local-runtime/pick-material-library-base-root",
+    "POST",
+    {},
+  );
+}
+
+export async function createMedia(payload: {
+  brandId?: string;
+  taskId?: string;
+  title: string;
+  mediaType: MediaType;
+  sourceUrl?: string;
+  storageKey: string;
+  mimeType?: string;
+  fileSize?: number;
+}) {
+  return jsonRequest<MediaRecord>("/media", "POST", payload);
+}

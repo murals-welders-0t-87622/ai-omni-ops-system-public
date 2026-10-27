@@ -1,0 +1,31 @@
+node_modules
+.pnpm-store
+.next
+dist
+coverage
+.release
+*.tsbuildinfo
+debug-*.md
+how --stat --summary*
+*status --short*
+__pycache__/
+*.pyc
+.env
+.env.local
+.DS_Store
+*.log
+*.pid
+.runtime
+.lark-cli
+.trae
+.tmp*
+.dbg
+workspace-notes
+prisma/dev.db
+apps/server/.dbg/
+
+# Lab local execution packages, state, credentials and database backups
+/runtime/
+
+# Brand-scoped host Codex task context and local receipts
+/.local/commerce-executor/
