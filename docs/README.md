@@ -1,5 +1,7 @@
 # AI全域运营系统文档中心
 
+2026-10-27：素材业务数据避免重复解压，见[变更与验收](changes/2026-10-27-material-query-normalization.md)。
+
 2026-10-27：素材与商品关联减少重复计算及重复查询；见[变更与验收](changes/2026-10-27-material-product-lookup.md)。
 
 2026-10-27：品牌隔离测试修订与专家资料挂载隔离冲突，见[系统检查](changes/2026-10-27-system-audit.md)。

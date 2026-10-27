@@ -1034,54 +1034,59 @@ export class AiControlAssetArchiveService {
   private async listBusinessAssets(brandId: string, limit: number): Promise<ArchiveRow[]> {
     if (!(await this.prisma.tableExists("BusinessAsset"))) return [];
     const rows = await this.prisma.$queryRaw<ArchiveRow[]>`
+      -- Extract the large original collector payload only once per eligible row.
+      -- MATERIALIZED prevents repeated decompression for each projected field.
+      WITH normalized AS MATERIALIZED (
+        SELECT "id", "brandId", "title", "description", "fileUrl", "category", "createdAt", "updatedAt",
+          CASE WHEN jsonb_typeof("metadataJson"::jsonb) = 'object'
+            THEN "metadataJson"::jsonb - 'rawFields'
+            ELSE "metadataJson"::jsonb
+          END AS "cleanMeta"
+        FROM "BusinessAsset"
+        WHERE "brandId" = ${brandId}
+          AND COALESCE("metadataJson"->>'kind', '') NOT LIKE 'OCEAN_AD_%'
+          AND COALESCE(NULLIF("metadataJson"->>'kind', ''), CAST("category" AS TEXT)) NOT IN (
+            'DOUYIN_COMMENT', 'XHS_NOTE_COMMENT', 'DOUYIN_CREATOR_SEARCH_RESULT',
+            'DOUYIN_TARGET_USER', 'XHS_TARGET_USER', 'DOUYIN_KEYWORD_RECOMMENDATION',
+            'DOUYIN_COMPETITOR_ACCOUNT', 'DOUYIN_BRAND_ACCOUNT'
+          )
+      )
       SELECT
         "id",
         'business_asset' AS "source",
-        COALESCE(NULLIF("metadataJson"->>'kind', ''), CAST("category" AS TEXT)) AS "kind",
+        COALESCE(NULLIF("cleanMeta"->>'kind', ''), CAST("category" AS TEXT)) AS "kind",
         COALESCE(NULLIF("title", ''), "id") AS "title",
         NULLIF("description", '') AS "description",
         COALESCE(
-          NULLIF("metadataJson"->>'htmlContent', ''),
-          NULLIF("metadataJson"->>'reportMarkdown', ''),
-          NULLIF("metadataJson"->>'textContent', '')
+          NULLIF("cleanMeta"->>'htmlContent', ''),
+          NULLIF("cleanMeta"->>'reportMarkdown', ''),
+          NULLIF("cleanMeta"->>'textContent', '')
         ) AS "textContent",
         "brandId",
         NULL AS "workspaceScope",
         NULL AS "taskId",
         NULL AS "taskGoal",
         COALESCE(
-          NULLIF("metadataJson"->>'videoUrl', ''),
-          NULLIF("metadataJson"->>'videoSourceUrl', ''),
+          NULLIF("cleanMeta"->>'videoUrl', ''),
+          NULLIF("cleanMeta"->>'videoSourceUrl', ''),
           "fileUrl"
         ) AS "assetUrl",
         CASE
-          WHEN COALESCE("metadataJson"->>'videoCacheStatus', '') = 'READY' THEN NULLIF("metadataJson"->>'videoStorageKey', '')
+          WHEN COALESCE("cleanMeta"->>'videoCacheStatus', '') = 'READY' THEN NULLIF("cleanMeta"->>'videoStorageKey', '')
           ELSE NULL
         END AS "storageKey",
         NULL AS "localPath",
-        NULLIF("metadataJson"->>'videoContentType', '') AS "mimeType",
+        NULLIF("cleanMeta"->>'videoContentType', '') AS "mimeType",
         -- rawFields is the original collector response. Archive conversion and
         -- work snapshots use normalized fields; keep the original in the DB.
-        CASE WHEN jsonb_typeof("metadataJson"::jsonb) = 'object'
-          THEN "metadataJson"::jsonb - 'rawFields'
-          ELSE "metadataJson"::jsonb
-        END AS "metadataJson",
+        "cleanMeta" AS "metadataJson",
         NULL AS "sourceKind",
         NULL AS "materialTags",
         "createdAt",
         "updatedAt",
         'BusinessAsset' AS "evidenceTable",
         "id" AS "evidenceRecordId"
-      FROM "BusinessAsset"
-      WHERE "brandId" = ${brandId}
-        AND COALESCE("metadataJson"->>'kind', '') NOT LIKE 'OCEAN_AD_%'
-        -- These exact normalized kinds cannot be collected works and were
-        -- already rejected by isRenderableBusinessAsset after fetching.
-        AND COALESCE(NULLIF("metadataJson"->>'kind', ''), CAST("category" AS TEXT)) NOT IN (
-          'DOUYIN_COMMENT', 'XHS_NOTE_COMMENT', 'DOUYIN_CREATOR_SEARCH_RESULT',
-          'DOUYIN_TARGET_USER', 'XHS_TARGET_USER', 'DOUYIN_KEYWORD_RECOMMENDATION',
-          'DOUYIN_COMPETITOR_ACCOUNT', 'DOUYIN_BRAND_ACCOUNT'
-        )
+      FROM normalized
       ORDER BY "createdAt" DESC
       LIMIT ${limit}
     `;
