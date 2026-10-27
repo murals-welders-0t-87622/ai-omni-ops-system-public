@@ -146,11 +146,13 @@ const SOURCE_ICONS: Record<ArchiveSource, typeof Boxes> = {
 
 const MATERIAL_TYPE_OPTIONS = ["视频", "图片", "音频", "文字"];
 const MATERIAL_SOURCE_OPTIONS = ["抖音/视频号", "小红书", "公众号", "用户上传"];
+const CLIP_FILTER_KEYS = ["sku", "scene", "action", "framing", "surface"] as const;
 
 export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/brand-admin" } = {}) {
   const homeHref = returnHref || archiveControlDestination(getStoredAuthSession());
   const [data, setData] = useState<ArchivePayload | null>(null);
   const [extraFilters, setExtraFilters] = useState<Record<string, string>>({});
+  const [clipDraft, setClipDraft] = useState<Record<string, string>>({});
   const [page, setPage] = useState(0), [jump, setJump] = useState("1");
   const [editing, setEditing] = useState<ArchiveItem | null>(null);
   const [loading, setLoading] = useState(false);
@@ -168,6 +170,8 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
   const [selectedFolderFiles, setSelectedFolderFiles] = useState<File[]>([]);
   const folderInputRef = useRef<HTMLInputElement | null>(null);
   const objectUrlsRef = useRef<string[]>([]);
+  const requestVersionRef = useRef(0);
+  const appliedClipRef = useRef<Record<string, string>>({});
   const [archivePreview, setArchivePreview] = useState<ArchivePreviewState | null>(null);
   const [previewingId, setPreviewingId] = useState("");
   const [openingId, setOpeningId] = useState("");
@@ -187,6 +191,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
   });
 
   const load = useCallback(async () => {
+    const requestVersion = ++requestVersionRef.current;
     setLoading(true);
     setError("");
     try {
@@ -199,14 +204,28 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
         const text = await res.text().catch(() => "");
         throw new Error(text || `HTTP ${res.status}`);
       }
-      setData((await res.json()) as ArchivePayload);
+      const payload = (await res.json()) as ArchivePayload;
+      if (requestVersion === requestVersionRef.current) setData(payload);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (requestVersion === requestVersionRef.current) setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setLoading(false);
+      if (requestVersion === requestVersionRef.current) setLoading(false);
     }
   }, [keywordFilter, materialSourceFilter, materialTypeFilter, extraFilters, page]);
-  useEffect(() => { setPage(0); setJump("1"); }, [keywordFilter, materialSourceFilter, materialTypeFilter, extraFilters]);
+  const resetPage = useCallback(() => { setPage(0); setJump("1"); }, []);
+  useEffect(() => () => { requestVersionRef.current++; }, []);
+  useEffect(() => {
+    if (CLIP_FILTER_KEYS.every(key => (clipDraft[key] || "") === (appliedClipRef.current[key] || ""))) return;
+    const timer = window.setTimeout(() => {
+      appliedClipRef.current = { ...clipDraft };
+      resetPage();
+      setExtraFilters(previous => {
+        const next = { ...previous, ...clipDraft };
+        return Object.keys(clipDraft).every(key => (previous[key] || "") === (next[key] || "")) ? previous : next;
+      });
+    }, 350);
+    return () => window.clearTimeout(timer);
+  }, [clipDraft, resetPage]);
 
   const registrationPayload = useCallback((current: RegistrationForm, file: File | null, options?: { folderFile?: File; includeUploadMarker?: boolean }) => {
     const activeFile = options?.folderFile ?? file;
@@ -516,7 +535,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
             <div className="flex flex-wrap items-center gap-2">
               <select
                 value={materialTypeFilter}
-                onChange={(event) => setMaterialTypeFilter(event.target.value)}
+                onChange={(event) => { resetPage(); setMaterialTypeFilter(event.target.value); }}
                 className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="">全部类型</option>
@@ -526,7 +545,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
               </select>
               <select
                 value={materialSourceFilter}
-                onChange={(event) => setMaterialSourceFilter(event.target.value)}
+                onChange={(event) => { resetPage(); setMaterialSourceFilter(event.target.value); }}
                 className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
               >
                 <option value="">全部素材来源</option>
@@ -540,7 +559,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
                   value={keywordInput}
                   onChange={(event) => setKeywordInput(event.target.value)}
                   onKeyDown={(event) => {
-                    if (event.key === "Enter") setKeywordFilter(keywordInput.trim());
+                    if (event.key === "Enter") { resetPage(); setKeywordFilter(keywordInput.trim()); }
                   }}
                   placeholder="关键词"
                   className="w-44 rounded-xl px-2 py-2 text-sm outline-none"
@@ -548,7 +567,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
               </div>
               <button
                 type="button"
-                onClick={() => setKeywordFilter(keywordInput.trim())}
+                onClick={() => { resetPage(); setKeywordFilter(keywordInput.trim()); }}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
               >
                 搜索
@@ -557,6 +576,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
                 <button
                   type="button"
                   onClick={() => {
+                    resetPage();
                     setMaterialTypeFilter("");
                     setMaterialSourceFilter("");
                     setKeywordInput("");
@@ -588,11 +608,11 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
 
         <section className="rounded-2xl border border-slate-200 bg-white p-4">
           <div className="flex flex-wrap gap-2">
-            <select aria-label="产品筛选" className="max-w-full rounded-lg border p-2 text-sm" value={extraFilters.productId || ""} onChange={e => setExtraFilters(f => ({ ...f, productId: e.target.value }))}><option value="">全部产品</option>{(data?.products || []).map(p => <option key={p.id} value={p.id}>{p.productName}</option>)}</select>
-            {([["libraryState", "入库状态", { collected: "已采集未入库", in_library: "已入素材库" }], ["availability", "可用性", MATERIAL_AVAILABILITY], ["recommendation", "推荐状态", MATERIAL_RECOMMENDATION], ["role", "素材用途", MATERIAL_ROLES], ["usage", "使用状态", { used: "已有使用记录", not_recorded: "未登记使用" }]] as const).map(([key, label, values]) => <select aria-label={label} key={key} className="rounded-lg border p-2 text-sm" value={extraFilters[key] || ""} onChange={e => setExtraFilters(f => ({ ...f, [key]: e.target.value }))}><option value="">全部{label}</option>{Object.entries(values).map(([v, n]) => <option key={v} value={v}>{n}</option>)}</select>)}
-            <button className="rounded-lg border px-3 py-2 text-sm" onClick={() => setExtraFilters({})}>清空条件</button>
+            <select aria-label="产品筛选" className="max-w-full rounded-lg border p-2 text-sm" value={extraFilters.productId || ""} onChange={e => { const value = e.target.value; resetPage(); setExtraFilters(f => ({ ...f, productId: value })); }}><option value="">全部产品</option>{(data?.products || []).map(p => <option key={p.id} value={p.id}>{p.productName}</option>)}</select>
+            {([["libraryState", "入库状态", { collected: "已采集未入库", in_library: "已入素材库" }], ["availability", "可用性", MATERIAL_AVAILABILITY], ["recommendation", "推荐状态", MATERIAL_RECOMMENDATION], ["role", "素材用途", MATERIAL_ROLES], ["usage", "使用状态", { used: "已有使用记录", not_recorded: "未登记使用" }]] as const).map(([key, label, values]) => <select aria-label={label} key={key} className="rounded-lg border p-2 text-sm" value={extraFilters[key] || ""} onChange={e => { const value = e.target.value; resetPage(); setExtraFilters(f => ({ ...f, [key]: value })); }}><option value="">全部{label}</option>{Object.entries(values).map(([v, n]) => <option key={v} value={v}>{n}</option>)}</select>)}
+            <button className="rounded-lg border px-3 py-2 text-sm" onClick={() => { resetPage(); setExtraFilters({}); appliedClipRef.current = {}; setClipDraft({}); }}>清空条件</button>
           </div>
-          <details className="mt-3"><summary className="cursor-pointer text-sm text-slate-600">按镜头找素材</summary><div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5">{[["sku", "SKU"], ["scene", "场景"], ["action", "动作"], ["framing", "景别"], ["surface", "表面"]].map(([key, label]) => <input aria-label={`${label}筛选`} key={key} className="min-w-0 rounded-lg border p-2 text-sm" placeholder={label} value={extraFilters[key] || ""} onChange={e => setExtraFilters(f => ({ ...f, [key]: e.target.value }))} />)}</div></details>
+          <details className="mt-3"><summary className="cursor-pointer text-sm text-slate-600">按镜头找素材</summary><div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-5">{[["sku", "SKU"], ["scene", "场景"], ["action", "动作"], ["framing", "景别"], ["surface", "表面"]].map(([key, label]) => <input aria-label={`${label}筛选`} key={key} className="min-w-0 rounded-lg border p-2 text-sm" placeholder={label} value={clipDraft[key] || ""} onChange={e => { const value = e.target.value; setClipDraft(f => ({ ...f, [key]: value })); }} />)}</div></details>
           {data?.productCoverage && <p className="mt-3 text-xs text-slate-500">已登记场景：{data.productCoverage.indexedScenes.join("、") || "暂无"} · 可剪片段 {data.productCoverage.indexedClips.length} 段。未登记不等于不存在。</p>}
         </section>
 

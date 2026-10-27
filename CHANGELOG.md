@@ -1,5 +1,9 @@
 # 公开版变更记录
 
+## 2026-10-27 · 素材筛选交互减负
+
+- 连续输入镜头条件合并查询，筛选时同步重置分页，避免旧响应覆盖新结果；见[说明](docs/changes/2026-10-27-material-filter-interaction.md)。
+
 ## 2026-10-27 · 素材数据读取减负
 
 - 优化大型业务素材 JSON 的读取与字段提取，保留原始数据、品牌过滤和完整搜索；新增只读 PostgreSQL 边界测试。见[变更说明](docs/changes/2026-10-27-material-query-normalization.md)。
