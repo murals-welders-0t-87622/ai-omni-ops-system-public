@@ -1,4 +1,5 @@
 import { generatedAssetKey } from "@ai-omni/shared/media-presentation";
+import { registerDesignImageMedia } from "./design-image-media";
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import { spawn, spawnSync } from "node:child_process";
 import { createReadStream, existsSync, readFileSync } from "node:fs";
@@ -4638,6 +4639,13 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
           tags: result.tags,
           assetUrl: imageAsset.url,
         }, { modelName: imageAsset.modelName });
+        // Generation is already paid and complete. Register only a confirmed
+        // local output; registration failure must not trigger another generation.
+        try {
+          await registerDesignImageMedia(this.prismaService, { url: imageAsset.url, serverBase: this.resolveServerBaseUrl(), brandId, taskId: task.id, userId, title });
+        } catch (error) {
+          this.logger.warn(`设计图片已生成，但素材登记失败（任务 ${task.id}）：${error instanceof Error ? error.message : "未知错误"}`);
+        }
         // #region debug-point B:design-image-success
         this.reportAIControlCenter502DebugEvent({
           hypothesisId: "B",

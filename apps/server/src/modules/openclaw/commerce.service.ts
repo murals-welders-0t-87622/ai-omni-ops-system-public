@@ -258,12 +258,18 @@ export class CommerceService {
               if (i.projectId) { const project = await this.record(tx, brandId, i.projectId, "COMMERCE_DETAIL"); if (i.productId && (project.metadataJson as any).productId !== i.productId) throw Error("策略项目与商品不匹配"); }
             }
           }
+          let planningTarget = (old?.metadataJson as any)?.planningTarget;
           if (p.planTaskId) {
             const task = await tx.task.findFirst({ where: { id: p.planTaskId, brandId, taskType: "commerce_detail_ai", taskStatus: "RUNNING" } }), input: any = task?.inputJson;
             if (!task || input.jobKind !== "operations_replan" || input.projectId !== old?.id || input.revision !== revision || input.lease?.token !== p.leaseToken || input.lease?.executorId !== p.executorId || Date.parse(input.lease?.expiresAt || "") < Date.now() || this.executors.get(brandId)?.actorId !== actorId) throw Error("规划任务租约或源版本已失效");
             assertPlanningResultTargets(operatingMap, scorecard, input.targetScenario);
+            planningTarget = input.targetScenario;
+          } else if (planningTarget) {
+            // A manual edit may change the underlying plan. Do not retain a stale goal.
+            try { assertPlanningResultTargets(operatingMap, scorecard, planningTarget); }
+            catch { planningTarget = undefined; }
           }
-          const data = { ...(p.planTaskId ? { replanTaskId: p.planTaskId } : {}), ...(operatingMap ? { operatingMap } : {}), ...(scorecard ? { scorecard } : {}), ...(growth ? { growth } : {}), shopId: p.shopId, snapshotId: text(p.snapshotId, 160), report: required(p.report, 60000), actions, revision: revision + 1, skillVersion: required(p.skillVersion, 80), externalExecuted: false };
+          const data = { ...(planningTarget ? { planningTarget } : {}), ...(p.planTaskId ? { replanTaskId: p.planTaskId } : {}), ...(operatingMap ? { operatingMap } : {}), ...(scorecard ? { scorecard } : {}), ...(growth ? { growth } : {}), shopId: p.shopId, snapshotId: text(p.snapshotId, 160), report: required(p.report, 60000), actions, revision: revision + 1, skillVersion: required(p.skillVersion, 80), externalExecuted: false };
           const title = required(p.title, 200);
           const row = old ? await tx.businessAsset.update({ where: { id: old.id }, data: { title, metadataJson: { ...data, kind: "COMMERCE_OPERATIONS_PLAN", actorId } } }) : await this.create(tx, brandId, actorId, "COMMERCE_OPERATIONS_PLAN", title, data);
           await this.create(tx, brandId, actorId, "COMMERCE_OPERATIONS_PLAN_REVISION", title, { ...data, planId: row.id }); out = { id: row.id, revision: data.revision };

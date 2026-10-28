@@ -9,7 +9,7 @@ function prepareGeneratedResult(result,source){
 }
 function recoverableDraft(w,job,folder){
  const rows=(w.tasks||[]).filter(t=>t.id!==job.id&&t.state==='FAILED'&&t.jobKind==='operations_replan'&&t.projectId===job.projectId&&t.projectRevision===job.revision&&/^[a-z0-9_-]+$/i.test(t.id)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
- for(const old of rows.slice(0,3)){const dir=path.join(path.dirname(folder),old.id);try{const req=JSON.parse(fs.readFileSync(path.join(dir,'request.json'),'utf8')).context;if(req.sourcePlan.id!==job.projectId||req.sourcePlan.revision!==job.revision||req.feedback!==job.instructions||['gmv','orders','averageOrderValue'].some(k=>Number(req.requestedTargets[k])!==Number(job.targetScenario[k])))continue;const file=['result-1.json','result-0.json'].find(f=>fs.existsSync(path.join(dir,f)));if(file)return{fromTask:old.id,sourceFile:file,result:JSON.parse(fs.readFileSync(path.join(dir,file),'utf8'))};}catch{}}
+ for(const old of rows.slice(0,3)){const dir=path.join(path.dirname(folder),old.id);try{const req=JSON.parse(fs.readFileSync(path.join(dir,'request.json'),'utf8')).context;if(req.sourcePlan.id!==job.projectId||req.sourcePlan.revision!==job.revision||req.feedback!==job.instructions||['gmv','orders','averageOrderValue','overallRoi','adSpend'].some(k=>{const a=req.requestedTargets[k],b=job.targetScenario[k];return (a==null)!==(b==null)||(a!=null&&Number(a)!==Number(b));}))continue;const file=['result-1.json','result-0.json'].find(f=>fs.existsSync(path.join(dir,f)));if(file)return{fromTask:old.id,sourceFile:file,result:JSON.parse(fs.readFileSync(path.join(dir,file),'utf8'))};}catch{}}
  return null;
 }
 const {assertPlanningResultTargets}=require('../../../packages/shared/dist/commerce-planning');

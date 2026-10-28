@@ -29,3 +29,9 @@
 核心架构和运行配置见 `docs/`、`docker/docker-compose.ontology-lab.yml`、`docker/ontology-lab.Dockerfile` 和 `prisma/`。发行前清理了原历史变更记录，保留私有源以便内部追溯。数据和运行配置应放在仓库外，不提交密钥。
 
 交流与中台合作：微信 `hbwangxiaodong`。
+
+
+电商目标的整体 ROI 与计划广告费：参见 [目标与计算口径](docs/changes/2026-10-28-commerce-overall-roi.md)。
+
+
+设计图片自动登记与电商展示：参见[图片关联说明](docs/changes/2026-10-28-design-image-registration.md)。

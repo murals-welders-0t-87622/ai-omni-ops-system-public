@@ -1,13 +1,42 @@
 "use client";
 import { useState } from "react";
-import {commerceHistoryScenarios} from "../../../../../../packages/shared/src/commerce-history";
+import { commerceHistoryScenarios } from "../../../../../../packages/shared/src/commerce-history";
+import { calculatePlannedAdSpend } from "../../../../../../packages/shared/src/commerce-planning";
 const input = "mt-2 w-full rounded-xl border border-indigo-200 bg-white p-3 text-lg font-semibold text-slate-900";
-export default function GoalReplan({ plan, snapshots=[], executor, tasks, onRequest, busy }: any) {
-  const history=commerceHistoryScenarios(plan,snapshots);
-  const selected=plan.operatingMap.scenarios.find((s:any)=>s.key===plan.operatingMap.selectedScenario);
-  const [target,setTarget]=useState({gmv:selected.gmv,orders:selected.orders,averageOrderValue:selected.averageOrderValue});
-  const job=tasks?.find((t:any)=>t.projectId===plan.id&&["QUEUED","RUNNING"].includes(t.state));
-  const ready=executor?.online&&executor.capabilities?.includes("operations_replan");
-  const change=(key:string,value:string)=>setTarget((old:any)=>{const n={...old,[key]:value};if(Number(n.orders)>0){if(key==='averageOrderValue'&&Number(value)>0)n.gmv=(Number(n.orders)*Number(value)).toFixed(2);else if(Number(n.gmv)>0)n.averageOrderValue=(Number(n.gmv)/Number(n.orders)).toFixed(8).replace(/0+$/,'').replace(/\.$/,'');}return n;});
-  return <section aria-label="经营目标修改" className="rounded-2xl bg-indigo-600 p-5 text-white"><div className="flex flex-wrap items-center justify-between gap-3"><h3 className="font-semibold">本期经营目标 · 可以修改</h3><span className="text-xs text-indigo-100">{plan.scorecard.start}—{plan.scorecard.end}</span></div><p className="mt-3 text-xs leading-6 text-indigo-100">先查看历史参照再修改目标。手工填入的更高目标是经营要求，须说明额外订单从哪里来。</p><div className="mt-3 grid gap-3 md:grid-cols-3">{history.map((s:any)=><button key={s.key} disabled={busy||!!job} onClick={()=>setTarget({gmv:s.gmv,orders:s.orders,averageOrderValue:s.averageOrderValue})} className="rounded-xl bg-white/10 p-3 text-left"><b className="text-sm">{s.label} · ¥{Number(s.gmv).toLocaleString()}</b><span className="mt-2 block text-xs leading-6">{s.basis}</span><span className="mt-2 block text-xs">采用这个历史参照 ↓</span></button>)}</div><fieldset disabled={busy||!!job} className="mt-4 grid gap-4 sm:grid-cols-3">{[["gmv","支付GMV（元）"],["orders","支付订单（单）"],["averageOrderValue","每单支付金额（元）"]].map(([key,label])=><label key={key} className="text-sm">{label}<input aria-label={label} inputMode="decimal" className={input} value={(target as any)[key]} onChange={e=>change(key,e.target.value)}/></label>)}</fieldset><p className="mt-3 text-xs leading-6 text-indigo-100">GMV＝订单数×每单支付金额。修改GMV或订单时重算每单金额；修改每单金额时重算GMV。</p><button disabled={busy||!!job||!ready} onClick={()=>onRequest(target)} className="mt-4 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-indigo-700 disabled:opacity-50">{job?'Codex正在重排，请等待…':'按新目标重排指标和策略'}</button><p className="mt-3 text-xs leading-6 text-indigo-100">{ready?'重排流量、转化、客单、复购、服务与投入三档策略，完成后自动保存新版本。':'本机Codex经营规划执行器连接后可点击重排。'}</p>{job&&<p role="status" className="mt-3 text-sm">{job.state==='QUEUED'?'等待Codex接单':job.message||'正在分析经营数据与目标'} · 当前方案保持V{plan.revision}</p>}</section>;
+export default function GoalReplan({ plan, snapshots = [], executor, tasks, onRequest, busy }: any) {
+  const history = commerceHistoryScenarios(plan, snapshots);
+  const selected = plan.operatingMap.scenarios.find((s: any) => s.key === plan.operatingMap.selectedScenario);
+  const [target, setTarget] = useState({ gmv: String(selected.gmv), orders: String(selected.orders), averageOrderValue: String(selected.averageOrderValue) });
+  const [overallRoi, setOverallRoi] = useState(String(plan.planningTarget?.overallRoi ?? ""));
+  const job = tasks?.find((t: any) => t.projectId === plan.id && ["QUEUED", "RUNNING"].includes(t.state));
+  const ready = executor?.online && executor.capabilities?.includes("operations_replan");
+  let adSpend = "", roiError = "";
+  if (overallRoi.trim()) {
+    try { adSpend = calculatePlannedAdSpend(target.gmv, overallRoi); }
+    catch (e: any) { roiError = e.message || "请填写有效的整体ROI"; }
+  }
+  const change = (key: string, value: string) => setTarget((old: any) => {
+    const next = { ...old, [key]: value };
+    if (Number(next.orders) > 0) {
+      if (key === "averageOrderValue" && Number(value) > 0) next.gmv = (Number(next.orders) * Number(value)).toFixed(2);
+      else if (Number(next.gmv) > 0) next.averageOrderValue = (Number(next.gmv) / Number(next.orders)).toFixed(8).replace(/0+$/, "").replace(/\.$/, "");
+    }
+    return next;
+  });
+  return <section aria-label="经营目标修改" className="rounded-2xl bg-indigo-600 p-5 text-white">
+    <div className="flex flex-wrap items-center justify-between gap-3"><h3 className="font-semibold">本期经营目标 · 可以修改</h3><span className="text-xs text-indigo-100">{plan.scorecard.start}—{plan.scorecard.end}</span></div>
+    <p className="mt-3 text-xs leading-6 text-indigo-100">先查看历史参照再修改目标。手工填入的更高目标是经营要求，须说明额外订单从哪里来。</p>
+    <div className="mt-3 grid gap-3 md:grid-cols-3">{history.map((s: any) => <button key={s.key} disabled={busy || !!job} onClick={() => setTarget({ gmv: String(s.gmv), orders: String(s.orders), averageOrderValue: String(s.averageOrderValue) })} className="rounded-xl bg-white/10 p-3 text-left"><b className="text-sm">{s.label} · ¥{Number(s.gmv).toLocaleString()}</b><span className="mt-2 block text-xs leading-6">{s.basis}</span><span className="mt-2 block text-xs">采用这个历史参照 ↓</span></button>)}</div>
+    <fieldset disabled={busy || !!job} className="mt-4 grid gap-4 sm:grid-cols-3">
+      {[["gmv", "支付GMV（元）"], ["orders", "支付订单（单）"], ["averageOrderValue", "每单支付金额（元）"]].map(([key, label]) => <label key={key} className="text-sm">{label}<input aria-label={label} inputMode="decimal" className={input} value={(target as any)[key]} onChange={e => change(key, e.target.value)} /></label>)}
+      <label className="text-sm">目标整体ROI（倍）<input aria-label="目标整体ROI（倍）" aria-invalid={!!roiError} aria-describedby="overall-roi-description" inputMode="decimal" className={input} value={overallRoi} onChange={e => setOverallRoi(e.target.value)} placeholder="例如：5" /></label>
+      <label className="text-sm">计划广告费（元）<input aria-label="计划广告费（元）" className={input + " bg-indigo-50"} value={adSpend} placeholder="输入ROI后自动计算" readOnly /></label>
+    </fieldset>
+    <p className="mt-3 text-xs leading-6 text-indigo-100">GMV＝订单数×每单支付金额。修改GMV或订单时重算每单金额；修改每单金额时重算GMV。</p>
+    <p id="overall-roi-description" className="mt-1 text-xs leading-6 text-indigo-100">计划广告费＝全店支付GMV÷目标整体ROI，按元保留两位小数。整体ROI＝全店支付GMV÷广告费；它不同于广告平台的归因成交ROI，也不是利润率。</p>
+    {roiError && <p role="alert" className="mt-2 text-sm text-amber-100">{roiError}</p>}
+    <button disabled={busy || !!job || !ready || !!roiError} onClick={() => onRequest(overallRoi.trim() ? { ...target, overallRoi, adSpend } : target)} className="mt-4 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-indigo-700 disabled:opacity-50">{job ? "Codex正在重排，请等待…" : "按新目标重排指标和策略"}</button>
+    <p className="mt-3 text-xs leading-6 text-indigo-100">{ready ? "重排流量、转化、客单、复购、服务与投入三档策略，完成后自动保存新版本。" : "本机Codex经营规划执行器连接后可点击重排。"}</p>
+    {job && <p role="status" className="mt-3 text-sm">{job.state === "QUEUED" ? "等待Codex接单" : job.message || "正在分析经营数据与目标"} · 当前方案保持V{plan.revision}</p>}
+  </section>;
 }

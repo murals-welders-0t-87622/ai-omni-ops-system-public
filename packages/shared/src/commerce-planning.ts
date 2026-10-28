@@ -43,15 +43,31 @@ export const COMMERCE_METRIC_CATALOG = [
 ] as const;
 const str = { type: "string" }, nullable = { type: ["string", "null"] };
 const object = (properties: any) => ({ type: "object", properties, required: Object.keys(properties), additionalProperties: false });
-export const PLANNING_TARGET_SCHEMA = object({ gmv: str, orders: str, averageOrderValue: str });
+export const PLANNING_TARGET_SCHEMA = { type: "object", properties: { gmv: str, orders: str, averageOrderValue: str, overallRoi: str, adSpend: str }, required: ["gmv", "orders", "averageOrderValue"], additionalProperties: false };
 export const PLANNING_INVESTMENT_SCHEMA = object({ cash: str, expectedNetSales: nullable, expectedContribution: nullable, strategy: str, expected: str, assumptions: str });
 export const PLANNING_VARIANT_SCHEMA = object({ scenarioKey: str, budget: str, calculation: str, settings: str, expected: str, steps: { type: "array", minItems: 1, maxItems: 12, items: str }, stopRule: str });
+// Overall ROI uses total store GMV, not ad-attributed revenue. Integer math
+// rounds the planned spend to the nearest cent (half up).
+export function calculatePlannedAdSpend(gmv: string, overallRoi: string) {
+  if (typeof gmv !== "string" || typeof overallRoi !== "string" || !/^\d{1,12}(\.\d{1,8})?$/.test(gmv) || !/^\d{1,9}(\.\d{1,8})?$/.test(overallRoi)) throw Error("请填写合法的GMV和大于0的整体ROI");
+  const fixed = (v: string) => { const [whole, decimal = ""] = v.split("."); return BigInt(whole + decimal.padEnd(8, "0")); };
+  const amount = fixed(gmv), ratio = fixed(overallRoi);
+  if (amount <= 0n || ratio <= 0n) throw Error("GMV和整体ROI必须大于0");
+  const cents = (amount * 200n + ratio) / (ratio * 2n);
+  if (cents <= 0n || cents > 99999999999999n) throw Error("计算出的广告费超出可设置范围");
+  return `${cents / 100n}.${(cents % 100n).toString().padStart(2, "0")}`;
+}
 export function normalizePlanningTarget(v: any) {
-  if (!v || Object.keys(v).sort().join() !== "averageOrderValue,gmv,orders" || !/^[1-9]\d{0,8}$/.test(v.orders) || !/^\d{1,12}(\.\d{1,8})?$/.test(v.gmv) || !/^\d{1,9}(\.\d{1,8})?$/.test(v.averageOrderValue) || Number(v.gmv) <= 0 || Number(v.averageOrderValue) <= 0) throw Error("请填写合法的GMV、整数订单及每单支付金额");
+  const keys = v && typeof v === "object" && !Array.isArray(v) ? Object.keys(v).sort().join() : "";
+  if (!v || !["averageOrderValue,gmv,orders", "adSpend,averageOrderValue,gmv,orders,overallRoi"].includes(keys) || typeof v.orders !== "string" || typeof v.gmv !== "string" || typeof v.averageOrderValue !== "string" || !/^[1-9]\d{0,8}$/.test(v.orders) || !/^\d{1,12}(\.\d{1,8})?$/.test(v.gmv) || !/^\d{1,9}(\.\d{1,8})?$/.test(v.averageOrderValue) || Number(v.gmv) <= 0 || Number(v.averageOrderValue) <= 0) throw Error("请填写合法的GMV、整数订单及每单支付金额");
   const fixed = (s: string) => { const [n, d = ""] = s.split("."); return BigInt(n + d.padEnd(8, "0")); };
   const gap = fixed(v.gmv) - BigInt(v.orders) * fixed(v.averageOrderValue);
   if (gap > 1000000n || gap < -1000000n) throw Error("GMV须等于订单数×每单支付金额（误差不超过1分），请调整目标");
-  return { gmv: v.gmv, orders: v.orders, averageOrderValue: v.averageOrderValue };
+  const base = { gmv: v.gmv, orders: v.orders, averageOrderValue: v.averageOrderValue };
+  if (keys === "averageOrderValue,gmv,orders") return base;
+  const adSpend = calculatePlannedAdSpend(v.gmv, v.overallRoi);
+  if (typeof v.adSpend !== "string" || !/^\d{1,12}\.\d{2}$/.test(v.adSpend) || v.adSpend !== adSpend) throw Error("计划广告费须按全店GMV÷整体ROI计算");
+  return { ...base, overallRoi: v.overallRoi, adSpend };
 }
 export function commerceInitiativeGroup(i: any) {
   if (COMMERCE_STRATEGY_GROUPS.some(g => g.key === i.group)) {
@@ -67,6 +83,7 @@ export function commerceInitiativeGroup(i: any) {
 export function assertPlanningResultTargets(map: any, scorecard: any, target: any) {
   const selected = map?.scenarios.find((s: any) => s.key === map.selectedScenario), orders = scorecard?.drivers.find((m: any) => m.id === "orders"), average = scorecard?.drivers.find((m: any) => m.id === "aov");
   if (!selected || !orders || !average || Number(scorecard.goal.target) !== Number(target.gmv) || Number(orders.target) !== Number(target.orders) || Number(average.target) !== Number(target.averageOrderValue) || ["gmv", "orders", "averageOrderValue"].some(k => Number(selected[k]) !== Number(target[k]))) throw Error("财务目标、orders及aov驱动指标须精确沿用用户输入的三个目标");
+  if (target.overallRoi !== undefined && (!selected.investment || Number(selected.investment.cash) !== Number(target.adSpend))) throw Error("选定方案的广告费必须与用户根据整体ROI计算的目标一致");
 }
 
 export function assertAdvertisingOnlyBudget(map:any) {
