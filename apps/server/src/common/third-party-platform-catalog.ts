@@ -43,6 +43,7 @@ const PLATFORM_NAME_BY_HOST: Record<string, string> = {
   "api.kol.cn": "软文街平台",
   "apihub.agnes-ai.com": "Agnes 平台",
   "duoyuanx.com": "多元探索平台",
+  "xjjuhe.site": "鸭屎香聚合平台",
 };
 
 export const THIRD_PARTY_PLATFORM_SEEDS: ThirdPartyPlatformRecord[] = buildThirdPartyPlatformSeeds();

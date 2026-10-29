@@ -3228,7 +3228,7 @@ type ImageProviderConfig = ThirdPartyChatConfig & {
   providerId: string;
   providerName: string;
   models: string[];
-  requestMode: "chat-completions" | "images-generations" | "apiz-task";
+  requestMode: "chat-completions" | "images-generations" | "apiz-task" | "xjjuhe-task";
   supportsTextToImage: boolean;
   supportsReferenceImages: boolean;
   requiresReferenceImages: boolean;
@@ -13598,10 +13598,10 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
             let shouldSkipRemainingPromptCandidates = false;
             for (const promptCandidate of promptsToTry) {
               const attemptLabel = this.buildImageAttemptLabel(provider.providerName, modelName, baseUrl);
+              let providerTaskIdForResult: string | undefined;
               try {
                 let asset: ReturnType<WorksService["extractGeneratedImagePayload"]>;
-                let providerTaskIdForResult: string | undefined;
-                if (provider.requestMode === "apiz-task") {
+                if (provider.requestMode === "apiz-task" || provider.requestMode === "xjjuhe-task") {
                   if (!provider.createPath || !provider.queryPath) {
                     lastError = `${modelName} 未配置 APIZ 图像任务路径`;
                     attemptTrail.push(`${attemptLabel} -> 未配置任务路径`);
@@ -13618,6 +13618,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
                   const providerTaskId = this.extractVideoTaskId(createResponse);
                   if (!providerTaskId) {
                     lastError = this.readVideoCreateFailureReason(createResponse) || `${modelName} 未返回任务 ID`;
+                    if (provider.requestMode === "xjjuhe-task") throw new ServiceUnavailableException(lastError);
                     attemptTrail.push(`${attemptLabel} -> ${lastError}`);
                     if (this.shouldShortCircuitImagePromptRetries(lastError)) {
                       shouldSkipRemainingPromptCandidates = true;
@@ -13713,6 +13714,11 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
                 };
               } catch (error) {
                 lastError = this.normalizeImageGenerationFailureMessage(error instanceof Error ? error.message : "图片生成失败");
+                if (provider.requestMode === "xjjuhe-task") {
+                  throw new ServiceUnavailableException(providerTaskIdForResult
+                    ? `图片任务已提交（任务号 ${providerTaskIdForResult}），查询未完成：${lastError}。请先查询任务，避免重复生成。`
+                    : `图片任务提交结果未确认：${lastError}。请先在平台查询任务，避免重复生成。`);
+                }
                 attemptTrail.push(`${attemptLabel} -> ${lastError}`);
                 if (this.shouldShortCircuitImagePromptRetries(lastError)) {
                   shouldSkipRemainingPromptCandidates = true;
@@ -29152,6 +29158,8 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       const baseUrls = this.dedupeStringList(this.apiProvidersService.getBaseUrls(provider));
       const requestMode = this.apiProvidersService.getStringExtra(provider, "requestMode") === "images-generations"
         ? "images-generations"
+        : this.apiProvidersService.getStringExtra(provider, "requestMode") === "xjjuhe-task"
+          ? "xjjuhe-task"
         : this.apiProvidersService.getStringExtra(provider, "requestMode") === "apiz-task"
           ? "apiz-task"
           : "chat-completions";
@@ -29222,6 +29230,10 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
           providerName: provider.name,
           reason: reasonParts.join("，"),
         });
+        continue;
+      }
+      if (requestMode === "xjjuhe-task" && (!createPath || !queryPath)) {
+        skippedReasons.push({ providerId: provider.id, providerName: provider.name, reason: "未配置图片任务提交或查询路径" });
         continue;
       }
       const capability = this.resolveImageProviderCapabilities(provider);
@@ -29732,6 +29744,26 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
     });
 
     switch (requestProfile) {
+      case "xjjuhe_video": {
+        if (params.modelName !== "omni_flash-10s" || params.requestedDurationSec !== 10) {
+          throw new BadRequestException("该平台当前仅支持所选 Omni 10 秒视频");
+        }
+        if (params.requestedAspectRatio && !["16:9", "9:16"].includes(params.requestedAspectRatio)) {
+          throw new BadRequestException("该平台当前仅支持 16:9 或 9:16 视频画幅");
+        }
+        if (hasReferenceImage) {
+          let reference: URL;
+          try { reference = new URL(requireReferenceImage()); } catch { throw new BadRequestException("参考图需要平台可访问的公网图片直链"); }
+          if (!["http:", "https:"].includes(reference.protocol) || reference.username || reference.password ||
+            /^(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|\[?::1\]?)/i.test(reference.hostname)) {
+            throw new BadRequestException("参考图需要平台可访问的公网图片直链");
+          }
+        }
+        return { payload: { model: params.modelName, prompt: params.prompt,
+          size: params.requestedAspectRatio === "16:9" ? "1280x720" : "720x1280",
+          ...(hasReferenceImage ? { images: [requireReferenceImage()] } : {}) },
+          createPath: params.config.createPath, queryPath: params.config.queryPath, renderedDurationSec: 10 };
+      }
       case "volcengine_seedance": {
         const content: Array<Record<string, unknown>> = [
           {
@@ -30040,6 +30072,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       let lastError = "";
       let currentModelName = "";
       let providerTaskIdForAttempt = "";
+      let xjjuheSubmitStarted = false;
       try {
         const config = await this.loadVideoProviderConfig(params.brandId, candidate.backend);
         const modelName = this.resolveVideoModelName(
@@ -30061,12 +30094,15 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
 
         const baseUrl = config.baseUrls[0];
         const apiKey = config.apiKeys[0];
+        xjjuheSubmitStarted = config.requestProfile === "xjjuhe_video";
         const createResponse = await this.requestAuthorizedJson(baseUrl, requestConfig.createPath, apiKey, {
           method: "POST",
           body: requestConfig.payload,
           timeoutMs: config.requestTimeoutMs ?? 240000,
         });
-        const providerTaskId = this.extractVideoTaskId(createResponse);
+        const providerTaskId = config.requestProfile === "xjjuhe_video"
+          ? this.readOptionalString(createResponse.id) || this.extractVideoTaskId(createResponse)
+          : this.extractVideoTaskId(createResponse);
         if (!providerTaskId) {
           const createFailureReason = this.readVideoCreateFailureReason(createResponse);
           throw new ServiceUnavailableException(
@@ -30140,6 +30176,11 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
         };
       } catch (error) {
         lastError = error instanceof Error ? error.message : "视频生成失败";
+        if (xjjuheSubmitStarted) {
+          throw new ServiceUnavailableException(providerTaskIdForAttempt
+            ? `视频任务已提交（任务号 ${providerTaskIdForAttempt}），结果未确认：${lastError}。请先查询任务，避免重复生成。`
+            : `视频任务提交结果未确认：${lastError}。请先在平台查询任务，避免重复生成。`);
+        }
       }
 
       if (lastError) {
@@ -30719,6 +30760,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       ? this.asRecord((topLevelOutputData?.videos as unknown[])[0])
       : null;
     const videoUrl = directVideoUrl
+      || this.readUrlLikeValue(payload.video_url)
       || this.readUrlLikeValue(firstVideo?.url)
       || this.readUrlLikeValue(firstVideo?.video_url)
       || this.readUrlLikeValue(firstOutputVideo?.url)
@@ -30838,6 +30880,19 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       openai: string;
     },
   ) {
+    if (provider.requestMode === "xjjuhe-task") {
+      if (referenceImageUrls.length > 8) throw new BadRequestException("该平台最多支持 8 张参考图");
+      const size = imageSizeOverride?.openai || "";
+      const match = /^(\d+)x(\d+)$/.exec(size);
+      const ratio = match ? Number(match[1]) / Number(match[2]) : (promptMode === "video_storyboard" ? 3 / 4 : 1);
+      const choices = [["1:1", 1], ["16:9", 16 / 9], ["9:16", 9 / 16], ["4:3", 4 / 3], ["3:4", 3 / 4], ["3:2", 3 / 2], ["2:3", 2 / 3], ["5:4", 5 / 4], ["4:5", 4 / 5], ["21:9", 21 / 9]] as const;
+      const aspectRatio = choices.reduce((best, candidate) => Math.abs(candidate[1] - ratio) < Math.abs(best[1] - ratio) ? candidate : best)[0];
+      const sizes = [["1024x1024", 1], ["1280x720", 16 / 9], ["720x1280", 9 / 16], ["1248x832", 3 / 2], ["832x1248", 2 / 3], ["1152x864", 4 / 3], ["864x1152", 3 / 4], ["1120x896", 5 / 4], ["896x1120", 4 / 5], ["1456x624", 1456 / 624]] as const;
+      const nearestSize = sizes.reduce((best, candidate) => Math.abs(candidate[1] - ratio) < Math.abs(best[1] - ratio) ? candidate : best)[0];
+      return { model: modelName, prompt, n: 1, response_format: "url",
+        ...(modelName === "gpt-image-2.5" ? { size: nearestSize } : { aspect_ratio: aspectRatio }),
+        ...(referenceImageUrls.length ? { reference_images: referenceImageUrls } : {}) };
+    }
     if (provider.requestMode === "apiz-task") {
       const normalizedModelName = String(modelName || "").toLowerCase();
       const shouldIncludeReferenceImages = referenceImageUrls.length > 0
