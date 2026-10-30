@@ -18,6 +18,8 @@ type PublishWechatDraftPayload = {
   onlyFansCanComment: boolean;
 };
 
+type ResolveLocalImage = (url: string) => Promise<{ buffer: Buffer; contentType: string } | null>;
+
 type WechatTokenResponse = {
   access_token?: string;
   expires_in?: number;
@@ -60,10 +62,10 @@ export class WechatOfficialAccountApiService {
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  async publishDraft(credential: WechatCredential, payload: PublishWechatDraftPayload) {
+  async publishDraft(credential: WechatCredential, payload: PublishWechatDraftPayload, resolveLocalImage?: ResolveLocalImage) {
     return this.withAccessTokenRetry(credential, async (accessToken) => {
-      const thumbMediaId = await this.uploadCoverImage(accessToken, payload.coverImageUrl);
-      const resolvedHtmlContent = await this.uploadContentImages(accessToken, payload.htmlContent);
+      const thumbMediaId = await this.uploadCoverImage(accessToken, payload.coverImageUrl, resolveLocalImage);
+      const resolvedHtmlContent = await this.uploadContentImages(accessToken, payload.htmlContent, resolveLocalImage);
       const normalizedDigest = this.normalizeWechatDigest(payload.summary, resolvedHtmlContent);
       const response = await this.requestJson<WechatDraftAddResponse>(
         `/cgi-bin/draft/add?access_token=${encodeURIComponent(accessToken)}`,
@@ -95,8 +97,8 @@ export class WechatOfficialAccountApiService {
     });
   }
 
-  private async uploadCoverImage(accessToken: string, coverImageUrl: string) {
-    const file = await this.downloadRemoteFile(coverImageUrl);
+  private async uploadCoverImage(accessToken: string, coverImageUrl: string, resolveLocalImage?: ResolveLocalImage) {
+    const file = await this.downloadRemoteFile(coverImageUrl, resolveLocalImage);
     const form = new FormData();
     form.set("media", new Blob([file.buffer], { type: file.contentType }), file.fileName);
     const response = await this.requestJson<WechatMaterialUploadResponse>(
@@ -114,7 +116,7 @@ export class WechatOfficialAccountApiService {
     return mediaId;
   }
 
-  private async uploadContentImages(accessToken: string, htmlContent: string) {
+  private async uploadContentImages(accessToken: string, htmlContent: string, resolveLocalImage?: ResolveLocalImage) {
     const normalizedHtml = String(htmlContent || "").trim();
     if (!normalizedHtml) {
       return normalizedHtml;
@@ -130,7 +132,7 @@ export class WechatOfficialAccountApiService {
       if (!sourceUrl || uploadCache.has(sourceUrl) || this.isWechatHostedImageUrl(sourceUrl)) {
         continue;
       }
-      uploadCache.set(sourceUrl, await this.uploadContentImage(accessToken, sourceUrl));
+      uploadCache.set(sourceUrl, await this.uploadContentImage(accessToken, sourceUrl, resolveLocalImage));
     }
     if (!uploadCache.size) {
       return normalizedHtml;
@@ -151,8 +153,8 @@ export class WechatOfficialAccountApiService {
     });
   }
 
-  private async uploadContentImage(accessToken: string, imageUrl: string) {
-    const file = await this.downloadRemoteFile(imageUrl);
+  private async uploadContentImage(accessToken: string, imageUrl: string, resolveLocalImage?: ResolveLocalImage) {
+    const file = await this.downloadRemoteFile(imageUrl, resolveLocalImage);
     const form = new FormData();
     form.set("media", new Blob([file.buffer], { type: file.contentType }), file.fileName);
     const response = await this.requestJson<WechatContentImageUploadResponse>(
@@ -271,8 +273,13 @@ export class WechatOfficialAccountApiService {
     return /\b(40001|40014|42001)\b/.test(message);
   }
 
-  private async downloadRemoteFile(url: string) {
+  private async downloadRemoteFile(url: string, resolveLocalImage?: ResolveLocalImage) {
     const normalizedUrl = String(url || "").trim();
+    const local = await resolveLocalImage?.(normalizedUrl);
+    if (local) {
+      if (!local.buffer.length || !local.contentType.startsWith("image/")) throw new ServiceUnavailableException("公众号图片为空或不是有效图片，请检查素材。");
+      return { ...local, fileName: this.resolveFileName(normalizedUrl, local.contentType) };
+    }
     if (!/^https?:\/\//i.test(normalizedUrl)) {
       throw new ServiceUnavailableException("公众号封面图地址无效，必须是可访问的 http/https URL。");
     }
@@ -288,18 +295,18 @@ export class WechatOfficialAccountApiService {
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error || "未知错误");
       throw new ServiceUnavailableException(
-        `下载公众号图片失败：${detail}（源地址：${normalizedUrl}，实际请求：${requestUrl}）`,
+        `下载公众号图片失败：${detail}，请检查图片链接和访问权限。`,
       );
     }
     if (!response.ok) {
       throw new ServiceUnavailableException(
-        `下载公众号图片失败：${response.status} ${response.statusText}（请求地址：${requestUrl}）`,
+        `下载公众号图片失败：${response.status} ${response.statusText}，请检查图片链接和访问权限。`,
       );
     }
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     if (!buffer.length) {
-      throw new ServiceUnavailableException(`下载公众号图片失败：返回内容为空（请求地址：${requestUrl}）`);
+      throw new ServiceUnavailableException("下载公众号图片失败：返回内容为空。");
     }
     const contentType = this.normalizeContentType(response.headers.get("content-type"));
     return {
@@ -377,7 +384,8 @@ export class WechatOfficialAccountApiService {
       contentType?: "application/json" | "multipart/form-data";
     },
   ) {
-    const response = await fetch(`${WECHAT_API_BASE_URL}${requestPath}`, {
+    let response: Response;
+    try { response = await fetch(`${WECHAT_API_BASE_URL}${requestPath}`, {
       method: options.method,
       headers: {
         Accept: "application/json",
@@ -391,16 +399,21 @@ export class WechatOfficialAccountApiService {
             ? options.body as FormData
             : JSON.stringify(options.body || {})
           : undefined,
-    });
+    }); } catch {
+      if (requestPath.startsWith("/cgi-bin/draft/add")) throw new ServiceUnavailableException("公众号草稿提交结果未知，请先到公众号草稿箱核对，勿直接重试。");
+      throw new ServiceUnavailableException(`微信公众号接口连接失败：${options.method} ${requestPath.split("?")[0]}，请检查网络。`);
+    }
     const rawText = await response.text();
     const payload = this.tryParseJson<T & { errcode?: number; errmsg?: string }>(rawText);
     if (!response.ok) {
+      if (requestPath.startsWith("/cgi-bin/draft/add") && response.status >= 500) throw new ServiceUnavailableException("公众号草稿提交结果未知，请先到公众号草稿箱核对，勿直接重试。");
       throw new ServiceUnavailableException(
-        `微信公众号接口请求失败：${options.method} ${requestPath} ${response.status}${this.buildApiErrorSuffix(payload?.errmsg, rawText)}`,
+        `微信公众号接口请求失败：${options.method} ${requestPath.split("?")[0]} ${response.status}${this.buildApiErrorSuffix(payload?.errmsg, rawText)}`,
       );
     }
     if (!payload) {
-      throw new ServiceUnavailableException(`微信公众号接口返回非 JSON：${options.method} ${requestPath}`);
+      if (requestPath.startsWith("/cgi-bin/draft/add")) throw new ServiceUnavailableException("公众号草稿提交结果未知，请先到公众号草稿箱核对，勿直接重试。");
+      throw new ServiceUnavailableException(`微信公众号接口返回非 JSON：${options.method} ${requestPath.split("?")[0]}`);
     }
     if (Number(payload.errcode || 0) !== 0) {
       throw new ServiceUnavailableException(

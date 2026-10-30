@@ -1412,7 +1412,7 @@ export function WechatWorkspaceShell(props: WechatWorkspaceShellProps) {
       upsertSession(response.item);
       setDrafts((current) => [response.draft, ...current.filter((item) => item.id !== response.draft.id)]);
       await reloadPublishHistory(brandId);
-      setNotice(`公众号工作流已通过 API 发布，media_id：${response.item.publishConfig?.mediaId || "已生成"}`);
+      setNotice(`已推送到公众号草稿箱，media_id：${response.item.publishConfig?.mediaId || "未返回"}；尚未公开发布。`);
       setActiveSection("history");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "发布公众号工作流失败。");
@@ -1443,7 +1443,7 @@ export function WechatWorkspaceShell(props: WechatWorkspaceShellProps) {
     try {
       const response = await publishWechatArticleToOfficialAccount(brandId, draftId, { mode: "PUBLISH_ARTICLE" });
       setDrafts((current) => current.map((item) => (item.id === draftId ? response.item : item)));
-      setNotice("已一键发布到公众号后台。");
+      setNotice("已推送到公众号草稿箱，尚未公开发布。");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "发布到公众号后台失败。");
     } finally {
@@ -2412,7 +2412,7 @@ export function WechatWorkspaceShell(props: WechatWorkspaceShellProps) {
                                   onClick={() => void handlePublishWorkflow()}
                                   disabled={isPublishingWorkflow || !selectedWorkflow.publishConfig?.ready}
                                 >
-                                  {isPublishingWorkflow ? "发布中..." : "执行 API 发布"}
+                                  {isPublishingWorkflow ? "推送中..." : "推送到公众号草稿箱"}
                                 </button>
                               </div>
                             </div>
@@ -2455,7 +2455,7 @@ export function WechatWorkspaceShell(props: WechatWorkspaceShellProps) {
                                     当前仍缺：{missingPublishChecklistLabels.join("、")}。先回到“配置初始化”补齐凭据，再重新保存发布确认。
                                   </div>
                                 ) : (
-                                  <div className="wechat-banner wechat-banner--notice">发布校验已通过，可以直接执行 API 发布。</div>
+                                  <div className="wechat-banner wechat-banner--notice">检查已通过，可以推送到公众号草稿箱；不会公开发布。</div>
                                 )}
                                 <div className="wechat-checklist">
                                   {publishChecklistItems.map((item) => (
@@ -2475,12 +2475,12 @@ export function WechatWorkspaceShell(props: WechatWorkspaceShellProps) {
                             <div className="wechat-panel-head">
                               <div>
                                 <strong>Step 6. 发布结果</strong>
-                                <p className="wechat-inline-tip">当前工作流已经发布完成，可在历史记录中继续查看对应草稿。</p>
+                                <p className="wechat-inline-tip">已提交到公众号草稿箱，可在公众号后台查看；尚未公开发布。</p>
                               </div>
                             </div>
                             <div className="wechat-publish-summary">
                               <div className="wechat-pill-row">
-                                <span className="archive-pill status-ready">已发布</span>
+                                <span className="archive-pill status-ready">已推送草稿箱</span>
                                 {selectedWorkflow.publishConfig?.mediaId ? (
                                   <span className="archive-pill status-ready">media_id：{selectedWorkflow.publishConfig.mediaId}</span>
                                 ) : null}

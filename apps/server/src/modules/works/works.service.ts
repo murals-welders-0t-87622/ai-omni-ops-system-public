@@ -8053,6 +8053,9 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
   async retryWechatPublishHistoryItem(brandId: string, historyId: string, auth?: RequestAuthContext) {
     const history = await this.loadWechatPublishHistoryStoreItem(brandId, historyId);
     const session = await this.loadWechatWorkflowSessionStoreItem(brandId, history.workflowId);
+    if (session.publishConfig?.mediaId || session.status === "PUBLISHING" || session.status === "PUBLISHED" || /草稿提交结果未知/.test(history.errorDetail || "")) {
+      throw new BadRequestException("该工作流可能已有公众号草稿，请先核对草稿箱和回执，避免重复提交。");
+    }
     session.publishConfig = {
       ready: true,
       accountId: session.accountId,
@@ -9267,6 +9270,9 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
 
   async publishWechatWorkflow(brandId: string, workflowId: string, auth?: RequestAuthContext, retryCount = 0) {
     const target = await this.loadWechatWorkflowSessionStoreItem(brandId, workflowId);
+    if (target.status === "PUBLISHING" || target.status === "PUBLISHED" || target.publishConfig?.mediaId || /草稿提交结果未知/.test(target.errorDetail || "")) {
+      throw new BadRequestException("该工作流正在提交或已有草稿回执，请先检查公众号草稿箱及工作流记录，避免重复提交。");
+    }
     const selectedAccount = await this.resolveWechatWorkflowOfficialAccount(brandId, target.accountId);
     let publishTaskId = "";
     try {
@@ -9309,8 +9315,11 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
           target,
           resolvedHtml,
         }),
+        (url) => this.resolveWechatLocalImage(brandId, url),
       );
       const mediaId = publishResult.mediaId;
+      target.publishConfig = { ...target.publishConfig!, mediaId };
+      await this.persistWechatWorkflowSessionStoreItem(target);
       const now = new Date().toISOString();
       const [articleRuntimeFallback, coverImageRuntimeFallback, bodyImageRuntimeFallback] = await Promise.all([
         this.resolveWechatTextRuntimeMeta(),
@@ -9708,6 +9717,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
           draft: target,
           resolvedHtml,
         }),
+        (url) => this.resolveWechatLocalImage(brandId, url),
       );
       const now = new Date().toISOString();
       target.publishStatus = "PUBLISHED";
@@ -13153,6 +13163,18 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       throw new NotFoundException("作品文件不存在");
     }
     return remoteFile;
+  }
+
+  private async resolveWechatLocalImage(brandId: string, url: string) {
+    let parsed: URL;
+    try { parsed = new URL(url, this.resolveServerBaseUrl()); } catch { return null; }
+    const configured = new URL(this.resolveServerBaseUrl());
+    const loopback = ["127.0.0.1", "localhost", "0.0.0.0", "[::1]"].includes(parsed.hostname.toLowerCase());
+    const match = /^\/api\/works\/brands\/([^/]+)\/assets(?:\/(.*))?$/.exec(parsed.pathname);
+    if (!match || (!loopback && parsed.origin !== configured.origin)) return null;
+    if (decodeURIComponent(match[1]) !== brandId) throw new BadRequestException("公众号图片不属于当前品牌。");
+    const fileName = parsed.searchParams.get("fileName") || decodeURIComponent(match[2] || "");
+    return this.getGeneratedAsset(brandId, fileName);
   }
 
   private async analyzeReferenceImages(

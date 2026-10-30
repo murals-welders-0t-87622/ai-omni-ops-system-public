@@ -3870,11 +3870,11 @@ const OPENCLAW_MCP_TOOLS: AIControlCenterMcpToolDefinition[] = [
   },
   {
     name: "manage_wechat_workflow",
-    description: "统一管理公众号工作流，支持偏好、工作流创建、Step 2-4 直写与生成、发布确认、正式发布和删除；当前可在 create_workflow / update_input 的 payload.accountId 中显式绑定目标公众号账号，后续发布确认与正式发布都会按该账号读取 AppID、AppSecret 和 IP 白名单。其中 set_article 未显式传 inputType 时会按正文内容自动识别 plain-text/markdown/html，set_images 除了直接传图片 URL 外，也支持在 coverImage / bodyImages 里传 fileUrl、materialId，或通过 upload.fileName / contentType / dataBase64 直传图片文件，set_html 代表外部已给出完整 HTML 草稿，generate_html 代表系统基于正文 canonical、图片资产与风格规则重新渲染，并产出可直接发布到公众号正文的 HTML 片段。",
+    description: "管理公众号工作流。push_to_wechat_draft 将已完成确认的工作流推送至绑定公众号的草稿箱，需用户授权并传 payload.confirmDraft=true；成功以微信 media_id 为准，不代表公开发布。支持 create_workflow、set_article、set_images、set_html、check_publish 等。",
     inputSchema: {
       type: "object",
       properties: {
-        action: { type: "string", description: "例如 list_drafts、save_preferences、create_workflow、set_article、set_images、set_html、generate_article、generate_images、generate_html、rebuild_publish_config、publish_workflow、delete_workflow。" },
+        action: { type: "string", description: "例如 list_drafts、create_workflow、set_article、set_images、set_html、check_publish、push_to_wechat_draft、delete_workflow。" },
         workflowId: { type: "string" },
         draftId: { type: "string" },
         historyId: { type: "string" },
@@ -8321,8 +8321,8 @@ export class AIControlCenterService {
 
     const result = await this.publishingService.publishWechatWorkflowToOfficialAccount(brandId, workflowId);
     return this.buildSummaryResponse({
-      title: "公众号工作流已提交发布",
-      summary: `已提交公众号工作流 ${workflowId} 的正式发布。`,
+      title: "公众号工作流已推送草稿箱",
+      summary: `工作流 ${workflowId} 已获得微信草稿回执；文章尚未公开发布。`,
       highlights: [
         `工作流：${workflowId}`,
         `任务状态：${this.readNestedStringField(result as Record<string, unknown>, ["task", "taskStatus"]) || "未知"}`,
@@ -13565,6 +13565,10 @@ export class AIControlCenterService {
       }
       case "check_publish":
         return this.checkWechatWorkflowPublishReadiness(headers, { workflowId: options?.workflowId });
+      case "push_to_wechat_draft": {
+        if (payload.confirmDraft !== true) throw new BadRequestException("推送草稿箱须获得用户授权，并设置 confirmDraft=true。");
+        return this.publishWechatWorkflow(headers, { workflowId: options?.workflowId });
+      }
       case "list_publish_history":
         return this.getWechatPublishHistory(headers, { limit: options?.limit });
       case "get_publish_history":

@@ -254,6 +254,7 @@ export const BRAND_OPERATIONS_ACTIONS: Readonly<Record<string, readonly string[]
     "set_html",
     "update_html_style",
     "check_publish",
+    "push_to_wechat_draft",
     "list_publish_history",
     "get_publish_history",
     "update_draft",
