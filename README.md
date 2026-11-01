@@ -1,5 +1,7 @@
 # AI 全域运营中台
 
+2026-10-31：详情页改为 Codex 对话交接、保留项目和历史；尚未发布。见[本地变更](docs/changes/2026-10-31-ecommerce-dialog-handoff.md)。
+
 2026-10-27：电商详情工作区优化媒体字段读取；[本地变更](docs/changes/2026-10-27-commerce-media-read.md)。
 
 2026-10-27：电商详情页空闲时减少自动刷新，有任务时保持快速更新；[详情](docs/changes/2026-10-27-commerce-idle-refresh.md)。
@@ -35,3 +37,6 @@
 
 
 设计图片自动登记与电商展示：参见[图片关联说明](docs/changes/2026-10-28-design-image-registration.md)。
+# 本地视频文案提取候选修复
+
+Docker 本地 ASR 依赖及离线模型的候选打包修改见 [变更说明](docs/changes/2026-10-31-local-asr-packaging.md)。当前源码尚未完成完整镜像与真实视频验收，不代表已发布或现有安装已生效。

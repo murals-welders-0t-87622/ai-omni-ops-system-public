@@ -28,8 +28,9 @@ ENV PIP_INDEX_URL=https://pypi.tuna.tsinghua.edu.cn/simple \
     PIP_TRUSTED_HOST="pypi.tuna.tsinghua.edu.cn pypi.org files.pythonhosted.org download.pytorch.org" \
     HF_ENDPOINT=https://hf-mirror.com \
     HF_HUB_DISABLE_XET=1 \
-    HF_HOME=/root/.cache/huggingface \
-    HUGGINGFACE_HUB_CACHE=/root/.cache/huggingface/hub
+    HF_HOME=/opt/omni-asr-cache \
+    HF_HUB_CACHE=/opt/omni-asr-cache/hub \
+    HUGGINGFACE_HUB_CACHE=/opt/omni-asr-cache/hub
 RUN if [ "$INSTALL_LOCAL_OCR" = "1" ] || [ "$INSTALL_LOCAL_ASR" = "1" ]; then \
       if [ -f /etc/apt/sources.list.d/debian.sources ]; then \
         sed -i 's|http://deb.debian.org/debian|https://mirrors.tuna.tsinghua.edu.cn/debian|g; s|http://deb.debian.org/debian-security|https://mirrors.tuna.tsinghua.edu.cn/debian-security|g' /etc/apt/sources.list.d/debian.sources; \
@@ -46,19 +47,30 @@ RUN if [ "$INSTALL_LOCAL_OCR" = "1" ]; then \
     else \
       echo "Local OCR runtime is optional. Rebuild with INSTALL_LOCAL_OCR=1 when image OCR tags are needed."; \
     fi
-RUN --mount=type=cache,id=ontology-lab-hf,target=/root/.cache/huggingface \
+RUN --mount=type=cache,id=ontology-lab-asr-pip,target=/root/.cache/pip \
     if [ "$INSTALL_LOCAL_ASR" = "1" ]; then \
-      python3 -m pip install --no-cache-dir --break-system-packages --upgrade pip setuptools wheel \
-      && python3 -m pip install --no-cache-dir --prefer-binary --break-system-packages -r docker/local-asr-requirements.txt \
-      && LOCAL_ASR_PRELOAD_WHISPER_MODEL="$LOCAL_ASR_PRELOAD_WHISPER_MODEL" python3 -c "import os; from faster_whisper import WhisperModel; model = (os.getenv('LOCAL_ASR_PRELOAD_WHISPER_MODEL') or 'small').strip() or 'small'; print(f'Preloading faster-whisper model: {model}'); WhisperModel(model, device='cpu', compute_type='int8'); print('Preloaded faster-whisper model successfully')"; \
+      installed=0; for index in https://pypi.tuna.tsinghua.edu.cn/simple https://pypi.org/simple https://pypi.tuna.tsinghua.edu.cn/simple; do \
+        if PIP_EXTRA_INDEX_URL= python3 -m pip install --prefer-binary --break-system-packages --timeout 90 --retries 3 -i "$index" -r docker/local-asr-requirements.txt; then installed=1; break; fi; \
+      done; [ "$installed" = "1" ]; \
     else \
       echo "Local ASR runtime is optional. Rebuild with INSTALL_LOCAL_ASR=1 when video transcript tags are needed."; \
+    fi
+
+FROM media-runtime AS asr-models
+ARG INSTALL_LOCAL_ASR=0
+ARG LOCAL_ASR_PRELOAD_WHISPER_MODEL=small
+COPY scripts/package-asr-model.py /app/scripts/package-asr-model.py
+RUN --mount=type=cache,id=ontology-lab-hf,target=/tmp/omni-asr-download \
+    mkdir -p /opt/omni-asr-cache && if [ "$INSTALL_LOCAL_ASR" = "1" ]; then \
+      HF_HOME=/tmp/omni-asr-download HF_HUB_CACHE=/tmp/omni-asr-download/hub HUGGINGFACE_HUB_CACHE=/tmp/omni-asr-download/hub python3 /app/scripts/package-asr-model.py --model "$LOCAL_ASR_PRELOAD_WHISPER_MODEL" --cache-dir /tmp/omni-asr-download/hub --destination /opt/omni-asr-cache/hub \
+      && HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 LOCAL_ASR_PRELOAD_WHISPER_MODEL="$LOCAL_ASR_PRELOAD_WHISPER_MODEL" python3 -c "import os; from faster_whisper import WhisperModel; WhisperModel(os.getenv('LOCAL_ASR_PRELOAD_WHISPER_MODEL') or 'small', device='cpu', compute_type='int8'); print('Embedded Whisper model verified offline')"; \
     fi
 
 FROM media-runtime AS source
 COPY . .
 
 FROM source AS server
+COPY --from=asr-models /opt/omni-asr-cache /opt/omni-asr-cache
 RUN npm run prisma:generate && npm run build:server
 EXPOSE 3011
 CMD ["node", "apps/server/dist/apps/server/src/main.js"]
