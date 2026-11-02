@@ -42,7 +42,7 @@ export function activeProductionCapabilities(grant: ConnectionGrant, _now = Date
 
 export function effectiveConnectionTools(grant: ConnectionGrant, now = Date.now()) {
   const tools = [...grant.tools];
-  if (activeProductionCapabilities(grant, now).includes("image_generation")) tools.push("create_design_work");
+  if (activeProductionCapabilities(grant, now).includes("image_generation")) tools.push("create_design_work", "generate_duoyuanx_text");
   return [...new Set(tools)];
 }
 

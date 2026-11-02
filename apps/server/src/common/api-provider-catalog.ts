@@ -211,6 +211,7 @@ const DUOYUANX_TEXT_MODEL_WHITELIST = [
   "claude-sonnet-4-5-20250929",
   "claude-sonnet-4-6",
   "claude-sonnet-5",
+  "claude-sonnet-5-5",
   "claude-opus-4-20250514",
   "claude-opus-4-5-20251101",
   "claude-opus-4-1-20250805",
@@ -219,8 +220,11 @@ const DUOYUANX_TEXT_MODEL_WHITELIST = [
   "claude-opus-4-7",
   "claude-opus-4-8",
   "claude-opus-5",
+  "claude-opus-5-5",
   "claude-haiku-4-5-20251001",
   "gemini-3.6-flash",
+  "gemini-3.7-flash",
+  "gemini-3.8-flash",
   "gemini-3-flash-preview",
   "gemini-2.0-flash",
   "gemini-2.5-flash",
@@ -270,6 +274,8 @@ const DUOYUANX_IMAGE_MODEL_WHITELIST = [
 ];
 
 const DUOYUANX_VIDEO_MODEL_WHITELIST = [
+  "grok-1.5-video",
+  "grok-1.5-video-15s",
   "veo_3_1",
   "veo_3_1-fast",
   "veo_3_1-extend",

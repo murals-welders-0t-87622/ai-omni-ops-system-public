@@ -427,6 +427,10 @@ export const HELD_CONNECTION_TOOLS: Readonly<Record<string, {group:string;reason
     "group": "separate_execution_authorization",
     "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替"
   },
+  "generate_duoyuanx_text": {
+    "group": "separate_execution_authorization",
+    "reason": "文本模型调用产生费用，仅随完整品牌运营连接开放，实际调用仍检查品牌权限"
+  },
   "create_douyin_original_copy": {
     "group": "separate_execution_authorization",
     "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替"
