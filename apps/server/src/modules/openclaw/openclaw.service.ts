@@ -1847,7 +1847,7 @@ const OPENCLAW_MCP_TOOLS: AIControlCenterMcpToolDefinition[] = [
   {
     name: "generate_duoyuanx_text",
     description: "使用当前品牌多元探索凭据和明确指定的文本模型生成文字，可能产生费用；返回供应商报告的模型与结果，不自动切换模型或保存为业务方案。",
-    inputSchema: { type: "object", properties: { model: { type: "string", maxLength: 128 }, prompt: { type: "string", maxLength: 30000 }, maxTokens: { type: "integer", minimum: 1, maximum: 4096 } }, required: ["model", "prompt"], additionalProperties: false },
+    inputSchema: { type: "object", properties: { model: { type: "string", maxLength: 128 }, prompt: { type: "string", maxLength: 30000 }, maxTokens: { type: "integer", minimum: 1, description: "仅在用户明确要求特定输出上限时提供；默认采用可确认的模型最大值，未知时交给平台。" } }, required: ["model", "prompt"], additionalProperties: false },
   },
   {
     name: "list_my_third_party_platforms",
@@ -16911,7 +16911,7 @@ export class AIControlCenterService {
         if (Object.keys(toolArgs).some((key) => !["model", "prompt", "maxTokens"].includes(key)) || typeof toolArgs.model !== "string" || typeof toolArgs.prompt !== "string" || (toolArgs.maxTokens !== undefined && typeof toolArgs.maxTokens !== "number")) throw new BadRequestException("文本模型调用参数不合法");
         const credential = await this.thirdPartyPlatformsService.resolveBrandRuntimeApiKeys(brandId, ["https://duoyuanx.com"]);
         if (credential.status !== "resolved" || !credential.apiKeys.length) throw new BadRequestException("当前品牌尚未配置可用的多元探索 API Key");
-        const data = await generateDuoyuanxText(credential.apiKeys[0], toolArgs.model, toolArgs.prompt, typeof toolArgs.maxTokens === "number" ? toolArgs.maxTokens : 2048);
+        const data = await generateDuoyuanxText(credential.apiKeys[0], toolArgs.model, toolArgs.prompt, typeof toolArgs.maxTokens === "number" ? toolArgs.maxTokens : undefined);
         return this.buildSummaryResponse({ title: "多元探索文本生成结果", summary: data.finishReason === "length" ? "平台返回的文本因长度限制可能不完整；尚未自动保存为业务方案。" : "已收到平台返回的文本；结果尚未自动保存为业务方案。", highlights: [`请求模型：${data.requestedModel}`, `平台返回模型：${data.reportedModel || "未提供"}`], data, links: [] });
       }
       case "list_my_third_party_platforms":

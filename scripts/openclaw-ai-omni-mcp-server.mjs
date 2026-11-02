@@ -16,7 +16,7 @@ const TOOL_DEFINITIONS = [
   {
     name: "generate_duoyuanx_text",
     description: "使用当前品牌多元探索凭据和指定文本模型生成文字，可能产生费用；不自动切换模型或保存业务方案。",
-    inputSchema: { type: "object", properties: { model: { type: "string", maxLength: 128 }, prompt: { type: "string", maxLength: 30000 }, maxTokens: { type: "integer", minimum: 1, maximum: 4096 } }, required: ["model", "prompt"], additionalProperties: false },
+    inputSchema: { type: "object", properties: { model: { type: "string", maxLength: 128 }, prompt: { type: "string", maxLength: 30000 }, maxTokens: { type: "integer", minimum: 1, description: "仅在用户明确要求特定输出上限时提供；默认采用可确认的模型最大值，未知时交给平台。" } }, required: ["model", "prompt"], additionalProperties: false },
   },
   {
     name: "get_current_brand_context",

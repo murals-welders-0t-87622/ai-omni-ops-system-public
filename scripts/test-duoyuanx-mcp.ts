@@ -7,7 +7,11 @@ import { effectiveConnectionTools } from "../apps/server/src/modules/openclaw/co
 async function main() {
   const originalFetch = globalThis.fetch;
   let calls = 0;
-  globalThis.fetch = async () => { calls++; return new Response(JSON.stringify({model: "gemini-3.1-pro-preview", choices: [{message: {content: "模拟回答"}, finish_reason: "stop"}]}), {status: 200}); };
+  globalThis.fetch = async (url, init) => {
+    if (String(url).includes("/v1/models/")) return new Response(JSON.stringify({id:"gemini-3.1-pro-preview",max_output_tokens:65536}), {status:200});
+    calls++; assert.equal(JSON.parse(String(init?.body)).max_tokens,65536);
+    return new Response(JSON.stringify({model: "gemini-3.1-pro-preview", choices: [{message: {content: "模拟回答"}, finish_reason: "stop"}]}), {status: 200});
+  };
   try {
     const full = effectiveConnectionTools({tools: [...CONNECTION_BRAND_TOOLS]});
     const actor = {userId: "user-a", brandId: "brand-a", connectionId: "connection-a", allowedMcpTools: full, allowedMcpProductionCapabilities: ["image_generation"]};
