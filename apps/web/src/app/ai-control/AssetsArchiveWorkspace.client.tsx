@@ -22,6 +22,7 @@ import {
 import { archiveControlDestination } from "../../services/workspace-access";
 import { requireCurrentBrandId, getStoredAuthSession } from "../../services/auth-session";
 import { authenticatedFetch, requestBlobByUrl } from "../../services/http";
+import { archivePreviewSource, isArchiveTaskNavigation } from "./archive-preview-source";
 
 function archiveHeaders() { const session=getStoredAuthSession(); return { Authorization: `Bearer ${session?.accessToken || ""}`, "x-brand-id": requireCurrentBrandId() }; }
 
@@ -271,7 +272,8 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
   }, []);
 
   const resolvePreviewAsset = useCallback(async (item: ArchiveItem) => {
-    const sourceUrl = item.links.source?.trim();
+    const rawSourceUrl = item.links.source?.trim();
+    const sourceUrl = rawSourceUrl ? archivePreviewSource(rawSourceUrl, window.location.origin) : "";
     if (!sourceUrl) {
       return null;
     }
@@ -301,12 +303,13 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
     if (item.textContent?.trim()) {
       return item.textContent.trim();
     }
-    if (item.description?.trim() && detectArchivePreviewType(item) === "TEXT") {
-      return item.description.trim();
-    }
-    const sourceUrl = item.links.source?.trim();
+    const rawSourceUrl = item.links.source?.trim();
+    const sourceUrl = rawSourceUrl ? archivePreviewSource(rawSourceUrl, window.location.origin) : "";
     if (!sourceUrl) {
-      return "";
+      return item.description?.trim() ? `此素材没有保存正文。素材说明：\n${item.description.trim()}` : "此素材没有保存可预览的正文。";
+    }
+    if (isArchiveTaskNavigation(sourceUrl, window.location.origin)) {
+      return item.description?.trim() ? `此素材关联了任务记录，但没有保存正文。素材说明：\n${item.description.trim()}` : "此素材关联了任务记录，但没有可预览的正文。";
     }
     if (isProtectedArchiveSource(sourceUrl)) {
       const response = await requestBlobByUrl(sourceUrl);
@@ -333,7 +336,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
           type: "TEXT",
           title: item.title,
           textContent: textContent || "暂无可预览正文",
-          downloadUrl: item.links.source,
+          downloadUrl: rememberObjectUrl(URL.createObjectURL(new Blob([textContent], { type: "text/plain;charset=utf-8" }))),
           downloadName: resolveArchiveFileName(item, item.links.source),
         });
         return;
@@ -376,7 +379,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
     } finally {
       setPreviewingId("");
     }
-  }, [resolvePreviewAsset, resolvePreviewText]);
+  }, [rememberObjectUrl, resolvePreviewAsset, resolvePreviewText]);
 
   const handleOpenArchiveItem = useCallback(async (item: ArchiveItem) => {
     const actionKey = `${item.source}:${item.id}`;
@@ -384,7 +387,8 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
     let pendingWindow: Window | null = null;
     setOpeningId(actionKey);
     try {
-      const sourceUrl = item.links.source?.trim();
+      const rawSourceUrl = item.links.source?.trim();
+      const sourceUrl = rawSourceUrl ? archivePreviewSource(rawSourceUrl, window.location.origin) : "";
       if (!sourceUrl) {
         if (previewType === "TEXT") {
           await handlePreviewArchiveItem(item);
@@ -900,6 +904,7 @@ export default function AssetsArchiveWorkspace({ returnHref }: { returnHref?: "/
               ) : looksLikeHtmlPreviewText(archivePreview.textContent) ? (
                 <iframe
                   title={archivePreview.title}
+                  sandbox=""
                   srcDoc={archivePreview.textContent || ""}
                   className="h-[72vh] w-full rounded-2xl border border-slate-200 bg-white"
                 />
@@ -995,7 +1000,7 @@ function ArchiveCard(props: {
         {item.collection?.workUrl && <a href={item.collection.workUrl} target="_blank" rel="noreferrer" className="rounded-lg border px-3 py-1.5 text-xs">查看采集原作</a>}
         {item.links.task ? (
           <Link href={item.links.task} className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800">
-            查看任务
+            查看任务记录
           </Link>
         ) : null}
         {previewType ? (
