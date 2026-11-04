@@ -347,6 +347,9 @@ export const BRAND_OPERATIONS_ACTIONS: Readonly<Record<string, readonly string[]
   ]
 };
 export const HELD_CONNECTION_TOOLS: Readonly<Record<string, {group:string;reason:string}>> = {
+  "list_soonstudio_models": {group:"brand_model_read",reason:"由现有品牌平台只读授权派生；不开放生成"},
+  "get_soonstudio_model": {group:"brand_model_read",reason:"由现有品牌平台只读授权派生；不开放生成"},
+  "get_soonstudio_job": {group:"brand_model_read",reason:"由现有品牌平台只读授权派生；不开放生成"},
   "get_local_material_storage_settings": {
     "group": "platform_or_personal",
     "reason": "平台全局/宿主或跨品牌个人账户配置，不属于品牌运营连接"
@@ -426,6 +429,14 @@ export const HELD_CONNECTION_TOOLS: Readonly<Record<string, {group:string;reason
   "create_design_work": {
     "group": "separate_execution_authorization",
     "reason": "付费模型/供应商生成或任务重试，需要独立业务授权，品牌资料读写授权不代替"
+  },
+  "submit_soonstudio_job": {
+    "group": "separate_execution_authorization",
+    "reason": "显式指定模型的付费生成；仅完整品牌运营连接可用，逐次检查品牌编辑权限"
+  },
+  "refresh_soonstudio_job": {
+    "group": "separate_execution_authorization",
+    "reason": "只查询本品牌已保存的供应商回执，不重发生成"
   },
   "generate_duoyuanx_text": {
     "group": "separate_execution_authorization",

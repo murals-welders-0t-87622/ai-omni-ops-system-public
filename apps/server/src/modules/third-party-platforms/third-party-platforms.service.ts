@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { BrandCredentialCipher } from "../../common/brand-credential-cipher";
+import { isRetiredPlatform } from "../../common/retired-platforms";
 import { AppConfigService } from "../../config/app-config.service";
 import { BadRequestException, Injectable, NotFoundException, ServiceUnavailableException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
@@ -179,6 +180,7 @@ export class ThirdPartyPlatformsService {
   }
 
   async createPlatform(payload: CreateThirdPartyPlatformPayload) {
+    if (isRetiredPlatform(payload)) throw new BadRequestException('此第三方平台已移除，不能重新添加');
     const nextRecord = this.buildPlatformRecord({
       id: `third_party_platform_${Date.now()}`,
       name: payload.name,
@@ -225,6 +227,8 @@ export class ThirdPartyPlatformsService {
     if (!current) {
       throw new NotFoundException("第三方平台不存在");
     }
+
+    if (isRetiredPlatform(current) || isRetiredPlatform({ ...current, ...payload })) throw new BadRequestException('此第三方平台已移除，不能重新启用');
 
     const nextRecord = this.buildPlatformRecord({
       ...current,
@@ -356,6 +360,7 @@ export class ThirdPartyPlatformsService {
     if (!platform) {
       throw new NotFoundException("第三方平台不存在");
     }
+    if (isRetiredPlatform(platform)) throw new BadRequestException('此第三方平台已移除；历史凭据仅保留用于原任务核对');
     const targetPlatformIds = group?.aliasIds.length ? group.aliasIds : [platform.id];
 
     const nextApiKey = String(payload.apiKey || "").trim();
@@ -872,7 +877,7 @@ export class ThirdPartyPlatformsService {
   }
 
   private async listPlatformGroups(): Promise<ThirdPartyPlatformGroup[]> {
-    return this.collapsePlatformGroups(await this.listPlatformsRaw());
+    return this.collapsePlatformGroups((await this.listPlatformsRaw()).filter((item) => !isRetiredPlatform(item)));
   }
 
   private async getPlatformGroupById(platformId: string) {

@@ -43,7 +43,7 @@ const PLATFORM_NAME_BY_HOST: Record<string, string> = {
   "api.kol.cn": "软文街平台",
   "apihub.agnes-ai.com": "Agnes 平台",
   "duoyuanx.com": "多元探索平台",
-  "xjjuhe.site": "鸭屎香聚合平台",
+  "api.soonstudio.ai": "SoonStudio 平台",
 };
 
 export const THIRD_PARTY_PLATFORM_SEEDS: ThirdPartyPlatformRecord[] = buildThirdPartyPlatformSeeds();
@@ -265,6 +265,7 @@ export function resolvePlatformWebsiteUrl(baseUrl: string) {
       "agent.mathmind.cn": "https://agent.mathmind.cn",
       "api.mathmind.cn": "https://agent.mathmind.cn",
       "duoyuanx.com": "https://duoyuanx.com",
+      "api.soonstudio.ai": "https://soonstudio.ai",
     };
     return websiteByHost[host] || `${url.protocol}//${url.host}`;
   } catch {

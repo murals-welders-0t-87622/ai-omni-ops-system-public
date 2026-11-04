@@ -9,11 +9,13 @@ import { RuanwenjieMediaService } from "./ruanwenjie-media.service";
 import { ThirdPartyPlatformsController } from "./third-party-platforms.controller";
 import { ThirdPartyPlatformsService } from "./third-party-platforms.service";
 import { VolcengineMusicService } from "./volcengine-music.service";
+import { SoonStudioRuntimeController } from "./soonstudio-runtime.controller";
+import { SoonStudioRuntimeService } from "./soonstudio-runtime.service";
 
 @Module({
   imports: [AuthModule, ApiProvidersModule],
-  controllers: [ThirdPartyPlatformsController],
-  providers: [ThirdPartyPlatformsService, ChanjingOpenApiService, GlmOpenService, LocalAsrService, LocalOcrService, VolcengineMusicService, RuanwenjieMediaService],
-  exports: [ThirdPartyPlatformsService, GlmOpenService, LocalAsrService, LocalOcrService, VolcengineMusicService, RuanwenjieMediaService],
+  controllers: [ThirdPartyPlatformsController, SoonStudioRuntimeController],
+  providers: [ThirdPartyPlatformsService, ChanjingOpenApiService, GlmOpenService, LocalAsrService, LocalOcrService, VolcengineMusicService, RuanwenjieMediaService, SoonStudioRuntimeService],
+  exports: [ThirdPartyPlatformsService, GlmOpenService, LocalAsrService, LocalOcrService, VolcengineMusicService, RuanwenjieMediaService, SoonStudioRuntimeService],
 })
 export class ThirdPartyPlatformsModule {}

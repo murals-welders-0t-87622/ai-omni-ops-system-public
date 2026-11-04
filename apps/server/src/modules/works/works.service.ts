@@ -12450,7 +12450,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
     const backend = this.normalizeVideoProvider(
       payload.requestedVideoProvider?.trim() || meta.resolvedVideoProvider || meta.requestedVideoProvider,
     );
-    const config = await this.loadVideoProviderConfig(brandId, backend);
+    const config = await this.loadVideoProviderConfig(brandId, backend, taskId);
     const snapshot = await this.queryVideoGenerationSnapshotWithTargets(
       this.buildVideoRequestTargets(config),
       config.backend,
@@ -12579,7 +12579,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
     const backend = this.normalizeVideoProvider(
       payload.requestedVideoProvider?.trim() || meta.resolvedVideoProvider || meta.requestedVideoProvider,
     );
-    const config = await this.loadVideoProviderConfig(brandId, backend);
+    const config = await this.loadVideoProviderConfig(brandId, backend, taskId);
     const snapshot = await this.queryVideoGenerationSnapshotWithTargets(
       this.buildVideoRequestTargets(config),
       config.backend,
@@ -12708,7 +12708,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
     const backend = this.normalizeVideoProvider(
       payload.requestedVideoProvider?.trim() || meta.resolvedVideoProvider || meta.requestedVideoProvider,
     );
-    const config = await this.loadVideoProviderConfig(brandId, backend);
+    const config = await this.loadVideoProviderConfig(brandId, backend, taskId);
     const snapshot = await this.queryVideoGenerationSnapshotWithTargets(
       this.buildVideoRequestTargets(config),
       config.backend,
@@ -21112,7 +21112,7 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       return params.segment;
     }
     const backend = this.normalizeVideoProvider(params.meta.resolvedVideoProvider || params.meta.requestedVideoProvider);
-    const config = await this.loadVideoProviderConfig(params.brandId, backend);
+    const config = await this.loadVideoProviderConfig(params.brandId, backend, params.taskId);
     const snapshot = await this.pollVideoGenerationResult(
       config.baseUrls[0],
       config.apiKeys[0],
@@ -29329,13 +29329,27 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
     throw new ServiceUnavailableException(`未找到 ${backend} 视频接口配置文件`);
   }
 
-  private async loadVideoProviderConfig(brandId: string | undefined, backend: VideoBackendKey): Promise<VideoProviderConfig> {
+  private async loadVideoProviderConfig(brandId: string | undefined, backend: VideoBackendKey, existingTaskId?: string): Promise<VideoProviderConfig> {
     const providers = await this.apiProvidersService.listActiveProvidersByRuntimeKey("video-generation");
     const requestedBackendKey = this.normalizeVideoBackendLookupKey(backend);
-    const provider = providers.find((item) => {
+    let provider = providers.find((item) => {
       const candidate = this.parseVideoBackendKey(this.apiProvidersService.getStringExtra(item, "backendKey"));
       return this.normalizeVideoBackendLookupKey(candidate) === requestedBackendKey;
     });
+    let retiredReceiptOnly = false;
+    // A retired provider is never selectable for new generation. Only the four
+    // recovery paths pass an actual local Task ID, checked against this brand.
+    if (!provider && brandId && existingTaskId) {
+      const owned = await this.prismaService.task.findFirst({ where: { id: existingTaskId, brandId } });
+      if (owned) {
+        const historical = await this.apiProvidersService.getProviderForExistingTask("provider_runtime_video_xjjuhe");
+        const historicalBackend = historical && this.parseVideoBackendKey(this.apiProvidersService.getStringExtra(historical, "backendKey"));
+        if (historical && historicalBackend && this.normalizeVideoBackendLookupKey(historicalBackend) === requestedBackendKey) {
+          provider = historical;
+          retiredReceiptOnly = true;
+        }
+      }
+    }
     if (!provider) {
       throw new ServiceUnavailableException(`${backend} 视频接口配置读取失败`);
     }
@@ -29362,10 +29376,10 @@ export class WorksService implements OnModuleInit, OnModuleDestroy {
       baseUrls,
       apiKeys,
       createPath: this.apiProvidersService.getStringExtra(provider, "createPath") || "/v2/videos/generations",
-      queryPath: this.apiProvidersService.getStringExtra(provider, "queryPath") || "/v2/videos/generations/{task_id}",
-      queryMethod: this.apiProvidersService.getStringExtra(provider, "queryMethod") === "POST" ? "POST" : "GET",
+      queryPath: retiredReceiptOnly ? "/v1/videos/{task_id}" : this.apiProvidersService.getStringExtra(provider, "queryPath") || "/v2/videos/generations/{task_id}",
+      queryMethod: !retiredReceiptOnly && this.apiProvidersService.getStringExtra(provider, "queryMethod") === "POST" ? "POST" : "GET",
       queryBodyMode:
-        this.apiProvidersService.getStringExtra(provider, "queryBodyMode") === "task_id-json"
+        retiredReceiptOnly ? undefined : this.apiProvidersService.getStringExtra(provider, "queryBodyMode") === "task_id-json"
           ? "task_id-json"
           : this.apiProvidersService.getStringExtra(provider, "queryBodyMode") === "taskId-json"
             ? "taskId-json"

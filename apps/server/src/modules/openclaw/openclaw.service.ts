@@ -67,6 +67,7 @@ import { PublishingService } from "../publishing/publishing.service";
 import { ReportsService } from "../reports/reports.service";
 import { TasksService } from "../tasks/tasks.service";
 import { ThirdPartyPlatformsService } from "../third-party-platforms/third-party-platforms.service";
+import { SoonStudioRuntimeService } from "../third-party-platforms/soonstudio-runtime.service";
 import { LocalRuntimeService } from "../local-runtime/local-runtime.service";
 import { VolcengineMusicService } from "../third-party-platforms/volcengine-music.service";
 import { UserSkillsService } from "../user-skills/user-skills.service";
@@ -1843,6 +1844,31 @@ const OPENCLAW_MCP_TOOLS: AIControlCenterMcpToolDefinition[] = [
       },
       additionalProperties: false,
     },
+  },
+  {
+    name: "list_soonstudio_models",
+    description: "分页检索SoonStudio全量官方模型目录及协议可用标记。目录存在不代表当前品牌密钥已获该模型权限。",
+    inputSchema: { type: "object", properties: { query: {type:"string"}, type: {type:"string"}, offset: {type:"integer",minimum:0}, limit: {type:"integer",minimum:1,maximum:100} }, additionalProperties:false },
+  },
+  {
+    name: "get_soonstudio_model",
+    description: "读取指定SoonStudio模型的精确接口路径、参数契约和支持状态。提交前先读取，禁止把不同模型统一套用Chat格式。",
+    inputSchema: {type:"object", properties:{model:{type:"string"}},required:["model"],additionalProperties:false},
+  },
+  {
+    name: "submit_soonstudio_job",
+    description: "按官方契约使用本品牌SoonStudio密钥提交一次指定模型任务，可能产生费用。requestId在同一业务动作重试时保持不变；结果URL尚不等于素材入库。",
+    inputSchema: {type:"object",properties:{requestId:{type:"string",maxLength:128},model:{type:"string"},profile:{type:"string"},endpoint:{type:"string"},body:{oneOf:[{type:"object"},{type:"array",items:{type:"object"}}]},files:{type:"array",maxItems:10,items:{type:"object",properties:{fieldName:{type:"string"},fileName:{type:"string"},contentType:{type:"string"},dataBase64:{type:"string"}},required:["fieldName","fileName","contentType","dataBase64"],additionalProperties:false}}},required:["requestId","model","profile","body"],additionalProperties:false},
+  },
+  {
+    name: "get_soonstudio_job",
+    description: "只读本品牌SoonStudio任务已保存的结果和状态，不发起或重发生成。",
+    inputSchema: {type:"object",properties:{taskId:{type:"string"}},required:["taskId"],additionalProperties:false},
+  },
+  {
+    name: "refresh_soonstudio_job",
+    description: "使用已保存的本品牌供应商任务号核对原任务状态，只查询，不创建新的付费任务。",
+    inputSchema: {type:"object",properties:{taskId:{type:"string"}},required:["taskId"],additionalProperties:false},
   },
   {
     name: "generate_duoyuanx_text",
@@ -4263,6 +4289,7 @@ export class AIControlCenterService {
     private readonly publishingService: PublishingService,
     private readonly reportsService: ReportsService,
     private readonly thirdPartyPlatformsService: ThirdPartyPlatformsService,
+    private readonly soonStudioRuntimeService: SoonStudioRuntimeService,
     private readonly volcengineMusicService: VolcengineMusicService,
     private readonly ordersService: OrdersService,
     private readonly userSkillsService: UserSkillsService,
@@ -16904,6 +16931,21 @@ export class AIControlCenterService {
         return this.generateOpportunityInsightStepThree(headers, {
           supplementInput: typeof toolArgs.supplementInput === "string" ? toolArgs.supplementInput : undefined,
         });
+      case "list_soonstudio_models":
+      case "get_soonstudio_model":
+      case "submit_soonstudio_job":
+      case "get_soonstudio_job":
+      case "refresh_soonstudio_job": {
+        const auth = await this.requireAuth(headers);
+        const brandId = await this.requireCurrentBrandId(auth);
+        const mutate = toolName === "submit_soonstudio_job" || toolName === "refresh_soonstudio_job";
+        await this.authService.assertBrandPermission(brandId, "personalCenter.works", mutate ? "edit" : "view", auth);
+        if (toolName === "list_soonstudio_models") return this.soonStudioRuntimeService.listModels(toolArgs);
+        if (toolName === "get_soonstudio_model") return this.soonStudioRuntimeService.getModel(String(toolArgs.model || ""));
+        if (toolName === "submit_soonstudio_job") return this.soonStudioRuntimeService.submit(brandId, toolArgs as any, auth.userId);
+        if (toolName === "get_soonstudio_job") return this.soonStudioRuntimeService.read(brandId, String(toolArgs.taskId || ""));
+        return this.soonStudioRuntimeService.refresh(brandId, String(toolArgs.taskId || ""));
+      }
       case "generate_duoyuanx_text": {
         const auth = await this.requireAuth(headers);
         const brandId = await this.requireCurrentBrandId(auth);

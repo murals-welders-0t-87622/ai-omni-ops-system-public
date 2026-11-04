@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import {
   DECOMMISSIONED_SYSTEM_API_PROVIDER_IDS,
@@ -6,6 +6,7 @@ import {
   SYSTEM_API_PROVIDER_SEEDS,
 } from "../../common/api-provider-catalog";
 import { isDecommissionedPlatformBaseUrl } from "../../common/third-party-platform-catalog";
+import { isRetiredApiProvider } from "../../common/retired-platforms";
 import { database, type ApiProviderRecord } from "../../common/mock-data";
 import { PrismaService } from "../../prisma/prisma.service";
 
@@ -89,19 +90,31 @@ export class ApiProvidersService {
             updatedAt: "desc",
           },
         });
-        return rows.map((item) => this.normalizeRow(item as unknown as ApiProviderRow));
+        return rows.map((item) => this.normalizeRow(item as unknown as ApiProviderRow)).filter((item) => !isRetiredApiProvider(item));
       }
       const rows = await this.prismaService.$queryRaw<ApiProviderRow[]>`
         SELECT *
         FROM "ApiProviderConfig"
         ORDER BY "updatedAt" DESC
       `;
-      return rows.map((item) => this.normalizeRow(item));
+      return rows.map((item) => this.normalizeRow(item)).filter((item) => !isRetiredApiProvider(item));
     }
 
     return [...database.apiProviders]
       .map((item) => ({ ...item }))
+      .filter((item) => !isRetiredApiProvider(item))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+
+  /** Internal receipt recovery only. The caller must first verify ownership of
+   * an existing Task; never use this lookup to submit a new generation. */
+  async getProviderForExistingTask(id: string) {
+    if (await this.prismaService.canUseDatabase()) {
+      await this.ensureTableReady();
+      return this.findById(id);
+    }
+    const provider = database.apiProviders.find((item) => item.id === id);
+    return provider ? { ...provider } : undefined;
   }
 
   async listActiveProviders() {
@@ -168,6 +181,7 @@ export class ApiProvidersService {
   }
 
   async createProvider(payload: CreateApiProviderPayload) {
+    if (isRetiredApiProvider(payload)) throw new BadRequestException('此第三方平台已移除，不能新建生成配置');
     const now = new Date().toISOString();
     const record = this.buildRecord({
       id: `provider_${Date.now()}`,
@@ -280,12 +294,14 @@ export class ApiProvidersService {
   }
 
   async updateProvider(id: string, payload: UpdateApiProviderPayload) {
+    if (isRetiredApiProvider({ id, ...payload })) throw new BadRequestException('此第三方平台已移除，不能重新启用');
     if (await this.prismaService.canUseDatabase()) {
       await this.ensureTableReady();
       const current = await this.findById(id);
       if (!current) {
         throw new NotFoundException("API Provider 不存在");
       }
+      if (isRetiredApiProvider(current)) throw new BadRequestException('此第三方平台已移除，不能重新启用');
       if (this.isSqliteDatabase()) {
         const row = await this.prismaService.apiProviderConfig.update({
           where: { id },
@@ -339,6 +355,8 @@ export class ApiProvidersService {
     if (!provider) {
       throw new NotFoundException("API Provider 不存在");
     }
+
+    if (isRetiredApiProvider(provider)) throw new BadRequestException('此第三方平台已移除，不能重新启用');
 
     if (payload.status) {
       provider.status = payload.status;

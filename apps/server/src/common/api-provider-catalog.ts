@@ -1,3 +1,5 @@
+import { SOONSTUDIO_MODELS } from "./soonstudio-model-catalog";
+
 type ProviderType = "OPENAI" | "GEMINI" | "DOUBAO" | "CUSTOM";
 type ProviderStatus = "ACTIVE" | "DISABLED" | "DRAFT";
 
@@ -1090,45 +1092,30 @@ export const DECOMMISSIONED_SYSTEM_API_PROVIDER_IDS = [
 ];
 
 export const SYSTEM_API_PROVIDER_SEEDS: ApiProviderSeedRecord[] = [
-  createSeed({
-    id: "provider_runtime_text_xjjuhe",
-    name: "鸭屎香聚合 · 对话模型",
-    providerType: "CUSTOM", status: "DRAFT", baseUrl: "https://xjjuhe.site",
-    tutorialUrl: "https://xjjuhe.site/docs/quickstart", modelWhitelist: ["gpt-4o-mini"],
-    apiKey: "", defaultModel: "gpt-4o-mini", organization: "", project: "", timeoutMs: 180000,
-    streamEnabled: true, customHeaders: {},
-    extraParams: { runtimeKey: "text-global", runtimeTags: ["text-global", "works-runtime", "reports-runtime"],
-      baseUrls: ["https://xjjuhe.site"], platformBaseUrls: ["https://xjjuhe.site"],
-      completionPath: "/v1/chat/completions", modelsPath: "/v1/models" },
-    remark: "在本品牌配置平台 API Key 后按需启用；具体模型和权限以平台账号为准。",
-  }),
-  createSeed({
-    id: "provider_runtime_image_xjjuhe",
-    name: "鸭屎香聚合 · GPT 图片",
-    providerType: "CUSTOM", status: "ACTIVE", baseUrl: "https://xjjuhe.site",
-    tutorialUrl: "https://xjjuhe.site/docs/openai", modelWhitelist: ["gpt-image-2", "gpt-image-2.5"],
-    apiKey: "", defaultModel: "gpt-image-2", organization: "", project: "", timeoutMs: 180000,
-    streamEnabled: false, customHeaders: {},
-    extraParams: { runtimeKey: "image-generation", runtimeTags: ["image-generation", "works-runtime"],
-      baseUrls: ["https://xjjuhe.site"], platformBaseUrls: ["https://xjjuhe.site"],
-      requestMode: "xjjuhe-task", createPath: "/v1/images/generations", queryPath: "/v1/images/generations/{task_id}",
-      queryMethod: "GET", supportsTextToImage: true, supportsReferenceImages: true, requiresReferenceImages: false },
-    remark: "GPT 图片任务异步生成；品牌自行配置 API Key。提交后轮询，不自动重复提交。",
-  }),
-  createSeed({
-    id: "provider_runtime_video_xjjuhe", name: "鸭屎香聚合 · Omni 视频",
-    providerType: "CUSTOM", status: "ACTIVE", baseUrl: "https://xjjuhe.site",
-    tutorialUrl: "https://xjjuhe.site/docs/openai", modelWhitelist: ["omni_flash-10s"], apiKey: "",
-    defaultModel: "omni_flash-10s", organization: "", project: "", timeoutMs: 180000,
-    streamEnabled: false, customHeaders: {},
-    extraParams: { runtimeKey: "video-generation", runtimeTags: ["video-generation", "works-runtime"],
-      backendKey: "xjjuhe_video", displayLabel: "鸭屎香 Omni 视频（10秒）", displayOrder: 350,
-      baseUrls: ["https://xjjuhe.site"], platformBaseUrls: ["https://xjjuhe.site"],
-      createPath: "/v1/videos", queryPath: "/v1/videos/{task_id}", queryMethod: "GET",
-      requestProfile: "xjjuhe_video", textModel: "omni_flash-10s", imageModel: "omni_flash-10s",
-      supportsTextToVideo: true, supportsImageToVideo: true, durationOptions: [10], pollIntervalMs: 5000, pollMaxAttempts: 120 },
-    remark: "仅提供 Omni 10 秒视频入口；参考图片须为平台可访问的公网直链。",
-  }),
+  createSeedWithTimestamp({
+    id: "provider_soonstudio_catalog",
+    name: "SoonStudio · 全模型能力网关",
+    providerType: "CUSTOM",
+    status: "DRAFT",
+    baseUrl: "https://api.soonstudio.ai",
+    tutorialUrl: "https://soonstudio.ai/docs",
+    modelWhitelist: SOONSTUDIO_MODELS.map((model) => model.id),
+    apiKey: "",
+    defaultModel: "",
+    organization: "",
+    project: "",
+    timeoutMs: 180000,
+    streamEnabled: false,
+    customHeaders: {},
+    extraParams: {
+      runtimeKey: "soonstudio-models",
+      runtimeTags: ["soonstudio-models"],
+      platformBaseUrls: ["https://api.soonstudio.ai"],
+      modelsPath: "/v1/model-catalog",
+      requestProfile: "soonstudio-contract",
+    },
+    remark: "包含官方国际目录的文本、图片、视频、音频等模型。按每个模型的官方接口契约调用，不抢占既有默认模型；已弃用或未提供API的模型保留目录标记。品牌需配置自己的SoonStudio密钥。",
+  }, "2026-11-05T00:00:00.000Z"),
   createSeedWithTimestamp({
     id: "provider_runtime_text_duoyuanx_unified",
     name: "多元探索 · 文生文/多模态",

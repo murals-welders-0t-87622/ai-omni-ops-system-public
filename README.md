@@ -1,5 +1,7 @@
 # AI 全域运营中台
 
+2026-11-05：增加SoonStudio全量模型目录、按官方协议的品牌HTTP/MCP任务接口，并移除鸭屎香新任务入口；历史数据保留。[接入、限制与验证](docs/changes/2026-11-05-soonstudio-integration.md)。
+
 2026-10-31：详情页改为 Codex 对话交接、保留项目和历史；尚未发布。见[本地变更](docs/changes/2026-10-31-ecommerce-dialog-handoff.md)。
 
 2026-10-27：电商详情工作区优化媒体字段读取；[本地变更](docs/changes/2026-10-27-commerce-media-read.md)。

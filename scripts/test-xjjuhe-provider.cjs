@@ -6,10 +6,9 @@ const {THIRD_PARTY_PLATFORM_SEEDS}=require('../apps/server/dist/apps/server/src/
 const service=Object.create(WorksService.prototype);
 const provider={provider:'IMAGE_API',providerId:'provider_runtime_image_xjjuhe',providerName:'测试平台',baseUrls:['https://xjjuhe.site'],apiKeys:['synthetic'],models:['gpt-image-2'],requestMode:'xjjuhe-task',createPath:'/v1/images/generations',queryPath:'/v1/images/generations/{task_id}',queryMethod:'GET',supportsTextToImage:true,supportsReferenceImages:true,requiresReferenceImages:false};
 const params={brandId:'test-brand',taskId:'test-task',title:'测试',workLabel:'测试',role:'COVER',order:0,providers:[provider],prompt:'示例',referenceImageUrls:[]};
-test('平台列出且预置凭证为空',()=>{
-  const platform=THIRD_PARTY_PLATFORM_SEEDS.find(x=>x.baseUrl==='https://xjjuhe.site');
-  assert.equal(platform.name,'鸭屎香聚合平台');
-  for(const id of ['provider_runtime_text_xjjuhe','provider_runtime_image_xjjuhe','provider_runtime_video_xjjuhe']) assert.equal(SYSTEM_API_PROVIDER_SEEDS.find(x=>x.id===id).apiKey,'');
+test('退役平台不再预置，新生成入口移除但保留原任务协议测试',()=>{
+  assert.equal(THIRD_PARTY_PLATFORM_SEEDS.some(x=>x.baseUrl==='https://xjjuhe.site'),false);
+  for(const id of ['provider_runtime_text_xjjuhe','provider_runtime_image_xjjuhe','provider_runtime_video_xjjuhe']) assert.equal(SYSTEM_API_PROVIDER_SEEDS.some(x=>x.id===id),false);
 });
 test('图片请求采用平台参数与正确尺寸',()=>{
   const p=service.buildImageGenerationPayload(provider,'gpt-image-2','提示词',['https://example.com/ref.png'],'social_graphic',{openai:'720x1280'});

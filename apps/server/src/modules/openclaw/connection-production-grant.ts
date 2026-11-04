@@ -42,7 +42,8 @@ export function activeProductionCapabilities(grant: ConnectionGrant, _now = Date
 
 export function effectiveConnectionTools(grant: ConnectionGrant, now = Date.now()) {
   const tools = [...grant.tools];
-  if (activeProductionCapabilities(grant, now).includes("image_generation")) tools.push("create_design_work", "generate_duoyuanx_text");
+  if (grant.tools.includes("list_my_third_party_platforms")) tools.push("list_soonstudio_models", "get_soonstudio_model", "get_soonstudio_job");
+  if (activeProductionCapabilities(grant, now).includes("image_generation")) tools.push("create_design_work", "generate_duoyuanx_text", "submit_soonstudio_job", "refresh_soonstudio_job");
   return [...new Set(tools)];
 }
 
